@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>GCSupportedGameControllers</key>
+	<array>
+		<dict>
+			<key>ProfileName</key>
+			<string>ExtendedGamepad</string>
+		</dict>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>DINCondensed-Regular.ttf</string>
+		<string>D-DIN.ttf</string>
+		<string>D-DINCondensed-Bold.ttf</string>
+		<string>Ebrima.ttf</string>
+		<string>D-DINCondensed.ttf</string>
+		<string>Orbitron-SemiBold.ttf</string>
+		<string>Orbitron-Regular.ttf</string>
+		<string>Orbitron-Medium.ttf</string>
+		<string>Orbitron-ExtraBold.ttf</string>
+		<string>Orbitron-Bold.ttf</string>
+		<string>Orbitron-Black.ttf</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string></string>
+	</dict>
+</dict>
+</plist>
