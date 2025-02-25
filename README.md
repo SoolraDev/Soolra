@@ -2,12 +2,6 @@
 
 Soolra is a multi-system game emulator designed for modern Apple platforms, bringing classic gaming to your devices with a beautiful, native interface. Visit [soolra.com](https://soolra.com) to learn more. The app is specifically designed to work with the Soolra Bluetooth Controller for the optimal gaming experience.
 
-## License
-
-Because Soolra incorporates emulator cores that are GPL-licensed, this project must be released under the GNU General Public License version 2.0 (GPLv2). Nevertheless, for the portions of code that we have personally created, I grant explicit permission to use, modify, and redistribute that code freely, with or without crediting me, and without any legal repercussions. The only exception to this permission is if you intend to publish your derivative work on the Apple App Store - in such cases, you must obtain explicit written consent from me first. All third-party dependencies and emulator cores continue to be governed by their respective original licenses.
-
-For the complete GPLv2 license text, see the [LICENSE](LICENSE) file.
-
 ## Features
 
 - Game Boy Advance (GBA) emulation
@@ -68,14 +62,11 @@ For the complete GPLv2 license text, see the [LICENSE](LICENSE) file.
   - `View/` - SwiftUI views and view models
   - `Extension/` - Minor Swift extensions and utilities and views
 
-## Source Code Notice
+## License
 
-As required by GPLv2, any modifications to this code must be made available under the same license terms. This includes:
+Because Soolra incorporates emulator cores that are GPL-licensed, this project must be released under the GNU General Public License version 2.0 (GPLv2). Nevertheless, for the portions of code that we have personally created, I grant explicit permission to use, modify, and redistribute that code freely, with or without crediting me, and without any legal repercussions. The only exception to this permission is if you intend to publish your derivative work on the Apple App Store - in such cases, you must obtain explicit written consent from me first. All third-party dependencies and emulator cores continue to be governed by their respective original licenses.
 
-1. All modified source code must be made available
-2. Clear documentation of changes must be provided
-3. The original copyright notice must be preserved
-4. The same license terms must be applied to derivative works
+For the complete GPLv2 license text, see the [LICENSE](LICENSE) file.
 
 ## Disclaimer
 
