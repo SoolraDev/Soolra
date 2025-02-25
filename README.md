@@ -4,8 +4,8 @@ Soolra is a multi-system game emulator designed for modern Apple platforms, brin
 
 ## Features
 
-- Game Boy Advance (GBA) emulation
-- Nintendo Entertainment System (NES) emulation
+- Game Boy Advance (GBA) emulation ([VisualBoy Advance-M](https://github.com/visualboyadvance-m/visualboyadvance-m))
+- Nintendo Entertainment System (NES) emulation ([Nestopia](https://github.com/0ldsk00l/nestopia))
 - Native SwiftUI interface
 - Modern UI/UX design
 - Custom audio implementation
