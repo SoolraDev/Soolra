@@ -15,8 +15,10 @@ class PauseGameViewModel: ObservableObject {
     @Published var selectedMenuIndex: Int = 0
     @Published var showPauseMenu: Bool = false
     @Published private(set) var isExiting: Bool = false
+    @Published var showCheatCodesView: Bool = false
+
     
-    let menuItems = ["Resume", "Exit Game"]
+    let menuItems = ["Resume", "Exit Game", "Cheat Codes"]
     private var exitAction: (() -> Task<Void, Never>)?
     private weak var consoleManager: ConsoleCoreManager?
     
@@ -128,6 +130,9 @@ class PauseGameViewModel: ObservableObject {
                 case 1:
                     print("⏸️ Exit selected")
                     initiateExit()
+                case 2:
+                    print("⏸️ Cheat Codes selected")
+                    showCheatCodesView = true
                 default:
                     break
                 }

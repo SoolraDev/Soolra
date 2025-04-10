@@ -9,17 +9,33 @@ import SwiftUI
 struct PauseGameView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @ObservedObject var pauseViewModel: PauseGameViewModel
-    
+
     var body: some View {
-        GeometryReader { geometry in
-            PauseGameContentView(
-                geometry: geometry,
-                pauseViewModel: pauseViewModel,
-                themeManager: themeManager
-            )
+        NavigationView {
+            ZStack {
+                GeometryReader { geometry in
+                    PauseGameContentView(
+                        geometry: geometry,
+                        pauseViewModel: pauseViewModel,
+                        themeManager: themeManager
+                    )
+                }
+
+                // Hidden NavigationLink that activates when showCheatCodesView becomes true
+                NavigationLink(
+                    destination: CheatCodesView(),
+                    isActive: $pauseViewModel.showCheatCodesView
+                ) {
+                    EmptyView()
+                }
+            }
+            .navigationBarHidden(true)
         }
+        .navigationViewStyle(StackNavigationViewStyle()) // For iPhone-style navigation
     }
 }
+
+
 
 // Background overlay view
 private struct PauseBackgroundView: View {
@@ -74,14 +90,17 @@ private struct PauseMenuContent: View {
     
     private func handleMenuAction(_ index: Int) {
         switch index {
-        case 0: // Resume
+        case 0:
             pauseViewModel.togglePause()
-        case 1: // Exit Game
+        case 1:
             pauseViewModel.initiateExit()
+        case 2:
+            pauseViewModel.showCheatCodesView = true
         default:
             break
         }
     }
+
 }
 
 // Main content view combining background and menu

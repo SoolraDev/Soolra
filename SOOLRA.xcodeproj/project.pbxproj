@@ -84,6 +84,7 @@
 		4CCFFDAD2D4D2B4B002B9F4A /* nes */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = nes; sourceTree = "<group>"; };
 		4CE85E512D55201F004A3CC2 /* gba */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = gba; sourceTree = "<group>"; };
 		4CF12CD52D4293CA004B7CD7 /* Boxart */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Boxart; sourceTree = "<group>"; };
+		92678D5C2DA805B4001CEDD6 /* Cheats */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Cheats; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +143,7 @@
 		183DF16C2862C99E0088FE1C /* SoolraConsole */ = {
 			isa = PBXGroup;
 			children = (
+				92678D5C2DA805B4001CEDD6 /* Cheats */,
 				183DF1712862C9A00088FE1C /* Assets.xcassets */,
 				180C86AA2869F898009E7C0D /* Core */,
 				183DF16D2862C99E0088FE1C /* SoolraApp.swift */,
@@ -239,6 +241,7 @@
 				4CCFFDAD2D4D2B4B002B9F4A /* nes */,
 				4CE85E512D55201F004A3CC2 /* gba */,
 				4CF12CD52D4293CA004B7CD7 /* Boxart */,
+				92678D5C2DA805B4001CEDD6 /* Cheats */,
 			);
 			name = SOOLRA;
 			packageProductDependencies = (
