@@ -16,14 +16,15 @@ class PauseGameViewModel: ObservableObject {
     @Published var showPauseMenu: Bool = false
     @Published private(set) var isExiting: Bool = false
     @Published var showCheatCodesView: Bool = false
-
     
     let menuItems = ["Resume", "Exit Game", "Cheat Codes"]
     private var exitAction: (() -> Task<Void, Never>)?
     private weak var consoleManager: ConsoleCoreManager?
-    
-    init(consoleManager: ConsoleCoreManager) {
+    let currentRom: Rom
+
+    init(consoleManager: ConsoleCoreManager, currentRom: Rom) {
         self.consoleManager = consoleManager
+        self.currentRom = currentRom
     }
     
     func setExitAction(_ action: @escaping () -> Task<Void, Never>) {
@@ -43,6 +44,7 @@ class PauseGameViewModel: ObservableObject {
         consoleManager.pauseEmulation()
         selectedMenuIndex = 0
     }
+    
     
     func ensurePaused() {
         print("⏸️ Ensuring game is paused")

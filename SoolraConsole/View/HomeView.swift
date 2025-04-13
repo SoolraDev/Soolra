@@ -439,8 +439,8 @@ struct HomeView: View {
         try await consoleManager.loadConsole(type: consoleType, romPath: url)
         
         // Create pause view model with console manager
-        let pauseViewModel = PauseGameViewModel(consoleManager: consoleManager)
-        
+        let pauseViewModel = PauseGameViewModel(consoleManager: consoleManager, currentRom: rom)
+
         // Set up exit action after view is fully initialized
         pauseViewModel.setExitAction {
             // Return the task so we can await it
