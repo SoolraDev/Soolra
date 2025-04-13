@@ -32,6 +32,7 @@ bool NES_LoadROM(const char* romPath);
 void NES_Shutdown(void);
 void NES_RunFrame(void);
 bool NES_IsPAL(void);
+bool NESAddCheatCode(const char *_Nonnull cheatCode);
 
 // Input handling
 void NES_SetInput(int button);

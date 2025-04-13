@@ -14,6 +14,7 @@
 #include "NstApiInput.hpp"
 #include "NstApiVideo.hpp"
 #include "NstApiSound.hpp"
+#include "NstApiCheats.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -36,6 +37,8 @@ namespace {
     std::unique_ptr<Nes::Api::Video> video;
     std::unique_ptr<Nes::Api::Sound> audio;
     std::unique_ptr<Nes::Api::Input> input;
+    std::unique_ptr<Nes::Api::Cheats> cheats;
+
 
     Nes::Api::Video::Output videoOutput;
     Nes::Api::Sound::Output audioOutput;
@@ -84,6 +87,7 @@ void NES_Init() {
     video = std::make_unique<Nes::Api::Video>(*emulator);
     audio = std::make_unique<Nes::Api::Sound>(*emulator);
     input = std::make_unique<Nes::Api::Input>(*emulator);
+    cheats = std::make_unique<Nes::Api::Cheats>(*emulator);
 
     // Assign callbacks
     Nes::Api::Video::Output::lockCallback.Set(videoLock, nullptr);
@@ -176,6 +180,26 @@ void NES_RunFrame() {
     // Execute a single frame
     emulator->Execute(&videoOutput, &audioOutput, &controllers);
 }
+
+bool NESAddCheatCode(const char *cheatCode)
+{
+    Nes::Api::Cheats::Code code;
+
+    if (NES_FAILED(Nes::Api::Cheats::GameGenieDecode(cheatCode, code)))
+    {
+        return false;
+    }
+
+    if (NES_FAILED(cheats->SetCode(code)))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+
+
 
 // --- Input Management ---
 void NES_SetInput(int button) {
