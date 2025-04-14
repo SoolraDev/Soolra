@@ -589,5 +589,11 @@ public class ConsoleCoreManager: ObservableObject {
         
         print("✅ Emulation started")
     }
+    
+    func activateCheat(_ cheat: Cheat) {
+        currentCore?.activateCheat(cheat)
+    }
+
+
 }
 

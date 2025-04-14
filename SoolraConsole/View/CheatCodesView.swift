@@ -3,6 +3,7 @@ import SwiftUI
 struct CheatCodesView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var consoleManager: ConsoleCoreManager
     @State private var cheats: [Cheat] = []
     @State private var showAddCheatView = false
     private let storage = CheatStorage()
@@ -13,7 +14,12 @@ struct CheatCodesView: View {
                 Button(action: {
                     cheats[index].isActive.toggle()
                     storage.saveCheats(cheats, for: gameName)
-                }) {
+
+                    if cheats[index].isActive {
+                        consoleManager.activateCheat(cheats[index])
+                    }
+                })
+ {
                     HStack {
                         Text(cheats[index].name)
                         Spacer()

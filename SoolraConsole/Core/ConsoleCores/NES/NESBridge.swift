@@ -151,4 +151,21 @@ class NESBridge: NSObject {
     public func isPAL() -> Bool {
         return NES_IsPAL()
     }
+    
+    func addCheatCode(_ cheatCode: String, type: String) -> Bool
+    {
+//        let cheatType = CheatType(type)
+//        guard cheatType == .gameGenie6 || cheatType == .gameGenie8 else { return false }
+
+        let codes = cheatCode.split(separator: "\n")
+        for code in codes
+        {
+            if !code.withCString({ NESAddCheatCode($0) })
+            {
+                return false
+            }
+        }
+        
+        return true
+    }
 }

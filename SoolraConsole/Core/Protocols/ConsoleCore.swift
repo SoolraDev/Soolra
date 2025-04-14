@@ -36,5 +36,6 @@ public protocol ConsoleCore {
     func performFrame() -> FrameType
     func pressButton(_ action: SoolraControllerAction)
     func releaseButton(_ action: SoolraControllerAction)
+    func activateCheat(_ cheat: Cheat)
 }
 

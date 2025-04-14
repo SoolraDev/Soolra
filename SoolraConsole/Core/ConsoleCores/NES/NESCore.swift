@@ -187,4 +187,10 @@ class NESCore: ConsoleCore {
         print("✅ Renderer initialization complete")
         return newRenderer
     }
+    
+    func activateCheat(_ cheat: Cheat) {
+        cheat.code.withCString { codeStr in
+            NESAddCheatCode(codeStr)
+        }
+    }
 }

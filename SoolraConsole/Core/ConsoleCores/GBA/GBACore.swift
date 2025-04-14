@@ -298,4 +298,6 @@ class GBACore: ConsoleCore {
         
         print("✅ GBA emulation started")
     }
+    func activateCheat(_ cheat: Cheat) {
+    }
 }
