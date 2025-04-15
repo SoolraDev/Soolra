@@ -21,9 +21,18 @@ struct AddCheatView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
 
-            TextField("Cheat Code", text: $cheatCode)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+            TextEditor(text: $cheatCode)
+                .frame(minHeight: 120)
+                .padding(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                )
                 .padding(.horizontal)
+                .onChange(of: cheatCode) { newValue in
+                    cheatCode = insertLineBreaks(every: 13, in: newValue)
+                }
+
 
             HStack {
                 Button("Back") {
@@ -61,4 +70,20 @@ struct AddCheatView: View {
         // TODO: Add real validation logic
         return true
     }
+    private func insertLineBreaks(every n: Int, in text: String) -> String {
+        // Remove existing line breaks
+        let cleaned = text.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\r", with: "")
+        
+        // Chunk into segments of n characters
+        var result = ""
+        for (index, char) in cleaned.enumerated() {
+            if index > 0 && index % n == 0 {
+                result.append("\n")
+            }
+            result.append(char)
+        }
+        return result
+    }
+
+    
 }

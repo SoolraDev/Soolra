@@ -381,37 +381,49 @@ bool GBAddCheatCode(const char* cheatCode, const char* type)
                 return false;
             }
         }
-
-        if (strcmp(type, "ActionReplay") == 0 || strcmp(type, "GameShark") == 0)
+        std::string sanitizedCode;
+        for (char c : line)
         {
-            std::string sanitizedCode;
-            for (char c : line)
-            {
-                if (c != ' ') sanitizedCode += c;
-            }
-
-            if (sanitizedCode.length() != 16)
-            {
-                return false;
-            }
-
-            cheatsAddGSACode(sanitizedCode.c_str(), "code", true);
+            if (c != ' ') sanitizedCode += c;
         }
-        else if (strcmp(type, "CodeBreaker") == 0)
-        {
-            if (line.length() != 13)
-            {
-                return false;
-            }
+        
+                    if (line.length() == 13)
+                    {
+                        cheatsAddCBACode(line.c_str(), "code");
+                    }
+                        else {
+                            cheatsAddGSACode(line.c_str(), "code", true);
+                        }
+                    }
+        
+//        if (strcmp(type, "ActionReplay") == 0 || strcmp(type, "GameShark") == 0)
+//        {
+//
+//            if (sanitizedCode.length() != 16)
+//            {
+//                return false;
+//            }
+//            cheatsAddCBACode(sanitizedCode.c_str(), "code");
+////            cheatsAddGSACode(sanitizedCode.c_str(), "code", true);
+//        }
+//        else if (strcmp(type, "CodeBreaker") == 0)
+//        {
 
-            cheatsAddCBACode(line.c_str(), "code");
-        }
-        else
-        {
-            // Unknown type
-            return false;
-        }
-    }
+
+//            if (sanitizedCode.length() != 13)
+//            {
+//                return false;
+//            }
+
+//            cheatsAddCBACode(sanitizedCode.c_str(), "code");
+//        }
+//
+//        else
+//        {
+//            // Unknown type
+//            return false;
+//        }
+//    }
 
     return true;
 }
