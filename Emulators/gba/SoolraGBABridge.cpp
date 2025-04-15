@@ -7,12 +7,16 @@
 // Include our bridge header first
 #include "SoolraGBABridge.hpp"
 
-// C++ standard includes
 #include <memory>
-#include <cstring>
+#include <cstring>     // for strcmp, memcpy, etc.
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
+
+#include <string>      // for std::string
+#include <sstream>     // for std::istringstream, std::getline
+#include <cctype>      // for isxdigit, isspace
+
 
 // Include our internal header that handles VBA includes
 #include "GBABridgeInternal.hpp"
@@ -356,6 +360,68 @@ const uint8_t* GBAGetVideoBuffer() {
 const uint8_t* GBAGetAudioBuffer() {
     return g_audioBuffer;
 }
+
+bool GBAddCheatCode(const char* cheatCode, const char* type)
+{
+    std::string cheatCodeStr(cheatCode);
+    std::istringstream stream(cheatCodeStr);
+    std::string line;
+
+    while (std::getline(stream, line))
+    {
+        // Remove leading/trailing whitespace
+        line.erase(0, line.find_first_not_of(" \t\r\n"));
+        line.erase(line.find_last_not_of(" \t\r\n") + 1);
+
+        // Validate: must only contain hex digits and spaces
+        for (char c : line)
+        {
+            if (!isxdigit(c) && c != ' ')
+            {
+                return false;
+            }
+        }
+
+        if (strcmp(type, "ActionReplay") == 0 || strcmp(type, "GameShark") == 0)
+        {
+            std::string sanitizedCode;
+            for (char c : line)
+            {
+                if (c != ' ') sanitizedCode += c;
+            }
+
+            if (sanitizedCode.length() != 16)
+            {
+                return false;
+            }
+
+            cheatsAddGSACode(sanitizedCode.c_str(), "code", true);
+        }
+        else if (strcmp(type, "CodeBreaker") == 0)
+        {
+            if (line.length() != 13)
+            {
+                return false;
+            }
+
+            cheatsAddCBACode(line.c_str(), "code");
+        }
+        else
+        {
+            // Unknown type
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void GBAResetCheats()
+{
+    cheatsDeleteAll(true);
+}
+
+
 
 #pragma clang diagnostic pop
 

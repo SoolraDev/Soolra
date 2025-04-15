@@ -594,6 +594,9 @@ public class ConsoleCoreManager: ObservableObject {
         currentCore?.activateCheat(cheat)
     }
 
+    func resetCheats(){
+        currentCore?.resetCheats()
+    }
 
 }
 

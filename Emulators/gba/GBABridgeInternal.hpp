@@ -14,6 +14,7 @@
 #include "core/gba/gbaGlobals.h"
 #include "core/gba/gbaFlash.h"
 #include "core/base/port.h"
+#include "core/gba/gbaCheats.h"
 
 // External VBA memory buffers
 extern uint8_t* g_bios;

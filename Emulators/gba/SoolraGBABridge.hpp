@@ -69,6 +69,11 @@ void GBASetAudioBuffer(uint8_t* buffer);
 const uint8_t* GBAGetVideoBuffer();
 const uint8_t* GBAGetAudioBuffer();
 
+// Cheats
+
+bool GBAddCheatCode(const char* cheatCode, const char* type);
+void GBAResetCheats();
+
 #if defined(__cplusplus)
 }
 #endif

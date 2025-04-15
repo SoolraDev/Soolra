@@ -202,6 +202,14 @@ class GBABridge: NSObject {
     public func resetInputs() {
         GBAResetInputs()
     }
+    
+    public func activateCheat(_ cheat: Cheat){
+        GBAddCheatCode(cheat.code, cheat.type.rawValue);
+    }
+    
+    public func resetCheats(){
+        GBAResetCheats();
+    }
 }
 
 

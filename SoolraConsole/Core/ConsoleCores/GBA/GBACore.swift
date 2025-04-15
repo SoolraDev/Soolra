@@ -14,6 +14,8 @@ import MetalKit
 
 // MARK: - GBA Core Implementation
 class GBACore: ConsoleCore {
+
+    
     typealias FrameType = GBAFrame
     typealias ConsoleRendererType = GBARenderer
     typealias AudioMakerType = GBAAudioMaker
@@ -299,5 +301,11 @@ class GBACore: ConsoleCore {
         print("✅ GBA emulation started")
     }
     func activateCheat(_ cheat: Cheat) {
+        bridge?.activateCheat(cheat)
+    }
+    
+    
+    func resetCheats() {
+        bridge?.resetCheats()
     }
 }

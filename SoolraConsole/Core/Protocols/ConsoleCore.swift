@@ -37,5 +37,6 @@ public protocol ConsoleCore {
     func pressButton(_ action: SoolraControllerAction)
     func releaseButton(_ action: SoolraControllerAction)
     func activateCheat(_ cheat: Cheat)
+    func resetCheats()
 }
 

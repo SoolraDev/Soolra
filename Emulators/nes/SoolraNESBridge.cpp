@@ -181,7 +181,7 @@ void NES_RunFrame() {
     emulator->Execute(&videoOutput, &audioOutput, &controllers);
 }
 
-bool NESAddCheatCode(const char *cheatCode)
+bool NES_AddCheatCode(const char *cheatCode)
 {
     Nes::Api::Cheats::Code code;
 
@@ -198,7 +198,11 @@ bool NESAddCheatCode(const char *cheatCode)
     return true;
 }
 
-
+void NES_ResetCheats()
+{
+    cheats->ClearCodes();
+}
+    
 
 
 // --- Input Management ---
