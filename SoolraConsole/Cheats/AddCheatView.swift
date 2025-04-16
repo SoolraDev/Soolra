@@ -8,9 +8,18 @@ import SwiftUI
 struct AddCheatView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var themeManager: ThemeManager
-
+    let existingCheat: Cheat?
     @State private var cheatName: String = ""
     @State private var cheatCode: String = ""
+    @State private var didSetInitialValues = false
+
+
+
+    init(existingCheat: Cheat?, onSave: @escaping (Cheat) -> Void) {
+        self.existingCheat = existingCheat
+        self.onSave = onSave
+    }
+
 
     var onSave: (Cheat) -> Void
 
@@ -57,6 +66,22 @@ struct AddCheatView: View {
             }
             .padding(.horizontal)
         }
+        .onAppear {
+            if !didSetInitialValues, let cheat = existingCheat {
+                cheatName = cheat.name
+                cheatCode = cheat.code
+                didSetInitialValues = true
+            }
+        }
+
+        .onDisappear {
+            cheatName = ""
+            cheatCode = ""
+            didSetInitialValues = false
+        }
+
+
+
         .navigationTitle("Add Cheat")
         .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
     }

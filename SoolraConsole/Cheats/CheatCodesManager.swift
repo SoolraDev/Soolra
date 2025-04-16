@@ -50,4 +50,29 @@ class CheatCodesManager: ObservableObject {
             consoleManager?.activateCheat(cheat)
         }
     }
+    func updateCheat(original: Cheat, updated: Cheat) {
+        guard let index = cheats.firstIndex(of: original) else { return }
+
+        // Replace the cheat
+        cheats[index] = updated
+        save()
+
+        // Reset & reapply active cheats if needed
+        resetAndReapplyActiveCheats()
+    }
+
+    
+    func deleteCheat(at index: Int) {
+        guard cheats.indices.contains(index) else { return }
+
+        let wasActive = cheats[index].isActive
+        cheats.remove(at: index)
+        save()
+
+        // If the deleted cheat was active, reset & reapply remaining active ones
+        if wasActive {
+            resetAndReapplyActiveCheats()
+        }
+    }
+
 }
