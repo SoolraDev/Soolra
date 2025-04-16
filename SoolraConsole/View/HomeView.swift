@@ -44,7 +44,7 @@ struct HomeView: View {
     @EnvironmentObject var metalManager: MetalManager
     @EnvironmentObject var dataController: CoreDataController
     @EnvironmentObject var consoleManager: ConsoleCoreManager
-
+    
     @StateObject private var viewModel = HomeViewModel.shared
     @State private var isEditMode: EditMode = .inactive
     @State private var isSettingsPresented: Bool = false
@@ -330,9 +330,10 @@ struct HomeView: View {
     private func navigateToRom(_ rom: Rom) {
         Task {
             do {
-                // Create console manager and load ROM
+                // Create console manager and load ROM and init cheat manager
                 let consoleManager = try ConsoleCoreManager(metalManager: metalManager)
-                
+                let gameName = rom.name ?? "unknown"
+                consoleManager.cheatCodesManager = CheatCodesManager(gameName: gameName)
                 // Load everything before transitioning view
                 let gameData = try await loadRom(rom: rom, consoleManager: consoleManager)
                 

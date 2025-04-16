@@ -50,6 +50,9 @@ public class ConsoleCoreManager: ObservableObject {
     @Published private(set) var isRendererReady: Bool = false
     @Published var shouldShowPauseMenu = false
     @Published public private(set) var isGameRunning: Bool = false
+    @Published var cheatCodesManager: CheatCodesManager?
+
+
     private var currentCore: (any ConsoleCore)?
     public var currentRenderer: (any ConsoleRenderer)?
     private var frameTimer: AnyCancellable?

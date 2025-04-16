@@ -23,7 +23,8 @@ struct PauseGameView: View {
 
                 // Hidden NavigationLink that activates when showCheatCodesView becomes true
                 NavigationLink(
-                    destination: CheatCodesView(gameName: pauseViewModel.currentRom.name ?? "unknown"),
+                    destination: CheatCodesView(consoleManager: pauseViewModel.consoleManager!)
+                    .environmentObject(pauseViewModel.consoleManager!),
                     isActive: $pauseViewModel.showCheatCodesView
                 ) {
                     EmptyView()

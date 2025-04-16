@@ -12,7 +12,6 @@ struct AddCheatView: View {
     @State private var cheatName: String = ""
     @State private var cheatCode: String = ""
 
-    var gameName: String
     var onSave: (Cheat) -> Void
 
     var body: some View {

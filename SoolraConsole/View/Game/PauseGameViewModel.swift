@@ -19,7 +19,7 @@ class PauseGameViewModel: ObservableObject {
     
     let menuItems = ["Resume", "Exit Game", "Cheat Codes"]
     private var exitAction: (() -> Task<Void, Never>)?
-    private weak var consoleManager: ConsoleCoreManager?
+    weak var consoleManager: ConsoleCoreManager?
     let currentRom: Rom
 
     init(consoleManager: ConsoleCoreManager, currentRom: Rom) {
