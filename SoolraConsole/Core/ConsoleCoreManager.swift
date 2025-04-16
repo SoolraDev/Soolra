@@ -38,7 +38,7 @@ public class ConsoleCoreManager: ObservableObject {
     }
     
     // Add state management
-    private struct ManagerState {
+     struct ManagerState {
         var isRendererInitialized = false
         var currentCoreType: ConsoleType?
         var isEmulationStarted = false
@@ -77,7 +77,7 @@ public class ConsoleCoreManager: ObservableObject {
     private let keyRepeatThreshold: TimeInterval = 0.05  // 50ms threshold to prevent key repeat issues
     
     // Add state management properties
-    private var managerState = ManagerState()
+    private(set) var managerState = ManagerState()
     private var stateLock = os_unfair_lock()
     
     @Published private(set) var isLoading = false

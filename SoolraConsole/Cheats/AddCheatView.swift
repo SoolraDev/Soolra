@@ -111,3 +111,12 @@ struct AddCheatView: View {
 
     
 }
+enum CheatTypeUI: String, CaseIterable, Identifiable {
+    case actionReplay = "Action Replay"
+    case codeBreaker = "Code Breaker"
+    case gameShark = "GameShark"
+    case gameGenie6 = "Game Genie (6)"
+    case gameGenie8 = "Game Genie (8)"
+
+    var id: String { rawValue }
+}
