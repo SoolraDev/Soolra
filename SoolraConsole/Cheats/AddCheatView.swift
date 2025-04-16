@@ -12,13 +12,24 @@ struct AddCheatView: View {
     @State private var cheatName: String = ""
     @State private var cheatCode: String = ""
     @State private var didSetInitialValues = false
+    @State private var selectedType: CheatTypeUI = .actionReplay
+
+    let consoleType: ConsoleCoreManager.ConsoleType
+    private var gbaTypes: [CheatTypeUI] {
+        [.actionReplay, .codeBreaker, .gameShark]
+    }
+    private var nesTypes: [CheatTypeUI] {
+        [.gameGenie6, .gameGenie8]
+    }
 
 
 
-    init(existingCheat: Cheat?, onSave: @escaping (Cheat) -> Void) {
+    init(existingCheat: Cheat?, consoleType: ConsoleCoreManager.ConsoleType, onSave: @escaping (Cheat) -> Void) {
         self.existingCheat = existingCheat
+        self.consoleType = consoleType
         self.onSave = onSave
     }
+
 
 
     var onSave: (Cheat) -> Void
@@ -28,6 +39,24 @@ struct AddCheatView: View {
             TextField("Cheat Name", text: $cheatName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
+            HStack(spacing: 8) {
+                ForEach(availableCheatTypes) { type in
+                    Button(action: {
+                        selectedType = type
+                    }) {
+                        Text(type.rawValue)
+                            .font(.system(size: 13, weight: .medium))
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 12)
+                            .background(
+                                Capsule()
+                                    .fill(selectedType == type ? Color.accentColor : Color.gray.opacity(0.2))
+                            )
+                            .foregroundColor(selectedType == type ? .white : .primary)
+                    }
+                }
+            }
+            .padding(.horizontal)
 
             TextEditor(text: $cheatCode)
                 .frame(minHeight: 120)
@@ -109,6 +138,16 @@ struct AddCheatView: View {
         return result
     }
 
+    private var availableCheatTypes: [CheatTypeUI] {
+        switch consoleType {
+        case .gba:
+            return [.actionReplay, .codeBreaker, .gameShark]
+        case .nes:
+            return [.gameGenie6, .gameGenie8]
+        }
+    }
+
+    
     
 }
 enum CheatTypeUI: String, CaseIterable, Identifiable {

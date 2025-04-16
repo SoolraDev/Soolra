@@ -70,7 +70,7 @@ struct CheatCodesView: View {
         .sheet(item: $editContext, onDismiss: {
             editContext = nil
         }) { context in
-            AddCheatView(existingCheat: context.existingCheat) { newCheat in
+            AddCheatView(existingCheat: context.existingCheat, consoleType: consoleManager.managerState.currentCoreType ?? .nes) { newCheat in
                 switch context {
                 case .edit(let original):
                     cheatManager.updateCheat(original: original, updated: newCheat)
