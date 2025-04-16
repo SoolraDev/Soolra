@@ -17,7 +17,7 @@ struct CheatCodesView: View {
         List {
             ForEach(cheatManager.cheats.indices, id: \.self) { index in
                 Button(action: {
-                    cheatManager.toggleCheat(at: index, consoleManager: consoleManager)
+                    cheatManager.toggleCheat(at: index)
                 }) {
                     HStack {
                         Text(cheatManager.cheats[index].name)
@@ -46,11 +46,10 @@ struct CheatCodesView: View {
         }
         .sheet(isPresented: $showAddCheatView) {
             AddCheatView() { newCheat in
-                cheatManager.addCheat(newCheat, consoleManager: consoleManager)
+                cheatManager.addCheat(newCheat)
             }
             .environmentObject(themeManager)
         }
-
 
         .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
     }

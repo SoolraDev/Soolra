@@ -10,31 +10,33 @@ import Foundation
 
 class CheatCodesManager: ObservableObject {
     @Published private(set) var cheats: [Cheat] = []
-    
+    weak var consoleManager: ConsoleCoreManager?
     private let storage = CheatStorage()
     private let gameName: String
 
-    init(gameName: String) {
+    init(gameName: String, consoleManager: ConsoleCoreManager) {
         self.gameName = gameName
+        self.consoleManager = consoleManager
         self.cheats = storage.loadCheats(for: gameName)
+        resetAndReapplyActiveCheats()
     }
 
-    func toggleCheat(at index: Int, consoleManager: ConsoleCoreManager) {
+    func toggleCheat(at index: Int) {
         cheats[index].isActive.toggle()
         save()
 
         if cheats[index].isActive {
-            consoleManager.activateCheat(cheats[index])
+            consoleManager?.activateCheat(cheats[index])
         } else {
-            resetAndReapplyActiveCheats(consoleManager: consoleManager)
+            resetAndReapplyActiveCheats()
         }
     }
 
-    func addCheat(_ cheat: Cheat, consoleManager: ConsoleCoreManager) {
+    func addCheat(_ cheat: Cheat) {
         cheats.append(cheat)
         save()
         if cheat.isActive {
-            consoleManager.activateCheat(cheat)
+            consoleManager?.activateCheat(cheat)
         }
     }
 
@@ -42,10 +44,10 @@ class CheatCodesManager: ObservableObject {
         storage.saveCheats(cheats, for: gameName)
     }
 
-    private func resetAndReapplyActiveCheats(consoleManager: ConsoleCoreManager) {
-        consoleManager.resetCheats()
+    private func resetAndReapplyActiveCheats() {
+        consoleManager?.resetCheats()
         for cheat in cheats where cheat.isActive {
-            consoleManager.activateCheat(cheat)
+            consoleManager?.activateCheat(cheat)
         }
     }
 }

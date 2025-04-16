@@ -33,10 +33,8 @@
 		705827A22C75766300AB8682 /* Orbitron-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7058279C2C75766300AB8682 /* Orbitron-Black.ttf */; };
 		70838FDC2C6BC96500B7AE46 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70838FDB2C6BC96500B7AE46 /* SplashView.swift */; };
 		70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BD249F2C6BF6F10070B5F9 /* Colors.swift */; };
-		92678D5F2DA805CA001CEDD6 /* CheatCodesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D5D2DA805BD001CEDD6 /* CheatCodesView.swift */; };
 		92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 92678D762DAA70E6001CEDD6 /* SQLite */; };
 		92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D802DAA76F5001CEDD6 /* Cheat.swift */; };
-		92678D972DABFEFD001CEDD6 /* AddCheatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D962DABFEFD001CEDD6 /* AddCheatView.swift */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
 		9D123D052CD007EE007508A8 /* D-DINCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */; };
@@ -73,9 +71,7 @@
 		705827A32C7576D500AB8682 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
 		70838FDB2C6BC96500B7AE46 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		70BD249F2C6BF6F10070B5F9 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
-		92678D5D2DA805BD001CEDD6 /* CheatCodesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatCodesView.swift; sourceTree = "<group>"; };
 		92678D802DAA76F5001CEDD6 /* Cheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheat.swift; sourceTree = "<group>"; };
-		92678D962DABFEFD001CEDD6 /* AddCheatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCheatView.swift; sourceTree = "<group>"; };
 		9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed.ttf"; sourceTree = "<group>"; };
 		9D123D022CD0046B007508A8 /* Ebrima.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ebrima.ttf; sourceTree = "<group>"; };
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -189,14 +185,12 @@
 		183DF1D62862FBD10088FE1C /* View */ = {
 			isa = PBXGroup;
 			children = (
-				92678D962DABFEFD001CEDD6 /* AddCheatView.swift */,
 				4C0CD8CE2D54E72800B079B5 /* Game */,
 				4C0CD8BA2D54E71100B079B5 /* SoolraController */,
 				180A47A12866E4EA00A82F16 /* DocumentPicker.swift */,
 				18EBB74A2864A13A00903F43 /* HomeView.swift */,
 				70838FDB2C6BC96500B7AE46 /* SplashView.swift */,
 				7032EDC02C76059400828A41 /* SettingsView.swift */,
-				92678D5D2DA805BD001CEDD6 /* CheatCodesView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -330,7 +324,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */,
-				92678D972DABFEFD001CEDD6 /* AddCheatView.swift in Sources */,
 				7032EDC32C761C5800828A41 /* ThemeManager.swift in Sources */,
 				70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */,
 				4CC26D9A2D4BABC600F3D262 /* ConsoleCoreManager.swift in Sources */,
@@ -345,7 +338,6 @@
 				180C86F0286B3F02009E7C0D /* HomeView+ViewModel.swift in Sources */,
 				4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */,
 				7032EDC12C76059400828A41 /* SettingsView.swift in Sources */,
-				92678D5F2DA805CA001CEDD6 /* CheatCodesView.swift in Sources */,
 				187ABE9E28642FF000372297 /* ButtonKey.swift in Sources */,
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
 			);
