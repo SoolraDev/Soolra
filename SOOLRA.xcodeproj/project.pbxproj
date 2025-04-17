@@ -471,7 +471,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = NV678TN5PJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";
@@ -502,7 +502,7 @@
 					"-I./Emulators/gba",
 					"-I./Emulators/SFML/include",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.soolra.soolra;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vakho.soolra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -521,7 +521,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = NV678TN5PJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";
@@ -552,7 +552,7 @@
 					"-I./Emulators/gba",
 					"-I./Emulators/SFML/include",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.soolra.soolra;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vakho.soolra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
