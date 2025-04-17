@@ -4,6 +4,8 @@ public enum CheatType: String, Codable, Hashable {
     case actionReplay = "ActionReplay"
     case gameShark = "GameShark"
     case codeBreaker = "CodeBreaker"
+    case gameGenie6 = "GameGenie6"
+    case gameGenie8 = "GameGenie8"
 }
 
 

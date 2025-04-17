@@ -44,6 +44,7 @@ struct AddCheatView: View {
                 ForEach(availableCheatTypes) { type in
                     Button(action: {
                         selectedType = type
+                        reformatCheatCode(for: type)
                     }) {
                         Text(type.rawValue)
                             .font(.system(size: 13, weight: .medium))
@@ -74,7 +75,10 @@ struct AddCheatView: View {
                     )
                     .padding(.horizontal)
                     .onChange(of: cheatCode) { newValue in
-                        cheatCode = insertLineBreaks(every: 13, in: newValue)
+                        let formatted = formatCheatCode(newValue, for: selectedType)
+                        if formatted != cheatCode {
+                            cheatCode = formatted
+                        }
                     }
             }
 
@@ -90,9 +94,9 @@ struct AddCheatView: View {
                 Button("Save") {
                     let newCheat = Cheat(
                         code: cheatCode,
-                        type: .actionReplay, // or default value
+                        type: CheatType(rawValue: selectedType.rawValue) ?? .codeBreaker,
                         name: cheatName,
-                        isActive: false
+                        isActive: true
                     )
 
                     if validate(cheat: newCheat) {
@@ -105,12 +109,18 @@ struct AddCheatView: View {
             .padding(.horizontal)
         }
         .onAppear {
-            if !didSetInitialValues, let cheat = existingCheat {
-                cheatName = cheat.name
-                cheatCode = cheat.code
+            if !didSetInitialValues {
+                if let cheat = existingCheat {
+                    cheatName = cheat.name
+                    cheatCode = cheat.code
+                    selectedType = CheatTypeUI(rawValue: cheat.type.rawValue) ?? availableCheatTypes.first!
+                } else {
+                    selectedType = availableCheatTypes.first! // ✅ default to first available type
+                }
                 didSetInitialValues = true
             }
         }
+
 
         .onDisappear {
             cheatName = ""
@@ -135,20 +145,7 @@ struct AddCheatView: View {
         // TODO: Add real validation logic
         return true
     }
-    private func insertLineBreaks(every n: Int, in text: String) -> String {
-        // Remove existing line breaks
-        let cleaned = text.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\r", with: "")
-        
-        // Chunk into segments of n characters
-        var result = ""
-        for (index, char) in cleaned.enumerated() {
-            if index > 0 && index % n == 0 {
-                result.append("\n")
-            }
-            result.append(char)
-        }
-        return result
-    }
+
 
     private var availableCheatTypes: [CheatTypeUI] {
         switch consoleType {
@@ -158,10 +155,72 @@ struct AddCheatView: View {
             return [.gameGenie6, .gameGenie8]
         }
     }
+    
+    private func allowedCharacters(for type: CheatTypeUI) -> CharacterSet {
+        switch type {
+        case .actionReplay, .gameShark, .codeBreaker:
+            return CharacterSet(charactersIn: "0123456789ABCDEF")
+        case .gameGenie6, .gameGenie8:
+            return CharacterSet(charactersIn: "APZLGITYEOXUKSVN")
+        }
+    }
+
+    private func formatCheatCode(_ raw: String, for type: CheatTypeUI) -> String {
+        let uppercase = raw.uppercased()
+        let cleaned = uppercase.filter { allowedCharacters(for: type).contains($0.unicodeScalars.first!) }
+
+        switch type {
+        case .codeBreaker:
+            return cleaned.chunkedCodeBreaker().joined(separator: "\n")
+        case .actionReplay, .gameShark:
+            return cleaned.chunked(into: 8).joined(separator: " ")
+        case .gameGenie6:
+            return cleaned.chunked(into: 6).joined(separator: "\n")
+        case .gameGenie8:
+            return cleaned.chunked(into: 8).joined(separator: "\n")
+        }
+    }
+    
+    private func reformatCheatCode(for type: CheatTypeUI) {
+        let reformatted = formatCheatCode(cheatCode, for: type)
+        if reformatted != cheatCode {
+            cheatCode = reformatted
+        }
+    }
+
 
     
-    
 }
+
+extension String {
+    func chunked(into size: Int) -> [String] {
+        stride(from: 0, to: count, by: size).map {
+            let start = index(startIndex, offsetBy: $0)
+            let end = index(start, offsetBy: size, limitedBy: endIndex) ?? endIndex
+            return String(self[start..<end])
+        }
+    }
+
+    // ✅ CodeBreaker-specific format: 8 + 4 per line
+    func chunkedCodeBreaker() -> [String] {
+        var result: [String] = []
+        var i = 0
+        while i + 8 <= count {
+            let start = index(startIndex, offsetBy: i)
+            let mid = index(start, offsetBy: 8)
+            let end = index(mid, offsetBy: 4, limitedBy: endIndex) ?? endIndex
+            let firstPart = String(self[start..<mid])
+            let secondPart = String(self[mid..<end])
+            result.append([firstPart, secondPart].joined(separator: secondPart.isEmpty ? "" : " "))
+            i += 12
+        }
+        return result
+    }
+}
+
+
+
+
 enum CheatTypeUI: String, CaseIterable, Identifiable {
     case actionReplay = "Action Replay"
     case codeBreaker = "Code Breaker"
