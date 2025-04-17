@@ -13,6 +13,8 @@ struct AddCheatView: View {
     @State private var cheatCode: String = ""
     @State private var didSetInitialValues = false
     @State private var selectedType: CheatTypeUI = .actionReplay
+    @State private var showError = false
+    @State private var errorMessage = ""
 
     let consoleType: ConsoleCoreManager.ConsoleType
     private var gbaTypes: [CheatTypeUI] {
@@ -92,17 +94,20 @@ struct AddCheatView: View {
                 Spacer()
 
                 Button("Save") {
+                    if !isValidCheatLength() {
+                        errorMessage = "Cheat code is not the correct length for \(selectedType.rawValue)."
+                        showError = true
+                        return
+                    }
+                    
                     let newCheat = Cheat(
                         code: cheatCode,
                         type: CheatType(rawValue: selectedType.rawValue) ?? .codeBreaker,
                         name: cheatName,
                         isActive: true
                     )
-
-                    if validate(cheat: newCheat) {
-                        onSave(newCheat)
-                        dismiss()
-                    }
+                    onSave(newCheat)
+                    dismiss()
                 }
                 .disabled(!canSave)
             }
@@ -113,7 +118,7 @@ struct AddCheatView: View {
                 if let cheat = existingCheat {
                     cheatName = cheat.name
                     cheatCode = cheat.code
-                    selectedType = CheatTypeUI(rawValue: cheat.type.rawValue) ?? availableCheatTypes.first!
+                    selectedType = CheatTypeUI(from: cheat.type) ?? availableCheatTypes.first!
                 } else {
                     selectedType = availableCheatTypes.first! // ✅ default to first available type
                 }
@@ -135,7 +140,14 @@ struct AddCheatView: View {
     }
         .frame(maxWidth: .infinity, alignment: .top)
         .padding(.top, 20)
+        .alert("Invalid Cheat Code", isPresented: $showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
+        }
+
     }
+    
 
     private var canSave: Bool {
         !cheatName.isEmpty && !cheatCode.isEmpty
@@ -171,9 +183,28 @@ struct AddCheatView: View {
 
         switch type {
         case .codeBreaker:
-            return cleaned.chunkedCodeBreaker().joined(separator: "\n")
+            let chunks = cleaned.chunked(into: 12) // 8 + 4 = 12 total chars per line
+            var lines: [String] = []
+
+            for chunk in chunks {
+                let first = String(chunk.prefix(8))
+                let second = String(chunk.dropFirst(8).prefix(4))
+                let line = second.isEmpty ? first : "\(first) \(second)"
+                lines.append(line)
+            }
+
+            return lines.joined(separator: "\n")
+
         case .actionReplay, .gameShark:
-            return cleaned.chunked(into: 8).joined(separator: " ")
+            let chunks = cleaned.chunked(into: 8)
+            var lines: [String] = []
+            for i in stride(from: 0, to: chunks.count, by: 2) {
+                let first = chunks[i]
+                let second = (i + 1 < chunks.count) ? chunks[i + 1] : nil
+                let line = second != nil ? "\(first) \(second!)" : first
+                lines.append(line)
+            }
+            return lines.joined(separator: "\n")
         case .gameGenie6:
             return cleaned.chunked(into: 6).joined(separator: "\n")
         case .gameGenie8:
@@ -188,6 +219,22 @@ struct AddCheatView: View {
         }
     }
 
+    private func isValidCheatLength() -> Bool {
+        let cleaned = cheatCode
+            .uppercased()
+            .filter { allowedCharacters(for: selectedType).contains($0.unicodeScalars.first!) }
+
+        switch selectedType {
+        case .codeBreaker:
+            return cleaned.count % 12 == 0 // 8 + 4 characters per code
+        case .actionReplay, .gameShark:
+            return cleaned.count % 16 == 0 // 8 + 8 characters per code
+        case .gameGenie6:
+            return cleaned.count % 6 == 0
+        case .gameGenie8:
+            return cleaned.count % 8 == 0
+        }
+    }
 
     
 }
@@ -201,7 +248,7 @@ extension String {
         }
     }
 
-    // ✅ CodeBreaker-specific format: 8 + 4 per line
+
     func chunkedCodeBreaker() -> [String] {
         var result: [String] = []
         var i = 0
@@ -230,3 +277,18 @@ enum CheatTypeUI: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 }
+
+extension CheatTypeUI {
+    init?(from cheatType: CheatType) {
+        switch cheatType.rawValue {
+        case "ActionReplay": self = .actionReplay
+        case "CodeBreaker": self = .codeBreaker
+        case "GameShark": self = .gameShark
+        case "GameGenie6": self = .gameGenie6
+        case "GameGenie8": self = .gameGenie8
+        default: return nil
+        }
+    }
+}
+
+
