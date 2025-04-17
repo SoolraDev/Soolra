@@ -35,6 +35,7 @@ struct AddCheatView: View {
     var onSave: (Cheat) -> Void
 
     var body: some View {
+        ScrollView {
         VStack(spacing: 20) {
             TextField("Cheat Name", text: $cheatName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -58,17 +59,25 @@ struct AddCheatView: View {
             }
             .padding(.horizontal)
 
-            TextEditor(text: $cheatCode)
-                .frame(minHeight: 120)
-                .padding(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                )
-                .padding(.horizontal)
-                .onChange(of: cheatCode) { newValue in
-                    cheatCode = insertLineBreaks(every: 13, in: newValue)
-                }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Code")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+
+                TextEditor(text: $cheatCode)
+                    .frame(height: 240) // ✅ half height
+                    .padding(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                    )
+                    .padding(.horizontal)
+                    .onChange(of: cheatCode) { newValue in
+                        cheatCode = insertLineBreaks(every: 13, in: newValue)
+                    }
+            }
+
 
 
             HStack {
@@ -113,6 +122,9 @@ struct AddCheatView: View {
 
         .navigationTitle("Add Cheat")
         .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+    }
+        .frame(maxWidth: .infinity, alignment: .top)
+        .padding(.top, 20)
     }
 
     private var canSave: Bool {

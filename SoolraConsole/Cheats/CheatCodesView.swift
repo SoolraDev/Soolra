@@ -67,20 +67,36 @@ struct CheatCodesView: View {
             }
         }
 
-        .sheet(item: $editContext, onDismiss: {
+        .fullScreenCover(item: $editContext, onDismiss: {
             editContext = nil
         }) { context in
-            AddCheatView(existingCheat: context.existingCheat, consoleType: consoleManager.managerState.currentCoreType ?? .nes) { newCheat in
-                switch context {
-                case .edit(let original):
-                    cheatManager.updateCheat(original: original, updated: newCheat)
-                case .new:
-                    cheatManager.addCheat(newCheat)
+            NavigationView {
+                AddCheatView(
+                    existingCheat: context.existingCheat,
+                    consoleType: consoleManager.managerState.currentCoreType ?? .nes
+                ) { newCheat in
+                    switch context {
+                    case .edit(let original):
+                        cheatManager.updateCheat(original: original, updated: newCheat)
+                    case .new:
+                        cheatManager.addCheat(newCheat)
+                    }
+                    editContext = nil
                 }
-                editContext = nil
+                .environmentObject(themeManager)
+                .navigationTitle("Add Cheat")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Close") {
+                            editContext = nil
+                        }
+                    }
+                }
             }
-            .environmentObject(themeManager)
+            .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
         }
+
 
 
 
