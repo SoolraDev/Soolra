@@ -102,7 +102,7 @@ struct AddCheatView: View {
                     
                     let newCheat = Cheat(
                         code: cheatCode,
-                        type: CheatType(rawValue: selectedType.rawValue) ?? .codeBreaker,
+                        type: selectedType.cheatType,
                         name: cheatName,
                         isActive: true
                     )
@@ -287,6 +287,17 @@ extension CheatTypeUI {
         case "GameGenie6": self = .gameGenie6
         case "GameGenie8": self = .gameGenie8
         default: return nil
+        }
+    }
+}
+extension CheatTypeUI {
+    var cheatType: CheatType {
+        switch self {
+        case .actionReplay: return CheatType(rawValue: "ActionReplay")!
+        case .codeBreaker: return CheatType(rawValue: "CodeBreaker")!
+        case .gameShark: return CheatType(rawValue: "GameShark")!
+        case .gameGenie6: return CheatType(rawValue: "GameGenie6")!
+        case .gameGenie8: return CheatType(rawValue: "GameGenie8")!
         }
     }
 }
