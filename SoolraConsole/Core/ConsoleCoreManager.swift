@@ -51,7 +51,8 @@ public class ConsoleCoreManager: ObservableObject {
     @Published var shouldShowPauseMenu = false
     @Published public private(set) var isGameRunning: Bool = false
     @Published var cheatCodesManager: CheatCodesManager?
-
+    var maxFastForwardSpeed: Float = 1
+    var currentFastForwardSpeed: Float = 1
 
     private var currentCore: (any ConsoleCore)?
     public var currentRenderer: (any ConsoleRenderer)?
@@ -202,7 +203,7 @@ public class ConsoleCoreManager: ObservableObject {
         
         // Power up the core before starting emulation
         currentCore?.powerUp()
-        
+        setMaxFastForwardSpeed(type: type)
         print("✅ Console loaded successfully")
     }
     
@@ -526,7 +527,7 @@ public class ConsoleCoreManager: ObservableObject {
         }
         
         // Get frame duration from core's bridge
-        let frameDuration: TimeInterval = 1.0/60.0
+        let frameDuration: TimeInterval = Double(1.0/(60.0 * currentFastForwardSpeed))
         
         print("⏱️ Starting frame timer with duration: \(frameDuration)")
         
@@ -600,6 +601,22 @@ public class ConsoleCoreManager: ObservableObject {
     func resetCheats(){
         currentCore?.resetCheats()
     }
+    
+    private func setMaxFastForwardSpeed(type: ConsoleType) {
+        switch type {
+        case .gba:
+            self.maxFastForwardSpeed = 3
+        default:
+            self.maxFastForwardSpeed = 4
+        }
+    }
+    
+    public func toggleFastForward() {
+        currentFastForwardSpeed = (currentFastForwardSpeed == 1) ? maxFastForwardSpeed : 1
+        currentCore?.setPlaybackRate(currentFastForwardSpeed)
+    }
+
+
 
 }
 

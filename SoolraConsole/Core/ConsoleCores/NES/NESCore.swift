@@ -189,14 +189,14 @@ class NESCore: ConsoleCore {
     }
     
     func activateCheat(_ cheat: Cheat) {
-//        cheat.code.withCString { codeStr in
-//            NES_AddCheatCode(codeStr)
-//        }
         bridge?.activateCheat(cheat)
-        
     }
     
     func resetCheats() {
         bridge?.resetCheats()
+    }
+    
+    func setPlaybackRate(_ rate: Float) {
+        audioMaker?.setPlaybackRate(rate)
     }
 }

@@ -17,7 +17,14 @@ class PauseGameViewModel: ObservableObject {
     @Published private(set) var isExiting: Bool = false
     @Published var showCheatCodesView: Bool = false
     
-    let menuItems = ["Resume", "Exit Game", "Cheat Codes"]
+    @Published var menuItems: [PauseMenuItem] = [
+        .resume,
+        .exit,
+        .cheatCodes,
+        .fastForward(false)
+    ]
+    @Published var isFastForwardEnabled: Bool = false
+
     private var exitAction: (() -> Task<Void, Never>)?
     weak var consoleManager: ConsoleCoreManager?
     let currentRom: Rom
@@ -125,19 +132,22 @@ class PauseGameViewModel: ObservableObject {
                 selectedMenuIndex = min(menuItems.count - 1, selectedMenuIndex + 1)
                 print("⏸️ Menu selection moved down to index: \(selectedMenuIndex)")
             case .menu, .a:
-                switch selectedMenuIndex {
-                case 0:
-                    print("⏸️ Resume selected")
-                    togglePause()
-                case 1:
-                    print("⏸️ Exit selected")
-                    initiateExit()
-                case 2:
-                    print("⏸️ Cheat Codes selected")
-                    showCheatCodesView = true
-                default:
-                    break
-                }
+                switch menuItems[selectedMenuIndex] {
+                    case .resume:
+                        print("⏸️ Resume selected")
+                        togglePause()
+                    case .exit:
+                        print("⏸️ Exit selected")
+                        initiateExit()
+                    case .cheatCodes:
+                        print("⏸️ Cheat Codes selected")
+                        showCheatCodesView = true   
+                    case .fastForward(_):
+                        isFastForwardEnabled.toggle()
+                        print("⏩ Fast Forward toggled to \(isFastForwardEnabled)")
+                        consoleManager?.toggleFastForward()
+                        menuItems[selectedMenuIndex] = .fastForward(isFastForwardEnabled)
+                    }
             default:
                 break
             }
@@ -157,6 +167,30 @@ class PauseGameViewModel: ObservableObject {
             Task {
                 await action().value
             }
+        }
+    }
+}
+enum PauseMenuItem: Identifiable {
+    case resume
+    case exit
+    case cheatCodes
+    case fastForward(Bool)
+
+    var id: String {
+        switch self {
+        case .resume: return "resume"
+        case .exit: return "exit"
+        case .cheatCodes: return "cheatCodes"
+        case .fastForward: return "fastForward"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .resume: return "Resume"
+        case .exit: return "Exit Game"
+        case .cheatCodes: return "Cheat Codes"
+        case .fastForward(let isOn): return "Fast Forward: \(isOn ? "On" : "Off")"
         }
     }
 }

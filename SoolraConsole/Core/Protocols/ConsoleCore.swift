@@ -38,5 +38,6 @@ public protocol ConsoleCore {
     func releaseButton(_ action: SoolraControllerAction)
     func activateCheat(_ cheat: Cheat)
     func resetCheats()
+    func setPlaybackRate(_ rate: Float)
 }
 

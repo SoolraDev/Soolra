@@ -58,9 +58,9 @@ private struct PauseMenuContent: View {
                 .foregroundColor(themeManager.whitetextColor)
                 .padding(.bottom, 30)
             
-            ForEach(Array(pauseViewModel.menuItems.enumerated()), id: \.offset) { index, title in
+            ForEach(Array(pauseViewModel.menuItems.enumerated()), id: \.element.id) { index, item in
                 Button(action: { handleMenuAction(index) }) {
-                    Text(title)
+                    Text(item.title)
                         .font(.custom("Orbitron-Bold", size: 18))
                         .foregroundColor(themeManager.whitetextColor)
                         .frame(maxWidth: .infinity)
@@ -89,18 +89,22 @@ private struct PauseMenuContent: View {
         .padding(.horizontal, 40)
     }
     
-    private func handleMenuAction(_ index: Int) {
-        switch index {
-        case 0:
-            pauseViewModel.togglePause()
-        case 1:
-            pauseViewModel.initiateExit()
-        case 2:
-            pauseViewModel.showCheatCodesView = true
-        default:
-            break
+        private func handleMenuAction(_ index: Int) {
+            let item = pauseViewModel.menuItems[index]
+            
+            switch item {
+            case .resume:
+                pauseViewModel.togglePause()
+            case .exit:
+                pauseViewModel.initiateExit()
+            case .cheatCodes:
+                pauseViewModel.showCheatCodesView = true
+            case .fastForward(_):
+                pauseViewModel.isFastForwardEnabled.toggle()
+                pauseViewModel.consoleManager?.toggleFastForward()
+                pauseViewModel.menuItems[index] = .fastForward(pauseViewModel.isFastForwardEnabled)
+            }
         }
-    }
 
 }
 

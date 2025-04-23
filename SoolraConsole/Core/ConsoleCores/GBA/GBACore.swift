@@ -308,4 +308,8 @@ class GBACore: ConsoleCore {
     func resetCheats() {
         bridge?.resetCheats()
     }
+    
+    func setPlaybackRate(_ rate: Float) {
+        //todo
+    }
 }
