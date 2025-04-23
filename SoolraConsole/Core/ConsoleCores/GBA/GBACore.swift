@@ -180,7 +180,8 @@ class GBACore: ConsoleCore {
             }
             return GBAFrame(data: UnsafeMutablePointer<UInt16>(OpaquePointer(videoBuffer)))
         }
-        
+    
+
         // Run one frame of emulation
         bridge?.runFrame(processVideo: true)
         
