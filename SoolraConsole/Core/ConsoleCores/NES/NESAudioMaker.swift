@@ -21,6 +21,7 @@ public class NESAudioMaker : AudioMakerProtocol {
         private let format: AVAudioFormat
         private var timePitchNode: AVAudioUnitTimePitch?
         private var currentRate: Float = 1.0
+    
         // Audio engine components
         private var ae: AVAudioEngine
         private var player: AVAudioPlayerNode

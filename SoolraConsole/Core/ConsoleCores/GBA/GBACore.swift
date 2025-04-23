@@ -310,6 +310,6 @@ class GBACore: ConsoleCore {
     }
     
     func setPlaybackRate(_ rate: Float) {
-        //todo
+        audioMaker?.setPlaybackRate(rate)
     }
 }
