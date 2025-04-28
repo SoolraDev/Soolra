@@ -513,6 +513,49 @@ public class ConsoleCoreManager: ObservableObject {
     }
     
     private func startFrameTimer() {
+        // Cancel any existing timer
+        frameTimer?.cancel()
+
+        // Tick at the screen’s native 60 Hz rate
+        let tickInterval = 1.0 / 60.0
+
+        frameTimer = Timer
+            .publish(every: tickInterval, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                guard let self = self,
+                      let core = self.currentCore,
+                      let renderer = self.currentRenderer else {
+                    return
+                }
+
+                // Don’t do anything when paused
+                var paused = false
+                self.updateState { paused = $0.isPaused }
+                if paused { return }
+
+                // How many sub-frames to run this tick
+                let factor = Int(self.currentFastForwardSpeed)
+                var lastFrame: ConsoleFrame?
+
+                // 1️⃣ Run N emulation frames (and queue N audio chunks)…
+                for _ in 0..<max(1, factor) {
+                    lastFrame = core.performFrame()
+                }
+
+                // 2️⃣ …then render exactly one video frame
+                if let gba = lastFrame as? GBAFrame {
+                    let pixels = Array(UnsafeBufferPointer(start: gba.data, count: 240 * 160))
+                    renderer.updateTexture(with: pixels)
+                } else if let nes = lastFrame as? NESFrame {
+                    let pixels = Array(UnsafeBufferPointer(start: nes.data, count: 256 * 240))
+                    renderer.updateTexture(with: pixels)
+                }
+            }
+    }
+
+    
+    private func startFrameTimerOld() {
         print("⏱️ Starting frame timer...")
         
         // Cancel any existing timer first
