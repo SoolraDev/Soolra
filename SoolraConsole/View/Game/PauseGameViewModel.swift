@@ -194,4 +194,8 @@ enum PauseMenuItem: Identifiable {
         case .fastForward(let isOn): return "Fast Forward: \(isOn ? "On" : "Off")"
         }
     }
+    var isExit: Bool {
+            if case .exit = self { return true }
+            else               { return false }
+        }
 }
