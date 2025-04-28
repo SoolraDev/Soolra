@@ -555,59 +555,7 @@ public class ConsoleCoreManager: ObservableObject {
     }
 
     
-    private func startFrameTimerOld() {
-        print("⏱️ Starting frame timer...")
-        
-        // Cancel any existing timer first
-        frameTimer?.cancel()
-        frameTimer = nil
-        
-        // Ensure we're ready to start
-        guard let core = currentCore,
-              let renderer = currentRenderer else {
-            print("⚠️ Cannot start frame timer - core or renderer not ready")
-            return
-        }
-        
-        // Get frame duration from core's bridge
-        let frameDuration: TimeInterval = Double(1.0/(60.0 * currentFastForwardSpeed))
-        
-        print("⏱️ Starting frame timer with duration: \(frameDuration)")
-        
-        frameTimer = Timer.publish(every: frameDuration, on: .main, in: .default)
-            .autoconnect()
-            .sink { [weak self] _ in
-                guard let self = self,
-                      let core = self.currentCore,
-                      let renderer = self.currentRenderer else {
-                    return
-                }
-                
-                // Check if we're paused
-                var isPaused = false
-                self.updateState { state in
-                    isPaused = state.isPaused
-                }
-                
-                if isPaused {
-                    return
-                }
-                
-                // Process frame and update renderer on main thread
-                let frame = core.performFrame()
-                
-                // Create array from frame data without copying
-                if let gbaFrame = frame as? GBAFrame {
-                    let pixelArray = Array(UnsafeBufferPointer(start: gbaFrame.data, count: 240 * 160))
-                    renderer.updateTexture(with: pixelArray)
-                } else if let nesFrame = frame as? NESFrame {
-                    let pixelArray = Array(UnsafeBufferPointer(start: nesFrame.data, count: 256 * 240))
-                    renderer.updateTexture(with: pixelArray)
-                }
-            }
-        
-        print("✅ Frame timer started")
-    }
+    
     
     public func startEmulation() {
         print("🎮 Starting emulation...")
