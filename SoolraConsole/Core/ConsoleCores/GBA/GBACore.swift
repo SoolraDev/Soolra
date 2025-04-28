@@ -207,6 +207,47 @@ class GBACore: ConsoleCore {
         // Return frame directly from bridge's buffer
         return GBAFrame(data: UnsafeMutablePointer<UInt16>(OpaquePointer(videoBuffer)))
     }
+//    func performFrame() -> GBAFrame {
+//        if isPaused {
+//            guard let videoBuffer = bridge?.videoBufferPublic else {
+//                fatalError("No video buffer available")
+//            }
+//            return GBAFrame(data: UnsafeMutablePointer<UInt16>(OpaquePointer(videoBuffer)))
+//        }
+//
+//        let multiplier: Int = {
+//            if let rate = audioMaker?.currentRate, rate >= 1 {
+//                return Int(rate)
+//            } else {
+//                return 1
+//            }
+//        }()
+//
+//        for _ in 0..<multiplier {
+//            bridge?.runFrame(processVideo: false)
+//
+//            if let audioBuffer = bridge?.audioBufferPublic {
+//                let samplesPerFrame = Int(bridge?.audioFrameLength ?? 0)
+//                if samplesPerFrame > 0 && !firstFrame {
+//                    let audioSize = samplesPerFrame * 4
+//                    audioMaker?.queueBuffer(audioBuffer, size: audioSize)
+//                }
+//            }
+//        }
+//
+//        bridge?.runFrame(processVideo: true)
+//        firstFrame = false
+//
+//        guard let videoBuffer = bridge?.videoBufferPublic else {
+//            fatalError("No video buffer available")
+//        }
+//
+//        frameCount += 1
+//        return GBAFrame(data: UnsafeMutablePointer<UInt16>(OpaquePointer(videoBuffer)))
+//    }
+
+
+    
     
     func pressButton(_ action: SoolraControllerAction) {
         // Prevent input during cleanup

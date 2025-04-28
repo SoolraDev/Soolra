@@ -18,7 +18,7 @@ class GBAAudioMaker: NSObject, AudioMakerProtocol {
     private var pendingBuffers: [AVAudioPCMBuffer] = []
     private let pendingBufferLock = NSLock()
     private var timePitchNode: AVAudioUnitTimePitch?
-    private var currentRate: Float = 1.0
+     var currentRate: Float = 1.0
     
     override init() {
         audioEngine = AVAudioEngine()

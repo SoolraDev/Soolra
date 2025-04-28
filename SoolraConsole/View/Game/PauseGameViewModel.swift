@@ -19,9 +19,10 @@ class PauseGameViewModel: ObservableObject {
     
     @Published var menuItems: [PauseMenuItem] = [
         .resume,
-        .exit,
         .cheatCodes,
-        .fastForward(false)
+        .exit,
+        
+//        .fastForward(false)
     ]
     @Published var isFastForwardEnabled: Bool = false
 
