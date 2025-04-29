@@ -606,6 +606,18 @@ public class ConsoleCoreManager: ObservableObject {
         currentFastForwardSpeed = (currentFastForwardSpeed == 1) ? maxFastForwardSpeed : 1
         currentCore?.setPlaybackRate(currentFastForwardSpeed)
     }
+    
+    public func saveState(to: URL) {
+        
+    }
+    
+    public func loadState(from: URL) {
+        
+    }
+    
+    public func captureScreenshot(to: URL) {
+        
+    }
 
 
 

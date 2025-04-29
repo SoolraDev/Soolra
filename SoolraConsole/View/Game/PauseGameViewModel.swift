@@ -16,13 +16,18 @@ class PauseGameViewModel: ObservableObject {
     @Published var showPauseMenu: Bool = false
     @Published private(set) var isExiting: Bool = false
     @Published var showCheatCodesView: Bool = false
-    
+    @Published var showSaveStateView: Bool = false
+    @Published var showLoadStateView: Bool = false
+
     @Published var menuItems: [PauseMenuItem] = [
         .resume,
+//        .saveState,
+//        .loadState,
         .cheatCodes,
         .fastForward(false),
         .exit
     ]
+
     @Published var isFastForwardEnabled: Bool = false
 
     private var exitAction: (() -> Task<Void, Never>)?
@@ -147,7 +152,12 @@ class PauseGameViewModel: ObservableObject {
                         print("⏩ Fast Forward toggled to \(isFastForwardEnabled)")
                         consoleManager?.toggleFastForward()
                         menuItems[selectedMenuIndex] = .fastForward(isFastForwardEnabled)
+                    case .saveState:
+                        showSaveStateView = true
+                    case .loadState:
+                        showLoadStateView = true
                     }
+                
             default:
                 break
             }
@@ -175,6 +185,8 @@ enum PauseMenuItem: Identifiable {
     case exit
     case cheatCodes
     case fastForward(Bool)
+    case saveState
+    case loadState
 
     var id: String {
         switch self {
@@ -182,6 +194,8 @@ enum PauseMenuItem: Identifiable {
         case .exit: return "exit"
         case .cheatCodes: return "cheatCodes"
         case .fastForward: return "fastForward"
+        case .saveState: return "saveState"
+        case .loadState: return "loadState"
         }
     }
 
@@ -191,6 +205,8 @@ enum PauseMenuItem: Identifiable {
         case .exit: return "Exit Game"
         case .cheatCodes: return "Cheat Codes"
         case .fastForward(let isOn): return "Fast Forward: \(isOn ? "On" : "Off")"
+        case .saveState: return "Save State"
+        case .loadState: return "Load State"
         }
     }
     var isExit: Bool {

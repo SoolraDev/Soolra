@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		180A47A22866E4EA00A82F16 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180A47A12866E4EA00A82F16 /* DocumentPicker.swift */; };
-		180C86EE286AEF40009E7C0D /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C86ED286AEF40009E7C0D /* CoreDataController.swift */; };
 		180C86F0286B3F02009E7C0D /* HomeView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C86EF286B3F02009E7C0D /* HomeView+ViewModel.swift */; };
 		183DF16E2862C99E0088FE1C /* SoolraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183DF16D2862C99E0088FE1C /* SoolraApp.swift */; };
 		183DF1722862C9A00088FE1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 183DF1712862C9A00088FE1C /* Assets.xcassets */; };
@@ -35,6 +34,8 @@
 		70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BD249F2C6BF6F10070B5F9 /* Colors.swift */; };
 		92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 92678D762DAA70E6001CEDD6 /* SQLite */; };
 		92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D802DAA76F5001CEDD6 /* Cheat.swift */; };
+		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
+		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
 		9D123D052CD007EE007508A8 /* D-DINCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */; };
@@ -44,7 +45,6 @@
 
 /* Begin PBXFileReference section */
 		180A47A12866E4EA00A82F16 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
-		180C86ED286AEF40009E7C0D /* CoreDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
 		180C86EF286B3F02009E7C0D /* HomeView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeView+ViewModel.swift"; sourceTree = "<group>"; };
 		183DF16A2862C99E0088FE1C /* SOOLRA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SOOLRA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		183DF16D2862C99E0088FE1C /* SoolraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoolraApp.swift; sourceTree = "<group>"; };
@@ -72,6 +72,8 @@
 		70838FDB2C6BC96500B7AE46 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		70BD249F2C6BF6F10070B5F9 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		92678D802DAA76F5001CEDD6 /* Cheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheat.swift; sourceTree = "<group>"; };
+		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
+		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed.ttf"; sourceTree = "<group>"; };
 		9D123D022CD0046B007508A8 /* Ebrima.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ebrima.ttf; sourceTree = "<group>"; };
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -154,7 +156,6 @@
 				4C9253D32D47ED2B00E38366 /* HapticManager.swift */,
 				70BD249F2C6BF6F10070B5F9 /* Colors.swift */,
 				7032EDC22C761C5800828A41 /* ThemeManager.swift */,
-				180C86ED286AEF40009E7C0D /* CoreDataController.swift */,
 				183DF1D62862FBD10088FE1C /* View */,
 				180C86AD2869FAF7009E7C0D /* Extension */,
 				183DF1D32862E1780088FE1C /* Model */,
@@ -178,6 +179,7 @@
 				4CEF41C72D21A4670068BC5B /* RomManager.swift */,
 				187ABE9D28642FF000372297 /* ButtonKey.swift */,
 				92678D802DAA76F5001CEDD6 /* Cheat.swift */,
+				928FA3232DC0DC0100F3C848 /* SaveState.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -185,6 +187,7 @@
 		183DF1D62862FBD10088FE1C /* View */ = {
 			isa = PBXGroup;
 			children = (
+				928FA3252DC0DC3400F3C848 /* SaveStateView.swift */,
 				4C0CD8CE2D54E72800B079B5 /* Game */,
 				4C0CD8BA2D54E71100B079B5 /* SoolraController */,
 				180A47A12866E4EA00A82F16 /* DocumentPicker.swift */,
@@ -332,9 +335,10 @@
 				18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */,
 				186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */,
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
+				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
+				928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */,
 				183DF16E2862C99E0088FE1C /* SoolraApp.swift in Sources */,
 				185B91812869EE8C003F88F5 /* Model.xcdatamodeld in Sources */,
-				180C86EE286AEF40009E7C0D /* CoreDataController.swift in Sources */,
 				180C86F0286B3F02009E7C0D /* HomeView+ViewModel.swift in Sources */,
 				4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */,
 				7032EDC12C76059400828A41 /* SettingsView.swift in Sources */,

@@ -21,7 +21,7 @@ struct PauseGameView: View {
                     )
                 }
 
-                // Hidden NavigationLink that activates when showCheatCodesView becomes true
+                // Hidden NavigationLinks
                 NavigationLink(
                     destination: CheatCodesView(consoleManager: pauseViewModel.consoleManager!)
                     .environmentObject(pauseViewModel.consoleManager!),
@@ -29,6 +29,22 @@ struct PauseGameView: View {
                 ) {
                     EmptyView()
                 }
+                NavigationLink(
+                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!, mode: .saving)
+                        .environmentObject(SaveStateManager.shared),
+                    isActive: $pauseViewModel.showSaveStateView
+                ) {
+                    EmptyView()
+                }
+
+                NavigationLink(
+                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!, mode: .loading)
+                        .environmentObject(SaveStateManager.shared),
+                    isActive: $pauseViewModel.showLoadStateView
+                ) {
+                    EmptyView()
+                }
+
             }
             .navigationBarHidden(true)
         }
@@ -99,22 +115,26 @@ private struct PauseMenuContent: View {
         .padding(.horizontal, 40)
     }
     
-        private func handleMenuAction(_ index: Int) {
-            let item = pauseViewModel.menuItems[index]
-            
-            switch item {
-            case .resume:
-                pauseViewModel.togglePause()
-            case .exit:
-                pauseViewModel.initiateExit()
-            case .cheatCodes:
-                pauseViewModel.showCheatCodesView = true
-            case .fastForward(_):
-                pauseViewModel.isFastForwardEnabled.toggle()
-                pauseViewModel.consoleManager?.toggleFastForward()
-                pauseViewModel.menuItems[index] = .fastForward(pauseViewModel.isFastForwardEnabled)
-            }
+    private func handleMenuAction(_ index: Int) {
+        let item = pauseViewModel.menuItems[index]
+        
+        switch item {
+        case .resume:
+            pauseViewModel.togglePause()
+        case .exit:
+            pauseViewModel.initiateExit()
+        case .cheatCodes:
+            pauseViewModel.showCheatCodesView = true
+        case .fastForward(_):
+            pauseViewModel.isFastForwardEnabled.toggle()
+            pauseViewModel.consoleManager?.toggleFastForward()
+            pauseViewModel.menuItems[index] = .fastForward(pauseViewModel.isFastForwardEnabled)
+        case .saveState:
+            pauseViewModel.showSaveStateView = true
+        case .loadState:
+            pauseViewModel.showLoadStateView = true
         }
+    }
 
 }
 
