@@ -217,6 +217,8 @@ struct SoolraApp: App {
             // Initialize console manager with metal manager
             let console = try ConsoleCoreManager(metalManager: metal)
             _consoleManager = StateObject(wrappedValue: console)
+            
+            
         } catch {
             // If initialization fails, we need to provide default values
             // but we'll store the error to show it to the user
@@ -253,6 +255,10 @@ struct SoolraApp: App {
                     .environmentObject(consoleManager)
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
+                        print("🚀 SplashView loading bundled ROMs")
+                        Task {
+                            await dataController.romManager.initBundledRoms()
+                        }
                     }
             } else {
                 HomeView()

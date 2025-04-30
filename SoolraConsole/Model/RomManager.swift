@@ -267,6 +267,39 @@ class RomManager {
             print("Failed to save ROM: \(error.localizedDescription)")
         }
     }
+    
+    
+    func initBundledRoms() async {
+        let fm = FileManager.default
+        guard let resourceURL = Bundle.main.resourceURL else { return }
+        let destDir = getSoolraDirectory()
+
+        do {
+            let allFiles = try fm.contentsOfDirectory(at: resourceURL,
+                                                      includingPropertiesForKeys: nil)
+            for file in allFiles {
+                let ext = file.pathExtension.lowercased()
+                guard ConsoleCoreManager.ConsoleType.allFileExtensions.contains(ext)
+                    else { continue }
+
+                let dest = destDir.appendingPathComponent(file.lastPathComponent)
+                guard !fm.fileExists(atPath: dest.path) else { continue }
+
+                try fm.copyItem(at: file, to: dest)
+                print("✅ Copied \(file.lastPathComponent)")
+
+                // **await** the Core Data insert before moving on
+                if let name = getRomName(from: file) {
+                    await createRomEntity(name: name, url: dest)
+                }
+            }
+        } catch {
+            print("❌ initBundledRoms failed:", error)
+        }
+    }
+
+
+
 }
 
 class RomArtworkLoader {
@@ -415,4 +448,6 @@ class RomArtworkLoader {
             return nil
         }
     }
+    
+    
 }

@@ -90,6 +90,7 @@
 		4CE85E512D55201F004A3CC2 /* gba */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = gba; sourceTree = "<group>"; };
 		4CF12CD52D4293CA004B7CD7 /* Boxart */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Boxart; sourceTree = "<group>"; };
 		92678D5C2DA805B4001CEDD6 /* Cheats */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Cheats; sourceTree = "<group>"; };
+		928FA3412DC228BF00F3C848 /* BundledRoms */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = BundledRoms; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +136,7 @@
 				705827A32C7576D500AB8682 /* info.plist */,
 				705827962C75764300AB8682 /* Fonts */,
 				183DF16B2862C99E0088FE1C /* Products */,
+				928FA3412DC228BF00F3C848 /* BundledRoms */,
 			);
 			sourceTree = "<group>";
 		};
@@ -250,6 +252,7 @@
 				4CE85E512D55201F004A3CC2 /* gba */,
 				4CF12CD52D4293CA004B7CD7 /* Boxart */,
 				92678D5C2DA805B4001CEDD6 /* Cheats */,
+				928FA3412DC228BF00F3C848 /* BundledRoms */,
 			);
 			name = SOOLRA;
 			packageProductDependencies = (
