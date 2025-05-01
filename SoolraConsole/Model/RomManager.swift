@@ -293,6 +293,7 @@ class RomManager {
                     await createRomEntity(name: name, url: dest)
                 }
             }
+            fetchRoms()
         } catch {
             print("❌ initBundledRoms failed:", error)
         }

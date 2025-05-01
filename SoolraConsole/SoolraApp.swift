@@ -256,9 +256,9 @@ struct SoolraApp: App {
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
                         print("🚀 SplashView loading bundled ROMs")
-                        Task {
-                            await dataController.romManager.initBundledRoms()
-                        }
+//                        Task {
+//                            await dataController.romManager.initBundledRoms()
+//                        }
                     }
             } else {
                 HomeView()

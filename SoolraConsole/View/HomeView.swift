@@ -196,8 +196,13 @@ struct HomeView: View {
             
         }
         .onAppear {
-            roms = dataController.romManager.fetchRoms()
-            viewModel.updateRomCount(roms.count)
+            Task {
+                await dataController.romManager.initBundledRoms()
+                await MainActor.run {
+                    roms = dataController.romManager.fetchRoms()
+                    viewModel.updateRomCount(roms.count)
+                }
+            }
         }
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
