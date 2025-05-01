@@ -170,6 +170,7 @@ class RomManager {
         
         context.delete(rom)
         save()
+        UserDefaults.standard.addDeletedROM(name: getRomName(from: currentUrl) ?? "")
     }
     
     // MARK: - Private Methods - File Management
@@ -279,29 +280,57 @@ class RomManager {
                                                       includingPropertiesForKeys: nil)
             for file in allFiles {
                 let ext = file.pathExtension.lowercased()
+ 
                 guard ConsoleCoreManager.ConsoleType.allFileExtensions.contains(ext)
                     else { continue }
-
+                
+                guard let romName = getRomName(from: file) else {
+                    print("⚠️ Skipping file with invalid ROM name: \(file.lastPathComponent)")
+                    continue
+                }
+                
+                guard !UserDefaults.standard.isROMDeleted(romName)
+                    else { continue }
+                
                 let dest = destDir.appendingPathComponent(file.lastPathComponent)
                 guard !fm.fileExists(atPath: dest.path) else { continue }
 
                 try fm.copyItem(at: file, to: dest)
                 print("✅ Copied \(file.lastPathComponent)")
-
+                
                 // **await** the Core Data insert before moving on
-                if let name = getRomName(from: file) {
-                    await createRomEntity(name: name, url: dest)
-                }
+                await createRomEntity(name: romName, url: dest)
+        
             }
-            fetchRoms()
         } catch {
             print("❌ initBundledRoms failed:", error)
         }
     }
-
-
-
 }
+
+extension UserDefaults {
+    private var deletedROMsKey: String { "deletedBundledROMs" }
+
+    var deletedBundledROMs: Set<String> {
+        get {
+            return Set(array(forKey: deletedROMsKey) as? [String] ?? [])
+        }
+        set {
+            set(Array(newValue), forKey: deletedROMsKey)
+        }
+    }
+
+    func addDeletedROM(name: String) {
+        var current = deletedBundledROMs
+        current.insert(name)
+        deletedBundledROMs = current
+    }
+
+    func isROMDeleted(_ name: String) -> Bool {
+        return deletedBundledROMs.contains(name)
+    }
+}
+
 
 class RomArtworkLoader {
     static let shared = RomArtworkLoader()
