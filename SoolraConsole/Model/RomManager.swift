@@ -271,9 +271,8 @@ class RomManager {
     }
     
     
-    func initBundledRoms() async {
+    func initDefaultRoms() async {
         let fm = FileManager.default
-        var bundledRomsCount = 0
         guard let resourceURL = Bundle.main.resourceURL else { return }
         let destDir = getSoolraDirectory()
 
@@ -290,7 +289,6 @@ class RomManager {
                     print("⚠️ Skipping file with invalid ROM name: \(file.lastPathComponent)")
                     continue
                 }
-                bundledRomsCount += 1
                 guard !UserDefaults.standard.isROMDeleted(romName)
                     else { continue }
                 
@@ -303,9 +301,8 @@ class RomManager {
                 // **await** the Core Data insert before moving on
                 await createRomEntity(name: romName, url: dest)
             }
-            UserDefaults.standard.setNumOfdefaultRomsInBundle(to: bundledRomsCount)
         } catch {
-            print("❌ initBundledRoms failed:", error)
+            print("❌ initDefaultRoms failed:", error)
         }
     }
     
@@ -328,21 +325,25 @@ class RomManager {
 
                 UserDefaults.standard.setNumOfdefaultRomsInBundle(to: count)
             } catch {
-                print("❌ Failed to count bundled ROMs: \(error)")
+                print("❌ Failed to count default ROMs: \(error)")
                 UserDefaults.standard.setNumOfdefaultRomsInBundle(to: 0)
             }
         }
     
-    func shouldLoadDefaultRomsOnStartup() -> Bool {
-        return UserDefaults.standard.numOfdefaultRomsInBundle > UserDefaults.standard.deletedBundledROMs.count
+    func resetDeletedDefaultRoms() {
+        UserDefaults.standard.deletedDefaultRoms.removeAll()
     }
+    
+//    func shouldLoadDefaultRomsOnStartup() -> Bool {
+//        return UserDefaults.standard.numOfdefaultRomsInBundle > UserDefaults.standard.deletedDefaultRoms.count
+//    }
 }
 
 extension UserDefaults {
-    private var deletedROMsKey: String { "deletedBundledROMs" }
+    private var deletedROMsKey: String { "deletedDefaultRoms" }
     private var numOfdefaultRomsInBundleKey: String { "numOfdefaultRomsInBundle" }
     
-    var deletedBundledROMs: Set<String> {
+    var deletedDefaultRoms: Set<String> {
         get {
             return Set(array(forKey: deletedROMsKey) as? [String] ?? [])
         }
@@ -362,13 +363,13 @@ extension UserDefaults {
     
 
     func addDeletedROM(name: String) {
-        var current = deletedBundledROMs
+        var current = deletedDefaultRoms
         current.insert(name)
-        deletedBundledROMs = current
+        deletedDefaultRoms = current
     }
 
     func isROMDeleted(_ name: String) -> Bool {
-        return deletedBundledROMs.contains(name)
+        return deletedDefaultRoms.contains(name)
     }
     
     func setNumOfdefaultRomsInBundle(to count: Int) {

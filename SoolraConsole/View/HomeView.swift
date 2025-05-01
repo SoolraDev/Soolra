@@ -65,13 +65,7 @@ struct HomeView: View {
         }
         return nil
     }
-    var messageText: String {
-        if dataController.romManager.shouldLoadDefaultRomsOnStartup() {
-            return "Loading default ROMs..."
-        } else {
-            return "There are no ROMs"
-        }
-    }
+
     var body: some View {
         ZStack(alignment: .top) {
             Color(red: 41 / 255, green: 3 / 255, blue: 135 / 255)
@@ -202,13 +196,15 @@ struct HomeView: View {
             
         }
         .onAppear {
-            Task {
-                await dataController.romManager.initBundledRoms()
-                await MainActor.run {
+//            Task {
+//                isLoading = true
+//                await dataController.romManager.initBundledRoms()
+//                await MainActor.run {
                     roms = dataController.romManager.fetchRoms()
                     viewModel.updateRomCount(roms.count)
-                }
-            }
+//                    isLoading = false
+//                }
+//            }
         }
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
@@ -247,6 +243,20 @@ struct HomeView: View {
         .environmentObject(controllerViewModel)
     }
 
+    private func loadDefaultRoms() {
+        Task {
+            isLoading = true
+            dataController.romManager.resetDeletedDefaultRoms()
+            await dataController.romManager.initDefaultRoms()
+            await MainActor.run {
+                roms = dataController.romManager.fetchRoms()
+                viewModel.updateRomCount(roms.count)
+                isLoading = false
+            }
+        }
+    }
+    
+    
     private func controllerActionButtonPressed() {
         let focusedButtonIndex = viewModel.focusedButtonIndex
         if focusedButtonIndex == 1 {
@@ -272,14 +282,20 @@ struct HomeView: View {
     private var emptyView: some View {
         VStack {
             Spacer()
-            Text(messageText)
+            Text("There are no ROMs")
                 .font(.custom("Orbitron-Black", size: 24))
-//            Button("Load default ROMs") {
-//                loadDefaultRom()
-//            }
+            Button("Load default ROMs") {
+                loadDefaultRoms()
+            }
+            .font(.custom("Orbitron-SemiBold", size: 24))
+                .buttonStyle(.borderedProminent)
+                .foregroundColor(.white)
+                .background(Color.purple)
+                Spacer()
+                Spacer()
+                Spacer()
             
             Button("Upload ROMs") {
-                //loadDefaultRom()
                 viewModel.isPresented.toggle()
             }
             .font(.custom("Orbitron-SemiBold", size: 24))
