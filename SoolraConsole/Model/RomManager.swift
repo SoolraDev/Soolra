@@ -14,6 +14,7 @@ class RomManager {
         
     init(context: NSManagedObjectContext) {
         self.context = context
+        countDefaultRomsinBundleOnFirstLaunch()
     }
     
     
@@ -307,6 +308,30 @@ class RomManager {
             print("❌ initBundledRoms failed:", error)
         }
     }
+    
+    func countDefaultRomsinBundleOnFirstLaunch() {
+        guard UserDefaults.standard.object(forKey: "numOfDefaultRomsInBundle") == nil else {
+            return
+        }
+        let fileManager = FileManager.default
+            guard let resourceURL = Bundle.main.resourceURL else {
+                print("❌ Resource URL not found.")
+                UserDefaults.standard.setNumOfdefaultRomsInBundle(to: 0)
+                return
+            }
+
+            do {
+                let files = try fileManager.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys: nil)
+                let count = files.filter { url in
+                    ConsoleCoreManager.ConsoleType.allFileExtensions.contains(url.pathExtension.lowercased())
+                }.count
+
+                UserDefaults.standard.setNumOfdefaultRomsInBundle(to: count)
+            } catch {
+                print("❌ Failed to count bundled ROMs: \(error)")
+                UserDefaults.standard.setNumOfdefaultRomsInBundle(to: 0)
+            }
+        }
     
     func shouldLoadDefaultRomsOnStartup() -> Bool {
         return UserDefaults.standard.numOfdefaultRomsInBundle > UserDefaults.standard.deletedBundledROMs.count

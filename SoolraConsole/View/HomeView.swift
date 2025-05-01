@@ -65,7 +65,13 @@ struct HomeView: View {
         }
         return nil
     }
-
+    var messageText: String {
+        if dataController.romManager.shouldLoadDefaultRomsOnStartup() {
+            return "Loading default ROMs..."
+        } else {
+            return "There are no ROMs"
+        }
+    }
     var body: some View {
         ZStack(alignment: .top) {
             Color(red: 41 / 255, green: 3 / 255, blue: 135 / 255)
@@ -262,10 +268,11 @@ struct HomeView: View {
 
     // MARK: - Subviews
 
+        
     private var emptyView: some View {
         VStack {
             Spacer()
-            Text("There are no ROMs")
+            Text(messageText)
                 .font(.custom("Orbitron-Black", size: 24))
 //            Button("Load default ROMs") {
 //                loadDefaultRom()
