@@ -11,6 +11,8 @@ import SwiftUI
 
 struct SaveStateView: View {
     @EnvironmentObject var manager: SaveStateManager
+    @Environment(\.dismiss) var dismiss
+
     var consoleManager: ConsoleCoreManager
     var mode: Mode
 
@@ -20,7 +22,6 @@ struct SaveStateView: View {
     }
 
     var body: some View {
-        NavigationView {
             List {
                 ForEach(manager.saveStates) { state in
                     HStack {
@@ -60,13 +61,22 @@ struct SaveStateView: View {
                 }
             }
             .navigationTitle(mode == .loading ? "Load State" : "Save State")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if mode == .saving {
-                    Button("New Save") {
-                        manager.saveNewState(from: consoleManager, name: nil)
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if mode == .saving {
+                        Button("New Save") {
+                            manager.saveNewState(from: consoleManager, name: nil)
+                        }
+                    } else {
+                        EmptyView() // Required to resolve ambiguity
                     }
                 }
             }
-        }
     }
 }
