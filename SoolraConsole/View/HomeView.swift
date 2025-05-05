@@ -282,9 +282,9 @@ struct HomeView: View {
     private var emptyView: some View {
         VStack {
             Spacer()
-            Text("There are no ROMs")
+            Text("There are no games")
                 .font(.custom("Orbitron-Black", size: 24))
-            Button("Load default ROMs") {
+            Button("Load default games") {
                 loadDefaultRoms()
             }
             .font(.custom("Orbitron-SemiBold", size: 24))
@@ -295,7 +295,7 @@ struct HomeView: View {
                 Spacer()
                 Spacer()
             
-            Button("Upload ROMs") {
+            Button("Upload games") {
                 viewModel.isPresented.toggle()
             }
             .font(.custom("Orbitron-SemiBold", size: 24))

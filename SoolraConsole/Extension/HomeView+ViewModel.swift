@@ -91,8 +91,8 @@ extension HomeView {
 extension HomeView.PopList {
     var description: String {
         switch self {
-        case .loadDefault: return "Load default roms"
-        case .addRom: return "Add rom"
+        case .loadDefault: return "Load default games"
+        case .addRom: return "Add game"
         }
     }
 }

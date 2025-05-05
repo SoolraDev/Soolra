@@ -60,7 +60,7 @@ struct SettingsView: View {
                             .stroke(viewModel.selectedIndex == 1 ? Color.white : Color.clear, lineWidth: 2)
                     )
                     
-                    NavigationLink("Manage ROMs") {
+                    NavigationLink("Manage Games") {
                         ManageRomsView().environmentObject(dataController)
                     }
                     .overlay(
@@ -155,7 +155,7 @@ struct SettingsView: View {
                     
                     
                 }
-                .navigationTitle("Manage ROMs")
+                .navigationTitle("Manage Games")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
