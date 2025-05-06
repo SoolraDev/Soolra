@@ -66,7 +66,7 @@ class SaveStateManager: ObservableObject {
         emulator.saveState(to: saveURL)
         emulator.captureScreenshot(to: thumbnailURL)
 
-        let state = SaveState(id: id, name: name, gameName: emulator.getCurrentGameName(), date: Date(), saveFileName: svsFile, thumbnailFileName: thumbFile)
+        let state = SaveState(id: id, name: name, gameName: emulator.gameName, date: Date(), saveFileName: svsFile, thumbnailFileName: thumbFile)
         saveStates.append(state)
         persist()
     }
@@ -88,5 +88,10 @@ class SaveStateManager: ObservableObject {
         let url = savesDirectory.appendingPathComponent(state.thumbnailFileName)
         return UIImage(contentsOfFile: url.path)
     }
+    
+    func states(for gameName: String) -> [SaveState] {
+        saveStates.filter { $0.gameName == gameName }
+    }
+
 }
 

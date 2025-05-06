@@ -103,7 +103,7 @@ public class ConsoleCoreManager: ObservableObject {
         }
     }
     
-    public init(metalManager: MetalManager, gameName: String) throws {
+    public init(metalManager: MetalManager, gameName: String = "none") throws {
         self.metalManager = metalManager
         self.gameName = gameName
         self.currentFrame = nil
@@ -618,11 +618,6 @@ public class ConsoleCoreManager: ObservableObject {
     
     public func captureScreenshot(to: URL) {
         
-    }
-
-
-    public func getCurrentGameName() -> String {
-        return "adad"
     }
 
 }

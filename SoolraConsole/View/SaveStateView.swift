@@ -23,7 +23,7 @@ struct SaveStateView: View {
 
     var body: some View {
             List {
-                ForEach(manager.saveStates) { state in
+                ForEach(manager.states(for: consoleManager.gameName)) { state in
                     HStack {
                         if let image = manager.thumbnail(for: state) {
                             Image(uiImage: image)
