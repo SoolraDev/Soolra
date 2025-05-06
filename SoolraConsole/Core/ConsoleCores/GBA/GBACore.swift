@@ -315,4 +315,14 @@ class GBACore: ConsoleCore {
     func setPlaybackRate(_ rate: Float) {
         audioMaker?.setPlaybackRate(rate)
     }
+    
+    func captureScreenshot(to url: URL) {
+        guard let buffer = bridge?.videoBufferPublic else {
+            print("❌ No video buffer available for screenshot")
+            return
+        }
+        ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 240, height: 160, to: url)
+    }
+
+    
 }

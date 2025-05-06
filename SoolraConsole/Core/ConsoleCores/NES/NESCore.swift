@@ -199,4 +199,14 @@ class NESCore: ConsoleCore {
     func setPlaybackRate(_ rate: Float) {
         audioMaker?.setPlaybackRate(rate)
     }
+    
+    func captureScreenshot(to url: URL) {
+        guard let buffer = bridge?.videoBufferPublic else {
+            print("❌ No video buffer available for screenshot")
+            return
+        }
+        ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 256, height: 240, to: url)
+    }
+
+
 }

@@ -617,7 +617,7 @@ public class ConsoleCoreManager: ObservableObject {
     }
     
     public func captureScreenshot(to: URL) {
-        
+        currentCore?.captureScreenshot(to: to)
     }
 
 }

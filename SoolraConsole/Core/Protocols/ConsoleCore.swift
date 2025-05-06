@@ -39,5 +39,6 @@ public protocol ConsoleCore {
     func activateCheat(_ cheat: Cheat)
     func resetCheats()
     func setPlaybackRate(_ rate: Float)
+    func captureScreenshot(to: URL)
 }
 
