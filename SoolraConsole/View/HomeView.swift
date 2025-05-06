@@ -359,12 +359,12 @@ struct HomeView: View {
         Task {
             do {
                 // Create console manager and load ROM and init cheat manager
-                let consoleManager = try ConsoleCoreManager(metalManager: metalManager)
+                let consoleManager = try ConsoleCoreManager(metalManager: metalManager, gameName: rom.name ?? "unknown")
 
                 // Load everything before transitioning view
                 let gameData = try await loadRom(rom: rom, consoleManager: consoleManager)
                 
-                consoleManager.cheatCodesManager = CheatCodesManager(gameName: rom.name ?? "unknown", consoleManager: consoleManager)
+                consoleManager.cheatCodesManager = CheatCodesManager(consoleManager: consoleManager)
                 
                 // Once everything is ready, update the view
                 await MainActor.run {

@@ -14,11 +14,11 @@ class CheatCodesManager: ObservableObject {
     private let storage = CheatStorage()
     private let gameName: String
     private let consoleType: ConsoleCoreManager.ConsoleType
-    init(gameName: String, consoleManager: ConsoleCoreManager) {
-        self.gameName = gameName
+    init(consoleManager: ConsoleCoreManager) {
+        self.gameName = consoleManager.gameName
         self.consoleManager = consoleManager
         self.consoleType = consoleManager.managerState.currentCoreType ?? .nes
-        self.cheats = storage.loadCheats(for: gameName)
+        self.cheats = storage.loadCheats(for: consoleManager.gameName)
         resetAndReapplyActiveCheats()
     }
 

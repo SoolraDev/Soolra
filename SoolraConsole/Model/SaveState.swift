@@ -13,6 +13,7 @@ import UIKit
 struct SaveState: Codable, Identifiable {
     let id: UUID
     var name: String?
+    var gameName: String
     var date: Date
     var saveFileName: String
     var thumbnailFileName: String
@@ -65,7 +66,7 @@ class SaveStateManager: ObservableObject {
         emulator.saveState(to: saveURL)
         emulator.captureScreenshot(to: thumbnailURL)
 
-        let state = SaveState(id: id, name: name, date: Date(), saveFileName: svsFile, thumbnailFileName: thumbFile)
+        let state = SaveState(id: id, name: name, gameName: emulator.getCurrentGameName(), date: Date(), saveFileName: svsFile, thumbnailFileName: thumbFile)
         saveStates.append(state)
         persist()
     }

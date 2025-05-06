@@ -53,7 +53,8 @@ public class ConsoleCoreManager: ObservableObject {
     @Published var cheatCodesManager: CheatCodesManager?
     var maxFastForwardSpeed: Float = 1
     var currentFastForwardSpeed: Float = 1
-
+    var gameName: String
+    
     private var currentCore: (any ConsoleCore)?
     public var currentRenderer: (any ConsoleRenderer)?
     private var frameTimer: AnyCancellable?
@@ -102,9 +103,9 @@ public class ConsoleCoreManager: ObservableObject {
         }
     }
     
-    public init(metalManager: MetalManager) throws {
+    public init(metalManager: MetalManager, gameName: String) throws {
         self.metalManager = metalManager
-        
+        self.gameName = gameName
         self.currentFrame = nil
         self.currentCore = nil
         self.currentRenderer = nil
@@ -620,6 +621,9 @@ public class ConsoleCoreManager: ObservableObject {
     }
 
 
+    public func getCurrentGameName() -> String {
+        return "adad"
+    }
 
 }
 
