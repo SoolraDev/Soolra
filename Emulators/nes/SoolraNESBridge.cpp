@@ -40,6 +40,7 @@ namespace {
     std::unique_ptr<Nes::Api::Cheats> cheats;
 
 
+//    Nes::Api::Machine nes_machine(emulator);
     Nes::Api::Video::Output videoOutput;
     Nes::Api::Sound::Output audioOutput;
     Nes::Api::Input::Controllers controllers;
@@ -51,6 +52,12 @@ namespace {
     // Callbacks
     NESBufferCallback videoCallback;
     NESBufferCallback audioCallback;
+
+    // Save / Load game
+    char *gameSaveSavePath = NULL;
+    char *gameSaveLoadPath = NULL;
+    bool gameLoaded = false;
+    char *gamePath = NULL;
 
     bool isInitialized = false;
 }
@@ -226,3 +233,61 @@ void NES_SetVideoCallback(NESBufferCallback callback) {
 void NES_SetAudioCallback(NESBufferCallback callback) {
     audioCallback = callback;
 }
+
+
+// --- Save / Load Game States ---
+
+
+void NESSaveSaveState(const char *saveStateFilepath)
+{
+    std::ofstream fileStream(saveStateFilepath, std::ifstream::out | std::ifstream::binary);
+    machine->SaveState(fileStream);
+}
+
+void NESLoadSaveState(const char *saveStateFilepath)
+{
+    std::ifstream fileStream(saveStateFilepath, std::ifstream::in | std::ifstream::binary);
+    machine->LoadState(fileStream);
+}
+
+
+
+void NESSaveGameSave(const char *gameSavePath)
+{
+    gameSaveSavePath = strdup(gameSavePath);
+    
+    std::string saveStatePath(gameSavePath);
+    saveStatePath += ".temp";
+    
+    // Create tempoary save state.
+    NESSaveSaveState(saveStatePath.c_str());
+    
+    // Unload cartridge, which forces emulator to save game.
+    machine->Unload();
+    
+    // Check after machine.Unload but before restarting to make sure we aren't starting emulator when no game is loaded.
+    if (!gameLoaded)
+    {
+        return;
+    }
+    
+    // Restart emulation.
+//    NESStartEmulation(gamePath);
+    NES_LoadROM(gamePath);
+    
+    // Load previous save save.
+    NESLoadSaveState(saveStatePath.c_str());
+    
+    // Delete temporary save state.
+    remove(saveStatePath.c_str());
+}
+
+void NESLoadGameSave(const char *gameSavePath)
+{
+    gameSaveLoadPath = strdup(gameSavePath);
+    
+    // Restart emulation so FileIO callback is called.
+//    NESStartEmulation(gamePath);
+    NES_LoadROM(gamePath);
+}
+

@@ -157,22 +157,21 @@ class NESBridge: NSObject {
         cheat.code.withCString { codeStr in
             NES_AddCheatCode(codeStr)
         }
-//        let cheatType = CheatType(type)
-//        guard cheatType == .gameGenie6 || cheatType == .gameGenie8 else { return false }
-
-//        let codes = cheat.code.split(separator: "\n")
-//        for code in codes
-//        {
-//            if !code.withCString({ NES_AddCheatCode($0) })
-//            {
-//                return false
-//            }
-//        }
-//        
-//        return true
     }
+    
     func resetCheats()
     {
         NES_ResetCheats()
+    }
+    
+    func loadSaveState(from url: URL)
+    {
+        url.withUnsafeFileSystemRepresentation { NESLoadGameSave($0!) }
+    }
+    
+    func saveGameSave(to url: URL)
+    {
+        url.withUnsafeFileSystemRepresentation { NESSaveGameSave($0!) }
+
     }
 }
