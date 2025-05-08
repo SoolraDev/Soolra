@@ -49,10 +49,6 @@ struct SaveStateView: View {
                             Button("Load") {
                                 manager.load(state: state, into: consoleManager)
                             }
-                        } else {
-                            Button("Overwrite") {
-                                manager.saveNewState(from: consoleManager, name: state.name)
-                            }
                         }
                     }
                 }

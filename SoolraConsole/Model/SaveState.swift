@@ -67,7 +67,8 @@ class SaveStateManager: ObservableObject {
         emulator.captureScreenshot(to: thumbnailURL)
 
         let state = SaveState(id: id, name: name, gameName: emulator.gameName, date: Date(), saveFileName: svsFile, thumbnailFileName: thumbFile)
-        saveStates.append(state)
+        saveStates.insert(state, at: 0)
+
         persist()
     }
 
