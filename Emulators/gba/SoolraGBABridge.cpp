@@ -46,16 +46,16 @@ void updateColorMapping(bool isLcdMode) {
         case 16: {
             for (int i = 0; i < 0x10000; i++) {
                 systemColorMap16[i] = ((i & 0x1f) << systemRedShift) |
-                                    (((i & 0x3e0) >> 5) << systemGreenShift) |
-                                    (((i & 0x7c00) >> 10) << systemBlueShift);
+                (((i & 0x3e0) >> 5) << systemGreenShift) |
+                (((i & 0x7c00) >> 10) << systemBlueShift);
             }
         } break;
         case 24:
         case 32: {
             for (int i = 0; i < 0x10000; i++) {
                 systemColorMap32[i] = ((i & 0x1f) << systemRedShift) |
-                                    (((i & 0x3e0) >> 5) << systemGreenShift) |
-                                    (((i & 0x7c00) >> 10) << systemBlueShift);
+                (((i & 0x3e0) >> 5) << systemGreenShift) |
+                (((i & 0x7c00) >> 10) << systemBlueShift);
             }
         } break;
     }
@@ -68,7 +68,7 @@ void systemSendScreen() {
 
 void systemDrawScreen() {
     if (!g_videoBuffer || !g_pix) {
-        printf("systemDrawScreen: buffers not ready - g_videoBuffer=%p g_pix=%p\n", 
+        printf("systemDrawScreen: buffers not ready - g_videoBuffer=%p g_pix=%p\n",
                (void*)g_videoBuffer, (void*)g_pix);
         return;
     }
@@ -149,8 +149,8 @@ void GBAInitialize(VideoCallback videoCallback, AudioCallback audioCallback) {
     
     for (int i = 0; i < 0x10000; i++) {
         systemColorMap32[i] = ((i & 0x1f) << systemRedShift) |
-                            (((i & 0x3e0) >> 5) << systemGreenShift) |
-                            (((i & 0x7c00) >> 10) << systemBlueShift);
+        (((i & 0x3e0) >> 5) << systemGreenShift) |
+        (((i & 0x7c00) >> 10) << systemBlueShift);
         systemColorMap16[i] = i;
     }
     
@@ -366,13 +366,13 @@ bool GBAddCheatCode(const char* cheatCode, const char* type)
     std::string cheatCodeStr(cheatCode);
     std::istringstream stream(cheatCodeStr);
     std::string line;
-
+    
     while (std::getline(stream, line))
     {
         // Remove leading/trailing whitespace
         line.erase(0, line.find_first_not_of(" \t\r\n"));
         line.erase(line.find_last_not_of(" \t\r\n") + 1);
-
+        
         // Validate: must only contain hex digits and spaces
         for (char c : line)
         {
@@ -387,44 +387,14 @@ bool GBAddCheatCode(const char* cheatCode, const char* type)
             if (c != ' ') sanitizedCode += c;
         }
         
-                    if (line.length() == 13)
-                    {
-                        cheatsAddCBACode(line.c_str(), "code");
-                    }
-                        else {
-                            cheatsAddGSACode(line.c_str(), "code", true);
-                        }
-                    }
-        
-//        if (strcmp(type, "ActionReplay") == 0 || strcmp(type, "GameShark") == 0)
-//        {
-//
-//            if (sanitizedCode.length() != 16)
-//            {
-//                return false;
-//            }
-//            cheatsAddCBACode(sanitizedCode.c_str(), "code");
-////            cheatsAddGSACode(sanitizedCode.c_str(), "code", true);
-//        }
-//        else if (strcmp(type, "CodeBreaker") == 0)
-//        {
-
-
-//            if (sanitizedCode.length() != 13)
-//            {
-//                return false;
-//            }
-
-//            cheatsAddCBACode(sanitizedCode.c_str(), "code");
-//        }
-//
-//        else
-//        {
-//            // Unknown type
-//            return false;
-//        }
-//    }
-
+        if (line.length() == 13)
+        {
+            cheatsAddCBACode(line.c_str(), "code");
+        }
+        else {
+            cheatsAddGSACode(line.c_str(), "code", true);
+        }
+    }
     return true;
 }
 
@@ -433,7 +403,27 @@ void GBAResetCheats()
     cheatsDeleteAll(true);
 }
 
+// Save/ Load Game States
 
+void GBASaveGameSave(const char* savePath)
+{
+    GBASystem.emuWriteBattery(savePath);
+}
+
+void GBALoadGameSave(const char* savePath)
+{
+    GBASystem.emuReadBattery(savePath);
+}
+
+void GBASaveState(const char* statePath)
+{
+    GBASystem.emuWriteState(statePath);
+}
+
+void GBALoadState(const char* statePath)
+{
+    GBASystem.emuReadState(statePath);
+}
 
 #pragma clang diagnostic pop
 

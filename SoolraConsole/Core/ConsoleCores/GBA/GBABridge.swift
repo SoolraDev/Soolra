@@ -210,6 +210,22 @@ class GBABridge: NSObject {
     public func resetCheats(){
         GBAResetCheats();
     }
+    
+    func loadSaveState(from url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBALoadState(path)
+        }
+    }
+    
+    func saveGameSave(to url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBASaveState(path)
+        }
+
+    }
+    
 }
 
 

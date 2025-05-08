@@ -205,8 +205,8 @@ enum PauseMenuItem: Identifiable {
         case .exit: return "Exit Game"
         case .cheatCodes: return "Cheat Codes"
         case .fastForward(let isOn): return "Fast Forward: \(isOn ? "On" : "Off")"
-        case .saveState: return "Save State"
-        case .loadState: return "Load State"
+        case .saveState: return "Save Game"
+        case .loadState: return "Load Game"
         }
     }
     var isExit: Bool {

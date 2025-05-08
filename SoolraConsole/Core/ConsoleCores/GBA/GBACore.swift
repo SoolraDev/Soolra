@@ -326,12 +326,13 @@ class GBACore: ConsoleCore {
         ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 240, height: 160, to: url)
     }
     
+    func loadGameState(from: URL) {
+        bridge?.loadSaveState(from: from)
+    }
+    
     func saveGameState(to: URL)
     {
-        print("todo")
-    }
-    func loadGameState(from: URL) {
-        print("todo")
+        bridge?.saveGameSave(to: to)
     }
     
     

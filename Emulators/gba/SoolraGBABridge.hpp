@@ -74,6 +74,11 @@ const uint8_t* GBAGetAudioBuffer();
 bool GBAddCheatCode(const char* cheatCode, const char* type);
 void GBAResetCheats();
 
+
+// Save and Load game states
+void GBASaveState(const char* path);
+void GBALoadState(const char* path);
+
 #if defined(__cplusplus)
 }
 #endif
