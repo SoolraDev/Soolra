@@ -16,6 +16,8 @@ import MetalKit
 
 // NES specific implementation
 class NESCore: ConsoleCore {
+
+    
     // MARK: - Constants
     enum Constants {
         static let frameWidth: Int = 256
@@ -206,6 +208,14 @@ class NESCore: ConsoleCore {
             return
         }
         ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 256, height: 240, to: url)
+    }
+    func loadGameState(from: URL) {
+        bridge?.loadSaveState(from: from)
+    }
+    
+    func saveGameState(to: URL)
+    {
+        bridge?.saveGameSave(to: to)
     }
 
 

@@ -609,11 +609,11 @@ public class ConsoleCoreManager: ObservableObject {
     }
     
     public func saveState(to: URL) {
-        print("✅ wat wat")
+        currentCore?.saveGameState(to: to)
     }
     
     public func loadState(from: URL) {
-        print("✅ weet wff")
+        currentCore?.loadGameState(from: from)
     }
     
     public func captureScreenshot(to: URL) {

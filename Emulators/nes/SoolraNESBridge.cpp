@@ -15,6 +15,7 @@
 #include "NstApiVideo.hpp"
 #include "NstApiSound.hpp"
 #include "NstApiCheats.hpp"
+#include "NstApiUser.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -24,42 +25,42 @@
 
 // NES core components
 namespace {
-    // Constants
-    constexpr size_t NES_WIDTH = Nes::Api::Video::Output::WIDTH;
-    constexpr size_t NES_HEIGHT = Nes::Api::Video::Output::HEIGHT;
-    constexpr size_t FRAME_BUFFER_SIZE = NES_WIDTH * NES_HEIGHT;
-    constexpr size_t SAMPLE_RATE = 44100;
-    constexpr size_t PAL_SAMPLES_PER_FRAME = SAMPLE_RATE / 50;  // 882 samples
-    constexpr size_t NTSC_SAMPLES_PER_FRAME = SAMPLE_RATE / 60; // 735 samples
-    
-    std::unique_ptr<Nes::Api::Emulator> emulator;
-    std::unique_ptr<Nes::Api::Machine> machine;
-    std::unique_ptr<Nes::Api::Video> video;
-    std::unique_ptr<Nes::Api::Sound> audio;
-    std::unique_ptr<Nes::Api::Input> input;
-    std::unique_ptr<Nes::Api::Cheats> cheats;
+// Constants
+constexpr size_t NES_WIDTH = Nes::Api::Video::Output::WIDTH;
+constexpr size_t NES_HEIGHT = Nes::Api::Video::Output::HEIGHT;
+constexpr size_t FRAME_BUFFER_SIZE = NES_WIDTH * NES_HEIGHT;
+constexpr size_t SAMPLE_RATE = 44100;
+constexpr size_t PAL_SAMPLES_PER_FRAME = SAMPLE_RATE / 50;  // 882 samples
+constexpr size_t NTSC_SAMPLES_PER_FRAME = SAMPLE_RATE / 60; // 735 samples
+
+std::unique_ptr<Nes::Api::Emulator> emulator;
+std::unique_ptr<Nes::Api::Machine> machine;
+std::unique_ptr<Nes::Api::Video> video;
+std::unique_ptr<Nes::Api::Sound> audio;
+std::unique_ptr<Nes::Api::Input> input;
+std::unique_ptr<Nes::Api::Cheats> cheats;
 
 
 //    Nes::Api::Machine nes_machine(emulator);
-    Nes::Api::Video::Output videoOutput;
-    Nes::Api::Sound::Output audioOutput;
-    Nes::Api::Input::Controllers controllers;
+Nes::Api::Video::Output videoOutput;
+Nes::Api::Sound::Output audioOutput;
+Nes::Api::Input::Controllers controllers;
 
-    // Fixed-size arrays instead of vectors
-    alignas(16) uint16_t frameBuffer[FRAME_BUFFER_SIZE];
-    alignas(16) uint16_t audioBuffer[PAL_SAMPLES_PER_FRAME]; // Use larger of the two sizes
+// Fixed-size arrays instead of vectors
+alignas(16) uint16_t frameBuffer[FRAME_BUFFER_SIZE];
+alignas(16) uint16_t audioBuffer[PAL_SAMPLES_PER_FRAME]; // Use larger of the two sizes
 
-    // Callbacks
-    NESBufferCallback videoCallback;
-    NESBufferCallback audioCallback;
+// Callbacks
+NESBufferCallback videoCallback;
+NESBufferCallback audioCallback;
 
-    // Save / Load game
-    char *gameSaveSavePath = NULL;
-    char *gameSaveLoadPath = NULL;
-    bool gameLoaded = false;
-    char *gamePath = NULL;
+// Save / Load game
+char *gameSaveSavePath = NULL;
+char *gameSaveLoadPath = NULL;
+bool gameLoaded = false;
+char *gamePath = NULL;
 
-    bool isInitialized = false;
+bool isInitialized = false;
 }
 
 // Internal callback handlers
@@ -74,7 +75,7 @@ void audioUnlock(void*, Nes::Api::Sound::Output& output) {
     if (audioCallback) {
         audioCallback(audioBuffer,
                       machine->GetMode() == Nes::Api::Machine::PAL ?
-                                             PAL_SAMPLES_PER_FRAME : NTSC_SAMPLES_PER_FRAME
+                      PAL_SAMPLES_PER_FRAME : NTSC_SAMPLES_PER_FRAME
                       );
     }
 }
@@ -84,24 +85,50 @@ bool NES_IsPAL(void) {
     return machine->GetMode() == Nes::Api::Machine::PAL;
 }
 
+static void NST_CALLBACK FileIO(void *context, Nes::Api::User::File& file)
+{
+    switch (file.GetAction())
+    {
+        case Nes::Api::User::File::LOAD_BATTERY:
+        case Nes::Api::User::File::LOAD_EEPROM:
+        {
+            if (gameSaveLoadPath == NULL) return;
+            std::ifstream fileStream(gameSaveLoadPath);
+            file.SetContent(fileStream);
+            gameSaveLoadPath = NULL;
+            break;
+        }
+        case Nes::Api::User::File::SAVE_BATTERY:
+        case Nes::Api::User::File::SAVE_EEPROM:
+        {
+            if (gameSaveSavePath == NULL) return;
+            std::ofstream fileStream(gameSaveSavePath);
+            file.GetContent(fileStream);
+            gameSaveSavePath = NULL;
+            break;
+        }
+        default: break;
+    }
+}
 
 // --- NES Setup Functions ---
 void NES_Init() {
     std::cout << "[NESBridge] Initializing NES Core..." << std::endl;
-
+    
     emulator = std::make_unique<Nes::Api::Emulator>();
     machine = std::make_unique<Nes::Api::Machine>(*emulator);
     video = std::make_unique<Nes::Api::Video>(*emulator);
     audio = std::make_unique<Nes::Api::Sound>(*emulator);
     input = std::make_unique<Nes::Api::Input>(*emulator);
     cheats = std::make_unique<Nes::Api::Cheats>(*emulator);
-
+    
     // Assign callbacks
     Nes::Api::Video::Output::lockCallback.Set(videoLock, nullptr);
     Nes::Api::Video::Output::unlockCallback.Set(videoUnlock, nullptr);
     Nes::Api::Sound::Output::lockCallback.Set(audioLock, nullptr);
     Nes::Api::Sound::Output::unlockCallback.Set(audioUnlock, nullptr);
-
+    Nes::Api::User::fileIoCallback.Set(FileIO, nullptr);
+    
     isInitialized = true;
     std::cout << "[NESBridge] Initialization complete." << std::endl;
 }
@@ -111,27 +138,27 @@ bool NES_LoadROM(const char* romPath) {
         std::cerr << "[NESBridge] Error: NES Core not initialized!" << std::endl;
         return false;
     }
-
+    
     std::cout << "[NESBridge] Loading ROM: " << romPath << std::endl;
-
+    
     std::ifstream romFile(romPath, std::ios::in | std::ios::binary);
     if (!romFile.good()) {
         std::cerr << "[NESBridge] Error: Failed to open ROM file." << std::endl;
         return false;
     }
-
+    
     if (NES_FAILED(machine->Load(romFile, Nes::Api::Machine::FAVORED_NES_NTSC))) {
         std::cerr << "[NESBridge] Error: Failed to load ROM." << std::endl;
         return false;
     }
-
+    
     machine->SetMode(machine->GetDesiredMode());
-
+    
     // Configure video output - simplified setup
     video->EnableUnlimSprites(true);
     videoOutput.pixels = frameBuffer;
     videoOutput.pitch = NES_WIDTH * sizeof(uint16_t);
-
+    
     // Create a RenderState object to configure video rendering parameters
     Nes::Api::Video::RenderState renderState;
     renderState.filter = Nes::Api::Video::RenderState::FILTER_NONE;
@@ -141,28 +168,29 @@ bool NES_LoadROM(const char* romPath) {
     renderState.bits.mask.r = 0xF800;
     renderState.bits.mask.g = 0x07E0;
     renderState.bits.mask.b = 0x001F;
-
+    
     if (NES_FAILED(video->SetRenderState(renderState))) {
         std::cerr << "[NESBridge] Error: Failed to set render state." << std::endl;
         return false;
     }
-
+    gamePath = strdup(romPath);
+    
     // Configure audio with optimized buffer management
     audio->SetSampleRate(SAMPLE_RATE);
     audioOutput.samples[0] = audioBuffer;
-    audioOutput.length[0] = machine->GetMode() == Nes::Api::Machine::PAL ? 
-                           PAL_SAMPLES_PER_FRAME : NTSC_SAMPLES_PER_FRAME;
+    audioOutput.length[0] = machine->GetMode() == Nes::Api::Machine::PAL ?
+    PAL_SAMPLES_PER_FRAME : NTSC_SAMPLES_PER_FRAME;
     
     // Set to null and 0 if not using a circular buffer
     audioOutput.samples[1] = nullptr;
     audioOutput.length[1] = 0;
-
+    
     // Configure controller
     input->ConnectController(0, Nes::Api::Input::PAD1);
-
+    
     // Start emulation
     machine->Power(true);
-
+    gameLoaded = true;
     std::cout << "[NESBridge] ROM successfully loaded!" << std::endl;
     return true;
 }
@@ -172,6 +200,7 @@ void NES_Shutdown() {
     
     std::cout << "[NESBridge] Shutting down NES..." << std::endl;
     
+    
     machine->Unload();
     machine->Power(false);
     
@@ -179,6 +208,8 @@ void NES_Shutdown() {
     audioCallback = nullptr;
     
     isInitialized = false;
+    gameLoaded = false;
+    gamePath = NULL;
     
     std::cout << "[NESBridge] Shutdown complete." << std::endl;
 }
@@ -188,20 +219,23 @@ void NES_RunFrame() {
     emulator->Execute(&videoOutput, &audioOutput, &controllers);
 }
 
+
+
+
 bool NES_AddCheatCode(const char *cheatCode)
 {
     Nes::Api::Cheats::Code code;
-
+    
     if (NES_FAILED(Nes::Api::Cheats::GameGenieDecode(cheatCode, code)))
     {
         return false;
     }
-
+    
     if (NES_FAILED(cheats->SetCode(code)))
     {
         return false;
     }
-
+    
     return true;
 }
 
@@ -209,7 +243,7 @@ void NES_ResetCheats()
 {
     cheats->ClearCodes();
 }
-    
+
 
 
 // --- Input Management ---
@@ -257,37 +291,44 @@ void NESSaveGameSave(const char *gameSavePath)
     gameSaveSavePath = strdup(gameSavePath);
     
     std::string saveStatePath(gameSavePath);
-    saveStatePath += ".temp";
+    //    saveStatePath += ".temp";
     
     // Create tempoary save state.
     NESSaveSaveState(saveStatePath.c_str());
     
+    
+    // Consider the following later when supporting ingame save/load functionality.
+    
+    
     // Unload cartridge, which forces emulator to save game.
-    machine->Unload();
+    //    machine->Unload();
     
     // Check after machine.Unload but before restarting to make sure we aren't starting emulator when no game is loaded.
-    if (!gameLoaded)
-    {
-        return;
-    }
+    //    if (!gameLoaded)
+    //    {
+    //        return;
+    //    }
     
     // Restart emulation.
-//    NESStartEmulation(gamePath);
-    NES_LoadROM(gamePath);
+    //    NESStartEmulation(gamePath);
+    //    NES_LoadROM(gamePath);
     
     // Load previous save save.
-    NESLoadSaveState(saveStatePath.c_str());
+    //    NESLoadSaveState(saveStatePath.c_str());
     
     // Delete temporary save state.
-    remove(saveStatePath.c_str());
+    //    remove(saveStatePath.c_str());
 }
 
 void NESLoadGameSave(const char *gameSavePath)
 {
     gameSaveLoadPath = strdup(gameSavePath);
+    NESLoadSaveState(gameSaveLoadPath);
     
+    
+    // Consider this later when supporting ingame save/load functionality.
     // Restart emulation so FileIO callback is called.
-//    NESStartEmulation(gamePath);
-    NES_LoadROM(gamePath);
+    //    NES_LoadROM(gamePath);
+    
 }
 

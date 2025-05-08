@@ -16,6 +16,8 @@ import MetalKit
 class GBACore: ConsoleCore {
 
     
+
+    
     typealias FrameType = GBAFrame
     typealias ConsoleRendererType = GBARenderer
     typealias AudioMakerType = GBAAudioMaker
@@ -323,6 +325,14 @@ class GBACore: ConsoleCore {
         }
         ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 240, height: 160, to: url)
     }
-
+    
+    func saveGameState(to: URL)
+    {
+        print("todo")
+    }
+    func loadGameState(from: URL) {
+        print("todo")
+    }
+    
     
 }

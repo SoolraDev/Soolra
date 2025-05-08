@@ -40,5 +40,7 @@ public protocol ConsoleCore {
     func resetCheats()
     func setPlaybackRate(_ rate: Float)
     func captureScreenshot(to: URL)
+    func saveGameState(to: URL)
+    func loadGameState(from: URL)
 }
 
