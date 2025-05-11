@@ -12,8 +12,8 @@ import SwiftUI
 struct SaveStateView: View {
     @EnvironmentObject var manager: SaveStateManager
     @Environment(\.dismiss) var dismiss
-
     var consoleManager: ConsoleCoreManager
+    var pauseViewModel: PauseGameViewModel
     var mode: Mode
 
     enum Mode {
@@ -48,8 +48,11 @@ struct SaveStateView: View {
                         if mode == .loading {
                             Button("Load") {
                                 manager.load(state: state, into: consoleManager)
+                                dismiss()
+                                pauseViewModel.togglePause()
                             }
                         }
+                        
                     }
                 }
                 .onDelete { indexSet in

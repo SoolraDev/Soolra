@@ -9,7 +9,7 @@ import SwiftUI
 struct PauseGameView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @ObservedObject var pauseViewModel: PauseGameViewModel
-
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -20,35 +20,43 @@ struct PauseGameView: View {
                         themeManager: themeManager
                     )
                 }
-
+                
                 // Hidden NavigationLinks
                 NavigationLink(
-                    destination: CheatCodesView(consoleManager: pauseViewModel.consoleManager!)
+                    destination: CheatCodesView(
+                        consoleManager: pauseViewModel.consoleManager!
+                    )
                     .environmentObject(pauseViewModel.consoleManager!),
                     isActive: $pauseViewModel.showCheatCodesView
                 ) {
                     EmptyView()
                 }
                 NavigationLink(
-                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!, mode: .saving)
-                        .environmentObject(SaveStateManager.shared),
+                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
+                                               pauseViewModel: pauseViewModel,
+                                               mode: .saving)
+                    .environmentObject(SaveStateManager.shared),
                     isActive: $pauseViewModel.showSaveStateView
                 ) {
                     EmptyView()
                 }
-
+                
                 NavigationLink(
-                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!, mode: .loading)
-                        .environmentObject(SaveStateManager.shared),
+                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
+                                               pauseViewModel: pauseViewModel,
+                                               mode: .loading)
+                    .environmentObject(SaveStateManager.shared),
                     isActive: $pauseViewModel.showLoadStateView
                 ) {
                     EmptyView()
                 }
-
+                
             }
             .navigationBarHidden(true)
         }
-        .navigationViewStyle(StackNavigationViewStyle()) // For iPhone-style navigation
+        .navigationViewStyle(
+            StackNavigationViewStyle()
+        ) // For iPhone-style navigation
     }
 }
 
@@ -74,17 +82,24 @@ private struct PauseMenuContent: View {
                 .foregroundColor(themeManager.whitetextColor)
                 .padding(.bottom, 30)
             
-            ForEach(Array(pauseViewModel.menuItems.enumerated()), id: \.element.id) { index, item in
+            ForEach(
+                Array(pauseViewModel.menuItems.enumerated()),
+                id: \.element.id
+            ) {
+                index,
+                item in
                 // 1️⃣ Compute once, outside of the view modifiers
                 let fgColor = item.isExit
-                    ? Color(red: 209/255, green: 31/255, blue: 38/255)
-                    : themeManager.whitetextColor
+                ? Color(red: 209/255, green: 31/255, blue: 38/255)
+                : themeManager.whitetextColor
                 let isSelected = pauseViewModel.selectedMenuIndex == index
-
+                
                 Button(action: { handleMenuAction(index) }) {
                     Text(item.title)
                         .font(.custom("Orbitron-Bold", size: 18))
-                        .foregroundColor(fgColor)                // 2️⃣ Apply here
+                        .foregroundColor(
+                            fgColor
+                        )                // 2️⃣ Apply here
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(
@@ -94,16 +109,20 @@ private struct PauseMenuContent: View {
                                     Capsule()
                                         .stroke(isSelected
                                                 ? Color.white
-                                                : themeManager.keyBorderColor.opacity(0.8),
+                                                : themeManager.keyBorderColor
+                                            .opacity(0.8),
                                                 lineWidth: isSelected ? 3 : 2
-                                        )
+                                               )
                                         .shadow(color: themeManager.keyShadowColor,
                                                 radius: 4, x: 0, y: 2)
                                 )
                         )
                         .scaleEffect(isSelected ? 1.05 : 1.0)
                 }
-                .animation(.easeInOut(duration: 0.2), value: pauseViewModel.selectedMenuIndex)
+                .animation(
+                    .easeInOut(duration: 0.2),
+                    value: pauseViewModel.selectedMenuIndex
+                )
             }
         }
         .padding(40)
@@ -128,14 +147,16 @@ private struct PauseMenuContent: View {
         case .fastForward(_):
             pauseViewModel.isFastForwardEnabled.toggle()
             pauseViewModel.consoleManager?.toggleFastForward()
-            pauseViewModel.menuItems[index] = .fastForward(pauseViewModel.isFastForwardEnabled)
+            pauseViewModel
+                .menuItems[index] =
+                .fastForward(pauseViewModel.isFastForwardEnabled)
         case .saveState:
             pauseViewModel.showSaveStateView = true
         case .loadState:
             pauseViewModel.showLoadStateView = true
         }
     }
-
+    
 }
 
 // Main content view combining background and menu
@@ -177,8 +198,17 @@ private struct MenuButton: View {
                         .fill(themeManager.keyBackgroundColor)
                         .overlay(
                             Capsule()
-                                .stroke(isSelected ? Color.white : themeManager.keyBorderColor.opacity(0.8), lineWidth: isSelected ? 3 : 2)
-                                .shadow(color: themeManager.keyShadowColor, radius: 4, x: 0, y: 2)
+                                .stroke(
+                                    isSelected ? Color.white : themeManager.keyBorderColor
+                                        .opacity(0.8),
+                                    lineWidth: isSelected ? 3 : 2
+                                )
+                                .shadow(
+                                    color: themeManager.keyShadowColor,
+                                    radius: 4,
+                                    x: 0,
+                                    y: 2
+                                )
                         )
                 )
                 .scaleEffect(isSelected ? 1.05 : 1.0)

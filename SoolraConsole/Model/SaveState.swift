@@ -77,6 +77,7 @@ class SaveStateManager: ObservableObject {
         emulator.loadState(from: url)
     }
 
+
     func delete(state: SaveState) {
         let fileManager = FileManager.default
         try? fileManager.removeItem(at: savesDirectory.appendingPathComponent(state.saveFileName))
