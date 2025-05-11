@@ -94,6 +94,15 @@ class SaveStateManager: ObservableObject {
     func states(for gameName: String) -> [SaveState] {
         saveStates.filter { $0.gameName == gameName }
     }
+    
+    func rename(state: SaveState, to newName: String) {
+        if let index = saveStates.firstIndex(where: { $0.id == state.id }) {
+            saveStates[index].name = newName
+            persist()
+        }
+    }
+
+    
 
 }
 
