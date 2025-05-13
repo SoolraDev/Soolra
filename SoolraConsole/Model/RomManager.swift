@@ -334,9 +334,6 @@ class RomManager {
         UserDefaults.standard.deletedDefaultRoms.removeAll()
     }
     
-//    func shouldLoadDefaultRomsOnStartup() -> Bool {
-//        return UserDefaults.standard.numOfdefaultRomsInBundle > UserDefaults.standard.deletedDefaultRoms.count
-//    }
 }
 
 extension UserDefaults {

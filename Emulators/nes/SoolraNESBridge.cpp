@@ -55,8 +55,7 @@ NESBufferCallback videoCallback;
 NESBufferCallback audioCallback;
 
 // Save / Load game
-char *gameSaveSavePath = NULL;
-char *gameSaveLoadPath = NULL;
+static char *batterySavePath = NULL;
 bool gameLoaded = false;
 char *gamePath = NULL;
 
@@ -92,22 +91,27 @@ static void NST_CALLBACK FileIO(void *context, Nes::Api::User::File& file)
         case Nes::Api::User::File::LOAD_BATTERY:
         case Nes::Api::User::File::LOAD_EEPROM:
         {
-            if (gameSaveLoadPath == NULL) return;
-            std::ifstream fileStream(gameSaveLoadPath);
-            file.SetContent(fileStream);
-            gameSaveLoadPath = NULL;
+            if (batterySavePath != nullptr)
+            {
+                std::ifstream fileStream(batterySavePath, std::ios::binary);
+                file.SetContent(fileStream);
+            }
             break;
         }
+
         case Nes::Api::User::File::SAVE_BATTERY:
         case Nes::Api::User::File::SAVE_EEPROM:
         {
-            if (gameSaveSavePath == NULL) return;
-            std::ofstream fileStream(gameSaveSavePath);
-            file.GetContent(fileStream);
-            gameSaveSavePath = NULL;
+            if (batterySavePath != nullptr)
+            {
+                std::ofstream fileStream(batterySavePath, std::ios::binary);
+                file.GetContent(fileStream);
+            }
             break;
         }
-        default: break;
+
+        default:
+            break;
     }
 }
 
@@ -274,13 +278,15 @@ void NES_SetAudioCallback(NESBufferCallback callback) {
 
 void NESSaveSaveState(const char *saveStateFilepath)
 {
-    std::ofstream fileStream(saveStateFilepath, std::ifstream::out | std::ifstream::binary);
+    // Pure save-state API, completely independent from FileIO/battery:
+    std::ofstream fileStream(saveStateFilepath, std::ios::binary);
     machine->SaveState(fileStream);
 }
 
 void NESLoadSaveState(const char *saveStateFilepath)
 {
-    std::ifstream fileStream(saveStateFilepath, std::ifstream::in | std::ifstream::binary);
+    // Pure load-state API, completely independent from FileIO/battery:
+    std::ifstream fileStream(saveStateFilepath, std::ios::binary);
     machine->LoadState(fileStream);
 }
 
@@ -288,7 +294,6 @@ void NESLoadSaveState(const char *saveStateFilepath)
 
 void NESSaveGameSave(const char *gameSavePath)
 {
-    gameSaveSavePath = strdup(gameSavePath);
     
     std::string saveStatePath(gameSavePath);
     //    saveStatePath += ".temp";
@@ -322,8 +327,7 @@ void NESSaveGameSave(const char *gameSavePath)
 
 void NESLoadGameSave(const char *gameSavePath)
 {
-    gameSaveLoadPath = strdup(gameSavePath);
-    NESLoadSaveState(gameSaveLoadPath);
+    NESLoadSaveState(gameSavePath);
     
     
     // Consider this later when supporting ingame save/load functionality.
@@ -331,4 +335,7 @@ void NESLoadGameSave(const char *gameSavePath)
     //    NES_LoadROM(gamePath);
     
 }
-
+void NES_SetBatterySavePath(const char* path) {
+    free(batterySavePath);
+    batterySavePath = strdup(path);
+}

@@ -113,7 +113,7 @@ class NESBridge: NSObject {
             guard let path = path else { return }
             _ = NES_LoadROM(path)
         }
-
+        
         print("✅ Game loaded successfully")
     }
     
@@ -172,6 +172,12 @@ class NESBridge: NSObject {
     func saveGameSave(to url: URL)
     {
         url.withUnsafeFileSystemRepresentation { NESSaveGameSave($0!) }
+
+    }
+    
+    func setAutosavePath(to url: URL)
+    {
+        url.withUnsafeFileSystemRepresentation { NES_SetBatterySavePath($0!) }
 
     }
 }

@@ -68,11 +68,27 @@ class NESCore: ConsoleCore {
     }
     
     func initialize(withROM romPath: URL) throws {
-        print("🔄 initializing NESCore with new ROM...")
+        print("🔄 Initializing NESCore with new ROM...")
+        configureAutosave(for: romPath)
         bridge?.start(withGameURL: romPath)
         _audioMaker?.play()
+
         print("✅ NESCore initialization complete")
     }
+
+    private func configureAutosave(for romPath: URL) {
+        let fileManager = FileManager.default
+        guard let cachesDir = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first else {
+            print("❌ Failed to access caches directory")
+            return
+        }
+
+        let safeName = romPath.deletingPathExtension().lastPathComponent
+        let autosaveFile = "autosave_\(safeName).svs"
+        let autosavePath = cachesDir.appendingPathComponent(autosaveFile)
+        bridge?.setAutosavePath(to: autosavePath)
+    }
+
     
     func performFrame() -> NESFrame {
         guard !isPaused else {
@@ -209,6 +225,7 @@ class NESCore: ConsoleCore {
         }
         ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 256, height: 240, to: url)
     }
+    
     func loadGameState(from: URL) {
         bridge?.loadSaveState(from: from)
     }

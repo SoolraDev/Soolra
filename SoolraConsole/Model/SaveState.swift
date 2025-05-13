@@ -29,33 +29,34 @@ import UIKit
 
 class SaveStateManager: ObservableObject {
     static let shared = SaveStateManager()
-
+    
     private let metadataURL: URL
     private let savesDirectory: URL
-
+    
     @Published private(set) var saveStates: [SaveState] = []
-
+    
     private init() {
         let fileManager = FileManager.default
         let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         savesDirectory = documents.appendingPathComponent("SaveStates")
         metadataURL = savesDirectory.appendingPathComponent("metadata.json")
-
+        
         try? fileManager.createDirectory(at: savesDirectory, withIntermediateDirectories: true)
         loadSaveStates()
     }
-
+    
     func loadSaveStates() {
         guard let data = try? Data(contentsOf: metadataURL) else { return }
         guard let decoded = try? JSONDecoder().decode([SaveState].self, from: data) else { return }
         saveStates = decoded.sorted { $0.date > $1.date }
     }
-
+    
     func persist() {
         let data = try? JSONEncoder().encode(saveStates)
         try? data?.write(to: metadataURL)
     }
 
+    
     func saveNewState(from emulator: ConsoleCoreManager, name: String?) {
         let id = UUID()
         let svsFile = "\(id).svs"
