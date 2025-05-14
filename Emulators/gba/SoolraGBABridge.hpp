@@ -77,7 +77,9 @@ void GBAResetCheats();
 
 // Save and Load game states
 void GBASaveState(const char* path);
+void GBASaveGameSave(const char* path);
 void GBALoadState(const char* path);
+void GBALoadGameSave(const char* path);
 
 #if defined(__cplusplus)
 }

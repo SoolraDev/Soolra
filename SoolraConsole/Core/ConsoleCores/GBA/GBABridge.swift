@@ -211,17 +211,33 @@ class GBABridge: NSObject {
         GBAResetCheats();
     }
     
-    func loadSaveState(from url: URL)
+    func loadGameState(from url: URL)
     {
         if let path = url.path.cString(using: .utf8) {
             GBALoadState(path)
         }
     }
     
-    func saveGameSave(to url: URL)
+    func saveGameState(to url: URL)
     {
         if let path = url.path.cString(using: .utf8) {
             GBASaveState(path)
+        }
+
+    }
+    
+    func loadAutosave(from url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBALoadGameSave(path)
+        }
+
+    }
+    
+    func saveAutosave(to url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBASaveGameSave(path)
         }
 
     }

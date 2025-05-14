@@ -43,11 +43,11 @@ class NESCore: ConsoleCore {
     private var bridge: NESBridge?
     private var isPaused: Bool = false
     private var _audioMaker: NESAudioMaker?
-    
     public var audioMaker: NESAudioMaker? { return _audioMaker }
+    public var autosavePath: URL
     
     // MARK: - Required Protocol Methods
-    required init(romPath: URL) throws {
+    required init(romPath: URL, autosavePath: URL) throws {
         print("📝 Loading initial ROM from path: \(romPath.path)")
         
         // Verify ROM file
@@ -62,31 +62,18 @@ class NESCore: ConsoleCore {
         
         // Initialize bridge with our buffers
         bridge = NESBridge(videoBuffer: videoBuffer, audioBuffer: audioBuffer)
-        
+        self.autosavePath = autosavePath
         // Start emulation
         try initialize(withROM: romPath)
     }
     
     func initialize(withROM romPath: URL) throws {
         print("🔄 Initializing NESCore with new ROM...")
-        configureAutosave(for: romPath)
+        bridge?.setAutosavePath(to: autosavePath)
         bridge?.start(withGameURL: romPath)
         _audioMaker?.play()
 
         print("✅ NESCore initialization complete")
-    }
-
-    private func configureAutosave(for romPath: URL) {
-        let fileManager = FileManager.default
-        guard let cachesDir = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first else {
-            print("❌ Failed to access caches directory")
-            return
-        }
-
-        let safeName = romPath.deletingPathExtension().lastPathComponent
-        let autosaveFile = "autosave_\(safeName).svs"
-        let autosavePath = cachesDir.appendingPathComponent(autosaveFile)
-        bridge?.setAutosavePath(to: autosavePath)
     }
 
     

@@ -36,6 +36,7 @@ class GBACore: ConsoleCore {
     private var startTime: TimeInterval = Date().timeIntervalSinceReferenceDate
     private var frameTimer: AnyCancellable?
     public var bridge: GBABridge?
+    public var autosavePath: URL
     
     // Add state tracking
     private var isCleaningUp = false
@@ -72,7 +73,7 @@ class GBACore: ConsoleCore {
     private var firstFrame = false;
     
     // Required initializer
-    required init(romPath: URL) throws {
+    required init(romPath: URL, autosavePath: URL) throws {
         print("📝 Loading initial ROM from path: \(romPath.path)")
         
         // Verify the file exists and is readable
@@ -89,7 +90,7 @@ class GBACore: ConsoleCore {
         startTime = Date().timeIntervalSinceReferenceDate
         lastFrameTime = startTime
         frameCount = 0
-        
+        self.autosavePath = autosavePath
         // Initialize with first ROM
         try initialize(withROM: romPath)
     }
@@ -126,6 +127,7 @@ class GBACore: ConsoleCore {
     }
     
     func pause() {
+        self.autoSave()
         isPaused = true
         audioMaker?.pause()
         renderer?.pause()
@@ -139,6 +141,7 @@ class GBACore: ConsoleCore {
     
     func shutdown() {
         print("🛑 Shutting down GBA Core")
+        self.autoSave()
         frameTimer?.cancel()
         audioMaker?.stop()
         bridge?.stop()
@@ -163,6 +166,7 @@ class GBACore: ConsoleCore {
         
         // Start the bridge with new ROM
         bridge?.start(withGameURL: romPath)
+        self.loadAutoSave()
         
         // Start audio playback if available
         _audioMaker?.play()
@@ -327,13 +331,24 @@ class GBACore: ConsoleCore {
     }
     
     func loadGameState(from: URL) {
-        bridge?.loadSaveState(from: from)
+        bridge?.loadGameState(from: from)
     }
     
     func saveGameState(to: URL)
     {
-        bridge?.saveGameSave(to: to)
+        bridge?.saveGameState(to: to)
     }
+    
+    func autoSave()
+    {
+        bridge?.saveAutosave(to: self.autosavePath)
+    }
+    
+    func loadAutoSave()
+    {
+        bridge?.loadAutosave(from: self.autosavePath)
+    }
+    
     
     
 }

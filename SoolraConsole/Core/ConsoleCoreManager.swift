@@ -170,11 +170,12 @@ public class ConsoleCoreManager: ObservableObject {
                 self.loadingMessage = ""
             }
         }
+        let autosavePath = self.configureAutosave(for:romPath)
         
         // Create appropriate core
         switch type {
         case .nes:
-            let core = try NESCore(romPath: romPath)
+            let core = try NESCore(romPath: romPath, autosavePath: autosavePath)
             await MainActor.run {
                 core.initializeAudio(audioMaker: sharedNESAudioMaker)
             }
@@ -183,7 +184,7 @@ public class ConsoleCoreManager: ObservableObject {
                 self.isGameRunning = true
             }
         case .gba:
-            let core = try GBACore(romPath: romPath)
+            let core = try GBACore(romPath: romPath, autosavePath: autosavePath)
             await MainActor.run {
                 core.initializeAudio(audioMaker: sharedGBAAudioMaker)
             }
@@ -193,6 +194,7 @@ public class ConsoleCoreManager: ObservableObject {
             }
         }
         
+    
         // Initialize on main thread
         await MainActor.run {
             updateState { state in
@@ -207,6 +209,21 @@ public class ConsoleCoreManager: ObservableObject {
         setMaxFastForwardSpeed(type: type)
         print("✅ Console loaded successfully")
     }
+    
+    private func configureAutosave(for romPath: URL) -> URL {
+        let fileManager = FileManager.default
+
+        // Try to get a real caches directory
+        let cachesDir = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first
+            ?? fileManager.temporaryDirectory  // Fallback to temp dir if needed
+
+        let safeName = romPath.deletingPathExtension().lastPathComponent
+        let autosaveFile = "autosave_\(safeName).svs"
+        let autosavePath = cachesDir.appendingPathComponent(autosaveFile)
+
+        return autosavePath
+    }
+
     
     public func shutdown() async {
         print("🛑 Starting shutdown sequence...")
