@@ -283,6 +283,9 @@ struct SoolraApp: App {
                     .environmentObject(metalManager)
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
+                        Analytics.logEvent("app_loaded", parameters: [
+                            "timestamp": Date().timeIntervalSince1970
+                        ])
                     }
             }
         }

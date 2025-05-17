@@ -51,6 +51,7 @@ public class ConsoleCoreManager: ObservableObject {
     @Published var shouldShowPauseMenu = false
     @Published public private(set) var isGameRunning: Bool = false
     @Published var cheatCodesManager: CheatCodesManager?
+
     var maxFastForwardSpeed: Float = 1
     var currentFastForwardSpeed: Float = 1
     var gameName: String
@@ -207,6 +208,7 @@ public class ConsoleCoreManager: ObservableObject {
         // Power up the core before starting emulation
         currentCore?.powerUp()
         setMaxFastForwardSpeed(type: type)
+
         print("✅ Console loaded successfully")
     }
     

@@ -8,6 +8,7 @@ import Foundation
 import CoreData
 import ZIPFoundation
 import UIKit
+import FirebaseAnalytics
 
 class RomManager {
     private let context: NSManagedObjectContext
@@ -85,6 +86,10 @@ class RomManager {
         
         try FileManager.default.copyItem(at: url, to: destinationURL)
         await createRomEntity(name: romName, url: destinationURL)
+        Analytics.logEvent("rom_added", parameters: [
+                        "rom_name": romName,
+                        "timestamp": Date().timeIntervalSince1970
+                    ])
     }
 
     private func handleZipFile(_ url: URL) async throws {
@@ -125,6 +130,10 @@ class RomManager {
             do {
                 try FileManager.default.moveItem(at: tempRomUrl, to: destinationURL)
                 await createRomEntity(name: romName, url: destinationURL)
+                Analytics.logEvent("rom_added", parameters: [
+                                "rom_name": romName,
+                                "timestamp": Date().timeIntervalSince1970
+                            ])
             } catch {
                 print("Error moving ROM file \(romName): \(error.localizedDescription)")
             }

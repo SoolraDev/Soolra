@@ -41,6 +41,7 @@
 		928FA3592DD8B09900F3C848 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 928FA3582DD8B09900F3C848 /* FirebaseCrashlytics */; };
 		928FA35B2DD8B09900F3C848 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 928FA35A2DD8B09900F3C848 /* FirebasePerformance */; };
 		928FA35D2DD8B09900F3C848 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 928FA35C2DD8B09900F3C848 /* FirebaseRemoteConfig */; };
+		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
 		9D123D052CD007EE007508A8 /* D-DINCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */; };
@@ -80,6 +81,7 @@
 		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
 		9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed.ttf"; sourceTree = "<group>"; };
 		9D123D022CD0046B007508A8 /* Ebrima.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ebrima.ttf; sourceTree = "<group>"; };
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 		183DF1D32862E1780088FE1C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */,
 				4CEF41C72D21A4670068BC5B /* RomManager.swift */,
 				187ABE9D28642FF000372297 /* ButtonKey.swift */,
 				92678D802DAA76F5001CEDD6 /* Cheat.swift */,
@@ -355,6 +358,7 @@
 				18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */,
 				186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */,
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
+				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
 				928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */,
 				183DF16E2862C99E0088FE1C /* SoolraApp.swift in Sources */,

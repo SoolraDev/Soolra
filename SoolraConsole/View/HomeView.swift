@@ -46,6 +46,7 @@ struct HomeView: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
     
     @StateObject private var viewModel = HomeViewModel.shared
+    @StateObject private var engagementTracker = EngagementTracker()
     @State private var isEditMode: EditMode = .inactive
     @State private var isSettingsPresented: Bool = false
     @State private var currentView: CurrentView = .grid
@@ -53,9 +54,9 @@ struct HomeView: View {
     @State private var isLoading: Bool = false
     @StateObject private var controllerViewModel = ControllerViewModel()
     @State private var isLoadingGame: Bool = false
-
+    
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
-
+    
     var backgroundImage: UIImage? {
         if viewModel.focusedButtonIndex >= 4,
            let rom = roms[safe: viewModel.focusedButtonIndex - 4],
@@ -65,19 +66,19 @@ struct HomeView: View {
         }
         return nil
     }
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             Color(red: 41 / 255, green: 3 / 255, blue: 135 / 255)
                 .edgesIgnoringSafeArea(.all)
-                        
+            
             switch currentView {
             case .grid, .gameDetail:  // Handle both grid and gameDetail the same way
                 GeometryReader { geometry in
                     let safeAreaBottom = geometry.safeAreaInsets.bottom
                     let safeAreaTop = geometry.safeAreaInsets.top
                     let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
-
+                    
                     ZStack {
                         if let bgImage = backgroundImage {
                             Image(uiImage: bgImage)
@@ -119,17 +120,17 @@ struct HomeView: View {
                         )
                         .sheet(isPresented: $viewModel.isPresented) {
                             DocumentPicker { url in
-                  
+                                
                                 // Use RomManager to handle adding the ROM
-                                 Task {
-                                     isLoading = true
-                                     await dataController.romManager.addRom( url: url)
-                                     withAnimation {
-                                         roms = dataController.romManager.fetchRoms()
-                                         isLoading = false
-                                     }
-                                 }
-
+                                Task {
+                                    isLoading = true
+                                    await dataController.romManager.addRom( url: url)
+                                    withAnimation {
+                                        roms = dataController.romManager.fetchRoms()
+                                        isLoading = false
+                                    }
+                                }
+                                
                             }
                             .font(.custom("Orbitron-Black", size: 24))
                         }
@@ -142,7 +143,7 @@ struct HomeView: View {
                         }
                         TitleSortingView(titleText: "All Games", sortingText: "A-Z")
                             .padding(.top, 10)
-
+                        
                         if roms.isEmpty {
                             emptyView
                         } else {
@@ -156,8 +157,8 @@ struct HomeView: View {
                         // padding to make the controller expand more
                         // TODO: change this per iPhone model.
                         // hard to keep consistent with gameview
-                            .frame(width: geometry.size.width, height: totalHeight * 0.48)
-                            .edgesIgnoringSafeArea(.bottom)
+                        .frame(width: geometry.size.width, height: totalHeight * 0.48)
+                        .edgesIgnoringSafeArea(.bottom)
                     }
                     .edgesIgnoringSafeArea(.all)
                     .preferredColorScheme(.dark)
@@ -174,13 +175,13 @@ struct HomeView: View {
                     // Dimmed background
                     Color.black.opacity(0.3)
                         .edgesIgnoringSafeArea(.all) // Optional: If you want to dim the screen
-
+                    
                     // Spinner overlay
                     VStack(spacing: 15) {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .white)) // Adjust spinner color
                             .scaleEffect(1.5) // Adjust size
-
+                        
                         Text("Loading...")
                             .foregroundColor(.white) // Match text color to spinner
                             .font(.headline) // Adjust font style
@@ -192,19 +193,13 @@ struct HomeView: View {
                 }
                 .zIndex(1000) // Ensure it stays on top
             }
-
+            
             
         }
         .onAppear {
-//            Task {
-//                isLoading = true
-//                await dataController.romManager.initBundledRoms()
-//                await MainActor.run {
-                    roms = dataController.romManager.fetchRoms()
-                    viewModel.updateRomCount(roms.count)
-//                    isLoading = false
-//                }
-//            }
+            roms = dataController.romManager.fetchRoms()
+            viewModel.updateRomCount(roms.count)
+            engagementTracker.startTracking()
         }
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
@@ -242,7 +237,7 @@ struct HomeView: View {
         }
         .environmentObject(controllerViewModel)
     }
-
+    
     private func loadDefaultRoms() {
         Task {
             isLoading = true
@@ -261,10 +256,10 @@ struct HomeView: View {
         let focusedButtonIndex = viewModel.focusedButtonIndex
         if focusedButtonIndex == 1 {
             isSettingsPresented = true
-
+            
         } else if focusedButtonIndex == 2 {
             viewModel.isPresented = true
-
+            
         } else if focusedButtonIndex == 3 {
             viewModel.isPresented.toggle()
         } else {
@@ -275,10 +270,10 @@ struct HomeView: View {
             }
         }
     }
-
+    
     // MARK: - Subviews
-
-        
+    
+    
     private var emptyView: some View {
         VStack {
             Spacer()
@@ -288,12 +283,12 @@ struct HomeView: View {
                 loadDefaultRoms()
             }
             .font(.custom("Orbitron-SemiBold", size: 24))
-                .buttonStyle(.borderedProminent)
-                .foregroundColor(.white)
-                .background(Color.purple)
-                Spacer()
-                Spacer()
-                Spacer()
+            .buttonStyle(.borderedProminent)
+            .foregroundColor(.white)
+            .background(Color.purple)
+            Spacer()
+            Spacer()
+            Spacer()
             
             Button("Upload games") {
                 viewModel.isPresented.toggle()
@@ -307,7 +302,7 @@ struct HomeView: View {
         .padding()
         .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
     }
-
+    
     private var romGridView: some View {
         ScrollViewReader { scrollProxy in
             ScrollView {
@@ -325,7 +320,7 @@ struct HomeView: View {
                             romIcon(for: rom, index: index + 4)
                         }
                         .id(index + 4)  // Add id for scrolling
-
+                        
                         if isEditMode == .active {
                             Button(action: {
                                 withAnimation {
@@ -352,15 +347,15 @@ struct HomeView: View {
             }
         }
     }
-
+    
     // MARK: - Helper Functions
-
+    
     private func navigateToRom(_ rom: Rom) {
         Task {
             do {
                 // Create console manager and load ROM and init cheat manager
                 let consoleManager = try ConsoleCoreManager(metalManager: metalManager, gameName: rom.name ?? "none")
-
+                
                 // Load everything before transitioning view
                 let gameData = try await loadRom(rom: rom, consoleManager: consoleManager)
                 
@@ -369,15 +364,16 @@ struct HomeView: View {
                 // Once everything is ready, update the view
                 await MainActor.run {
                     //withAnimation(.easeInOut(duration: 0.3)) {
-                        self.currentView = .game(gameData)
+                    self.currentView = .game(gameData)
                     //}
                 }
+                engagementTracker.setCurrentRom(rom.name ?? "none")
             } catch {
                 print("Failed to load console: \(error)")
             }
         }
     }
-
+    
     private func romIcon(for rom: Rom, index: Int) -> some View {
         VStack {
             if let imageData = rom.imageData, let uiImage = UIImage(data: imageData) {
@@ -392,14 +388,14 @@ struct HomeView: View {
                                 .stroke(viewModel.focusedButtonIndex == index ? Color.white : Color.clear, lineWidth: 4)
                                 .padding(1)
                         )
-
+                    
                     Text(rom.name ?? "Unknown")
                         .font(.custom("Ebrima", size: 13))
                         .foregroundColor(.primary)
                         .lineLimit(1)
                 }
                 .frame(width: 88)
-
+                
             } else {
                 VStack(spacing: 3) {
                     Image(systemName: "gamecontroller.fill")
@@ -411,44 +407,44 @@ struct HomeView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(Color.white, lineWidth: 1)
                         )
-
+                    
                     Text(rom.name ?? "Unknown")
                         .font(.custom("Ebrima", size: 13))
                         .foregroundColor(.primary)
                         .lineLimit(1)
                 }
                 .frame(width: 88)
-
+                
             }
         }
         .cornerRadius(8)
         .shadow(radius: 4)
         .contentShape(Rectangle())
     }
-
+    
     private func addRomIcon() -> some View {
         VStack(spacing: 3) {
-                Image("home-new-item-big")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 88, height: 70)
-                    .cornerRadius(8)
-                    .clipped()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.focusedButtonIndex == 3 ? Color.white : Color.clear, lineWidth: 4)
-                            .padding(1)
-                    )
-
-                Text("Upload games")
-                    .font(.custom("Ebrima", size: 13))
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
-            }
-            .frame(width: 88)
+            Image("home-new-item-big")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 88, height: 70)
+                .cornerRadius(8)
+                .clipped()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(viewModel.focusedButtonIndex == 3 ? Color.white : Color.clear, lineWidth: 4)
+                        .padding(1)
+                )
+            
+            Text("Upload games")
+                .font(.custom("Ebrima", size: 13))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+        }
+        .frame(width: 88)
     }
     
-
+    
     private func loadRom(rom: Rom, consoleManager: ConsoleCoreManager) async throws -> GameViewData {
         guard let url = rom.url else {
             throw NSError(domain: "Invalid URL", code: -1, userInfo: nil)
@@ -470,7 +466,7 @@ struct HomeView: View {
         
         // Create pause view model with console manager
         let pauseViewModel = PauseGameViewModel(consoleManager: consoleManager, currentRom: rom)
-
+        
         // Set up exit action after view is fully initialized
         pauseViewModel.setExitAction {
             // Return the task so we can await it
@@ -480,7 +476,7 @@ struct HomeView: View {
                     await consoleManager.shutdown()
                     
                     // Wait a bit for any in-flight frames to complete
-                   // try await Task.sleep(nanoseconds: 1_000_000_000) // 1second
+                    // try await Task.sleep(nanoseconds: 1_000_000_000) // 1second
                     
                     // Then navigate away
                     currentView = .grid
@@ -499,13 +495,13 @@ struct HomeView: View {
             pauseViewModel: pauseViewModel
         )
     }
-
+    
     struct BlinkingFocusedButton<Content: View>: View {
         @Binding var selectedIndex: Int
         let index: Int
         let action: () -> Void
         let content: () -> Content
-
+        
         var body: some View {
             Button(action: {
                 action()
@@ -521,14 +517,14 @@ struct HomeView: View {
             .buttonStyle(PlainButtonStyle())
         }
     }
-
+    
     struct HomeNavigationView: View {
         @Binding var isSettingsPresented: Bool
         var onSettingsButtonTap: () -> Void
         @Binding var focusedButtonIndex: Int
         let dataController: CoreDataController
         let viewModel: HomeViewModel
-
+        
         var body: some View {
             VStack {
                 HStack {
@@ -539,13 +535,13 @@ struct HomeView: View {
                             .frame(width: 27, height: 27)
                             .padding()
                     })
-
+                    
                     ZStack(alignment: .trailing) {
                         RoundedRectangle(cornerRadius: 14)
                             .fill(Color.white)
                             .opacity(0.5)
                             .frame(height: 27)
-
+                        
                         Image("home-search-bold")
                             .resizable()
                             .foregroundColor(.white)
@@ -554,10 +550,10 @@ struct HomeView: View {
                             .padding(.trailing, 10)
                     }
                     .frame(maxWidth: .infinity)
-
+                    
                     BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 1, action: {
                         onSettingsButtonTap()
-
+                        
                     }, content: {
                         Image("home-settings-icon")
                             .resizable()
@@ -579,7 +575,7 @@ struct HomeView: View {
             }
         }
     }
-
+    
     struct CurrentItemView: View {
         var currentRom: Rom?
         @Binding var currentView: CurrentView
@@ -603,14 +599,14 @@ struct HomeView: View {
                                 .frame(width: 134, height: 120)
                         }
                     }
-
+                    
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(focusedButtonIndex == 2 ? Color.white : Color.clear, lineWidth: 3)
                             .padding(1)
                     )
                 }
-
+                
                 Text(currentRom?.name ?? "Add Game")
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.white)
@@ -630,7 +626,7 @@ struct HomeView: View {
 struct TitleSortingView: View {
     let titleText: String
     let sortingText: String
-
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -638,14 +634,14 @@ struct TitleSortingView: View {
                     .font(.custom("DINCondensed-Regular", size: 20))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 Text(sortingText)
                     .font(.custom("DINCondensed-Regular", size: 20))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.horizontal)
-
+            
             Rectangle()
                 .fill(Color.white)
                 .frame(height: 1)
@@ -658,7 +654,7 @@ struct CustomImageView: View {
     let image: Image
     let width: Double
     let height: Double
-
+    
     var body: some View {
         ZStack {
             image
