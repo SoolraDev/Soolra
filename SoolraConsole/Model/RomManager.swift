@@ -12,9 +12,11 @@ import FirebaseAnalytics
 
 class RomManager {
     private let context: NSManagedObjectContext
+    private let saveStateManager: SaveStateManager
         
-    init(context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext, saveStateManager: SaveStateManager) {
         self.context = context
+        self.saveStateManager = saveStateManager
         countDefaultRomsinBundleOnFirstLaunch()
     }
     
@@ -174,6 +176,7 @@ class RomManager {
                 try FileManager.default.removeItem(at: currentUrl)
                 print("Successfully deleted ROM file at: \(currentUrl.path)")
             }
+            saveStateManager.deleteAllStates(rom)
         } catch {
             print("Failed to delete ROM file: \(error.localizedDescription)")
         }

@@ -11,13 +11,13 @@ class CoreDataController: ObservableObject {
     let container = NSPersistentContainer(name: "Model")
     let romManager: RomManager
     
-    init() {
+    init(saveStateManager: SaveStateManager) {
         container.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("Unable to load persistent stores: \(error)")
             }
         }
-        self.romManager = RomManager(context: container.viewContext)
+        self.romManager = RomManager(context: container.viewContext, saveStateManager: saveStateManager)
     }
 
     static func isFirstLaunch() -> Bool {

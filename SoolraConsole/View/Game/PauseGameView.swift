@@ -34,8 +34,7 @@ struct PauseGameView: View {
                 NavigationLink(
                     destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
                                                pauseViewModel: pauseViewModel,
-                                               mode: .saving)
-                    .environmentObject(SaveStateManager.shared),
+                                               mode: .saving),
                     isActive: $pauseViewModel.showSaveStateView
                 ) {
                     EmptyView()
@@ -44,8 +43,7 @@ struct PauseGameView: View {
                 NavigationLink(
                     destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
                                                pauseViewModel: pauseViewModel,
-                                               mode: .loading)
-                    .environmentObject(SaveStateManager.shared),
+                                               mode: .loading),
                     isActive: $pauseViewModel.showLoadStateView
                 ) {
                     EmptyView()

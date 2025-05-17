@@ -38,6 +38,7 @@ struct SettingsView: View {
     @State private var selectedColor: Color = .purple
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var dataController: CoreDataController
+    @EnvironmentObject var saveStateManager: SaveStateManager
     @StateObject private var viewModel = SettingsViewModel()
     
     var body: some View {

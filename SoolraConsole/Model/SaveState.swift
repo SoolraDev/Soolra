@@ -117,6 +117,28 @@ class SaveStateManager: ObservableObject {
             persist()
         }
     }
+    
+    func deleteAllStates(_ rom: Rom) {
+        let fileManager = FileManager.default
+        let gameName = rom.name
+        // Filter states to delete
+        let statesToDelete = saveStates.filter { $0.gameName == gameName }
+
+        for state in statesToDelete {
+            let saveURL = savesDirectory.appendingPathComponent(state.saveFileName)
+            let thumbURL = savesDirectory.appendingPathComponent(state.thumbnailFileName)
+
+            try? fileManager.removeItem(at: saveURL)
+            try? fileManager.removeItem(at: thumbURL)
+        }
+
+        // Remove from memory and persist
+        saveStates.removeAll { $0.gameName == gameName }
+        persist()
+    }
+
+    
+    
 
     
 

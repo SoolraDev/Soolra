@@ -44,6 +44,7 @@ struct HomeView: View {
     @EnvironmentObject var metalManager: MetalManager
     @EnvironmentObject var dataController: CoreDataController
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @EnvironmentObject var saveStateManager: SaveStateManager
     
     @StateObject private var viewModel = HomeViewModel.shared
     @StateObject private var engagementTracker = EngagementTracker()

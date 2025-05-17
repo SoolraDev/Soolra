@@ -213,7 +213,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct SoolraApp: App {
     @StateObject private var themeManager = ThemeManager()
-    @StateObject private var dataController = CoreDataController()
+    @StateObject private var dataController = CoreDataController(saveStateManager: SaveStateManager.shared)
     @StateObject private var audioSessionManager = AudioSessionManager()
     @StateObject private var metalManager: MetalManager
     @StateObject private var consoleManager: ConsoleCoreManager
@@ -231,9 +231,7 @@ struct SoolraApp: App {
             
             // Initialize console manager with metal manager
             let console = try ConsoleCoreManager(metalManager: metal)
-            _consoleManager = StateObject(wrappedValue: console)
-            
-            
+            _consoleManager = StateObject(wrappedValue: console)            
         } catch {
             // If initialization fails, we need to provide default values
             // but we'll store the error to show it to the user
@@ -271,9 +269,6 @@ struct SoolraApp: App {
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
                         print("🚀 SplashView loading bundled ROMs")
-//                        Task {
-//                            await dataController.romManager.initBundledRoms()
-//                        }
                     }
             } else {
                 HomeView()
@@ -281,6 +276,7 @@ struct SoolraApp: App {
                     .environmentObject(dataController)
                     .environmentObject(consoleManager)
                     .environmentObject(metalManager)
+                    .environmentObject(SaveStateManager.shared)
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
                         Analytics.logEvent("app_loaded", parameters: [
