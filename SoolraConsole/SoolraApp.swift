@@ -6,6 +6,8 @@
 
 import AVFoundation
 import SwiftUI
+import FirebaseCore
+import FirebaseAnalytics
 
 public class AudioSessionManager: ObservableObject {
     private var audioSessionObserver: Any?
@@ -197,6 +199,17 @@ public class AudioSessionManager: ObservableObject {
     }
 }
 
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+
+    return true
+  }
+}
+
+
 @main
 struct SoolraApp: App {
     @StateObject private var themeManager = ThemeManager()
@@ -207,10 +220,12 @@ struct SoolraApp: App {
     @State private var isShowingSplash = true
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
     @State private var initializationError: Error?
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     init() {
         // Initialize Metal device first and handle potential errors
         do {
+
             let metal = try MetalManager()
             _metalManager = StateObject(wrappedValue: metal)
             
