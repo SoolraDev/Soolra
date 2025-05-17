@@ -50,13 +50,17 @@ struct SaveStateView: View {
 
               Spacer()
 
-              if mode == .loading {
-                Button("Load") {
-                  manager.load(state: state, into: consoleManager)
-                  dismiss()
-                  pauseViewModel.togglePause()
-                }
-              }
+                if mode == .loading {
+                        Button("Load") {
+                            manager.load(state: state, into: consoleManager)
+                            dismiss()
+                            pauseViewModel.togglePause()
+                        }
+                    } else if mode == .saving {
+                        Button("Overwrite") {
+                            manager.overwrite(state: state, with: consoleManager)
+                        }
+                    }
             }
             // 2️⃣ Now *attach* your swipe actions to that HStack
             .swipeActions(edge: .trailing) {

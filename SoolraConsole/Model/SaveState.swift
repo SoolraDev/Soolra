@@ -87,6 +87,21 @@ class SaveStateManager: ObservableObject {
         persist()
     }
 
+    func overwrite(state: SaveState, with emulator: ConsoleCoreManager) {
+        let saveURL = savesDirectory.appendingPathComponent(state.saveFileName)
+        let thumbURL = savesDirectory.appendingPathComponent(state.thumbnailFileName)
+
+        emulator.saveState(to: saveURL)
+        emulator.captureScreenshot(to: thumbURL)
+
+        if let index = saveStates.firstIndex(where: { $0.id == state.id }) {
+            saveStates[index].date = Date() // Update timestamp
+        }
+
+        persist()
+    }
+
+    
     func thumbnail(for state: SaveState) -> UIImage? {
         let url = savesDirectory.appendingPathComponent(state.thumbnailFileName)
         return UIImage(contentsOfFile: url.path)

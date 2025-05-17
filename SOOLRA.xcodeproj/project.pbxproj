@@ -189,11 +189,11 @@
 		183DF1D62862FBD10088FE1C /* View */ = {
 			isa = PBXGroup;
 			children = (
-				928FA3252DC0DC3400F3C848 /* SaveStateView.swift */,
 				4C0CD8CE2D54E72800B079B5 /* Game */,
 				4C0CD8BA2D54E71100B079B5 /* SoolraController */,
 				180A47A12866E4EA00A82F16 /* DocumentPicker.swift */,
 				18EBB74A2864A13A00903F43 /* HomeView.swift */,
+				928FA3252DC0DC3400F3C848 /* SaveStateView.swift */,
 				70838FDB2C6BC96500B7AE46 /* SplashView.swift */,
 				7032EDC02C76059400828A41 /* SettingsView.swift */,
 			);
@@ -497,7 +497,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.2;
+				MARKETING_VERSION = 5.7.3;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -547,7 +547,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.2;
+				MARKETING_VERSION = 5.7.3;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
