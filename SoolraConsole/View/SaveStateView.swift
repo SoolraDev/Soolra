@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SaveStateView: View {
     @EnvironmentObject var manager: SaveStateManager
+    @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) var dismiss
     var consoleManager: ConsoleCoreManager
     var pauseViewModel: PauseGameViewModel
@@ -110,6 +111,7 @@ struct SaveStateView: View {
                 }
             }
         }
+        .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
         .alert("Rename Save", isPresented: $isRenaming) {
             TextField("New name", text: $newName)
             Button("Save") {

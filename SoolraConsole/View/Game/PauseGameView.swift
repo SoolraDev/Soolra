@@ -34,7 +34,8 @@ struct PauseGameView: View {
                 NavigationLink(
                     destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
                                                pauseViewModel: pauseViewModel,
-                                               mode: .saving),
+                                               mode: .saving)
+                    .environmentObject(themeManager),
                     isActive: $pauseViewModel.showSaveStateView
                 ) {
                     EmptyView()
@@ -43,7 +44,8 @@ struct PauseGameView: View {
                 NavigationLink(
                     destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
                                                pauseViewModel: pauseViewModel,
-                                               mode: .loading),
+                                               mode: .loading)
+                    .environmentObject(themeManager),
                     isActive: $pauseViewModel.showLoadStateView
                 ) {
                     EmptyView()
@@ -52,9 +54,8 @@ struct PauseGameView: View {
             }
             .navigationBarHidden(true)
         }
-        .navigationViewStyle(
-            StackNavigationViewStyle()
-        ) // For iPhone-style navigation
+        .navigationViewStyle(StackNavigationViewStyle())
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -68,73 +69,78 @@ private struct PauseBackgroundView: View {
     }
 }
 
-// Menu content view
 private struct PauseMenuContent: View {
     @EnvironmentObject var themeManager: ThemeManager
     @ObservedObject var pauseViewModel: PauseGameViewModel
-    
+
     var body: some View {
-        VStack(spacing: 20) {
-            Text("PAUSED")
-                .font(.custom("Orbitron-Black", size: 32))
-                .foregroundColor(themeManager.whitetextColor)
-                .padding(.bottom, 30)
+        VStack {
+            Spacer() // Push to center vertically
             
-            ForEach(
-                Array(pauseViewModel.menuItems.enumerated()),
-                id: \.element.id
-            ) {
-                index,
-                item in
-                // 1️⃣ Compute once, outside of the view modifiers
-                let fgColor = item.isExit
-                ? Color(red: 209/255, green: 31/255, blue: 38/255)
-                : themeManager.whitetextColor
-                let isSelected = pauseViewModel.selectedMenuIndex == index
-                
-                Button(action: { handleMenuAction(index) }) {
-                    Text(item.title)
-                        .font(.custom("Orbitron-Bold", size: 18))
-                        .foregroundColor(
-                            fgColor
-                        )                // 2️⃣ Apply here
+            VStack(spacing: 24) {
+                Text("Paused")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+
+                ForEach(Array(pauseViewModel.menuItems.enumerated()), id: \.element.id) { index, item in
+                    let isSelected = pauseViewModel.selectedMenuIndex == index
+                    let iconName = icon(for: item)
+
+                    Button(action: { handleMenuAction(index) }) {
+                        HStack {
+                            if let iconName {
+                                Image(systemName: iconName)
+                                    .foregroundColor(.white)
+                            }
+                            Text(item.title)
+                                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 24)
                         .frame(maxWidth: .infinity)
-                        .padding()
                         .background(
-                            Capsule()
-                                .fill(themeManager.keyBackgroundColor)
-                                .overlay(
-                                    Capsule()
-                                        .stroke(isSelected
-                                                ? Color.white
-                                                : themeManager.keyBorderColor
-                                            .opacity(0.8),
-                                                lineWidth: isSelected ? 3 : 2
-                                               )
-                                        .shadow(color: themeManager.keyShadowColor,
-                                                radius: 4, x: 0, y: 2)
-                                )
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(isSelected ? themeManager.keyBackgroundColor.opacity(0.7) : Color.white.opacity(0.1))
+                                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
                         )
-                        .scaleEffect(isSelected ? 1.05 : 1.0)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.white.opacity(isSelected ? 0.8 : 0.3), lineWidth: isSelected ? 2 : 1)
+                        )
+                    }
+                    .scaleEffect(isSelected ? 1.05 : 1.0)
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
                 }
-                .animation(
-                    .easeInOut(duration: 0.2),
-                    value: pauseViewModel.selectedMenuIndex
-                )
             }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(.ultraThinMaterial)
+                    .shadow(radius: 20)
+            )
+            .padding(.horizontal, 20)
+            .frame(maxWidth: 500)
+
+            Spacer() // Push to center vertically
         }
-        .padding(40)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color("AppGray"))
-                .shadow(radius: 10)
-        )
-        .padding(.horizontal, 40)
+        .frame(maxHeight: .infinity) // Ensure full height
     }
-    
+
+    private func icon(for item: PauseMenuItem) -> String? {
+        switch item {
+        case .resume: return "play.circle.fill"
+        case .exit: return "xmark.circle.fill"
+        case .cheatCodes: return "wand.and.stars"
+        case .fastForward(let enabled): return enabled ? "forward.fill" : "forward"
+        case .saveState: return "square.and.arrow.down"
+        case .loadState: return "square.and.arrow.up"
+        }
+    }
+
     private func handleMenuAction(_ index: Int) {
         let item = pauseViewModel.menuItems[index]
-        
+
         switch item {
         case .resume:
             pauseViewModel.togglePause()
@@ -145,37 +151,41 @@ private struct PauseMenuContent: View {
         case .fastForward(_):
             pauseViewModel.isFastForwardEnabled.toggle()
             pauseViewModel.consoleManager?.toggleFastForward()
-            pauseViewModel
-                .menuItems[index] =
-                .fastForward(pauseViewModel.isFastForwardEnabled)
+            pauseViewModel.menuItems[index] = .fastForward(pauseViewModel.isFastForwardEnabled)
         case .saveState:
             pauseViewModel.showSaveStateView = true
         case .loadState:
             pauseViewModel.showLoadStateView = true
         }
     }
-    
 }
 
-// Main content view combining background and menu
+
+
 private struct PauseGameContentView: View {
     let geometry: GeometryProxy
     let pauseViewModel: PauseGameViewModel
     let themeManager: ThemeManager
-    
+
     var body: some View {
         ZStack {
             PauseBackgroundView()
-            
-            PauseMenuContent(pauseViewModel: pauseViewModel)
-                .environmentObject(themeManager)
-                .position(
-                    x: geometry.size.width / 2,
-                    y: (geometry.size.height * 0.3) - 80
-                )
+
+            VStack {
+                PauseMenuContent(pauseViewModel: pauseViewModel)
+                    .environmentObject(themeManager)
+                    .padding(.horizontal, 20)
+                    .frame(maxWidth: 500)
+                    .frame(height: geometry.size.height * 0.45) // Confine to top half
+                    .padding(.top, 20) // Slight breathing room from top
+
+                Spacer()
+            }
         }
+        .frame(width: geometry.size.width, height: geometry.size.height)
     }
 }
+
 
 // Menu button view
 private struct MenuButton: View {
