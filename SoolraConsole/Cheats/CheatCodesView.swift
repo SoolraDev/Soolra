@@ -94,13 +94,7 @@ struct CheatCodesView: View {
                     }
                 }
             }
-            .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
         }
-
-
-
-
-
         .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
     }
     

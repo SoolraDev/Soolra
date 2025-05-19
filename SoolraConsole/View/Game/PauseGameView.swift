@@ -9,7 +9,7 @@ import SwiftUI
 struct PauseGameView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @ObservedObject var pauseViewModel: PauseGameViewModel
-    
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -20,42 +20,51 @@ struct PauseGameView: View {
                         themeManager: themeManager
                     )
                 }
-                
-                // Hidden NavigationLinks
-                NavigationLink(
-                    destination: CheatCodesView(
-                        consoleManager: pauseViewModel.consoleManager!
-                    )
-                    .environmentObject(pauseViewModel.consoleManager!),
-                    isActive: $pauseViewModel.showCheatCodesView
-                ) {
-                    EmptyView()
-                }
-                NavigationLink(
-                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
-                                               pauseViewModel: pauseViewModel,
-                                               mode: .saving)
-                    .environmentObject(themeManager),
-                    isActive: $pauseViewModel.showSaveStateView
-                ) {
-                    EmptyView()
-                }
-                
-                NavigationLink(
-                    destination: SaveStateView(consoleManager: pauseViewModel.consoleManager!,
-                                               pauseViewModel: pauseViewModel,
-                                               mode: .loading)
-                    .environmentObject(themeManager),
-                    isActive: $pauseViewModel.showLoadStateView
-                ) {
-                    EmptyView()
-                }
-                
             }
             .navigationBarHidden(true)
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.dark) // ← Pause menu always dark
+
+        // ——— Cheat Codes (modal) ———
+        .fullScreenCover(isPresented: $pauseViewModel.showCheatCodesView) {
+            NavigationView {
+                CheatCodesView(consoleManager: pauseViewModel.consoleManager!)
+                    .environmentObject(pauseViewModel.consoleManager!)
+                    .environmentObject(themeManager)
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+        }
+
+        // ——— Save State (modal) ———
+        .fullScreenCover(isPresented: $pauseViewModel.showSaveStateView) {
+            NavigationView {
+                SaveStateView(
+                    consoleManager: pauseViewModel.consoleManager!,
+                    pauseViewModel: pauseViewModel,
+                    mode: .saving
+                )
+                .environmentObject(themeManager)
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+        }
+
+        // ——— Load State (modal) ———
+        .fullScreenCover(isPresented: $pauseViewModel.showLoadStateView) {
+            NavigationView {
+                SaveStateView(
+                    consoleManager: pauseViewModel.consoleManager!,
+                    pauseViewModel: pauseViewModel,
+                    mode: .loading
+                )
+                .environmentObject(themeManager)
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+        }
     }
 }
 
@@ -200,6 +209,7 @@ private struct PauseGameContentView: View {
             }
         }
         .frame(width: geometry.size.width, height: geometry.size.height)
+        .preferredColorScheme(.dark)
     }
 }
 
