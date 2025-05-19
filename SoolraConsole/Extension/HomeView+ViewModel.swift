@@ -14,6 +14,7 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     @Published var selectedGameIndex: Int?
     @Published var focusedButtonIndex: Int = 0
     @Published var romCount: Int = 0
+    @Published var searchQuery: String = ""
 
     let controllerService = BluetoothControllerService.shared
 

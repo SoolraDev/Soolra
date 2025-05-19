@@ -85,6 +85,9 @@ private struct PauseMenuContent: View {
                 ForEach(Array(pauseViewModel.menuItems.enumerated()), id: \.element.id) { index, item in
                     let isSelected = pauseViewModel.selectedMenuIndex == index
                     let iconName = icon(for: item)
+                    let fgColor = item.isExit
+                        ? Color(red: 209/255, green: 31/255, blue: 38/255)
+                        : themeManager.whitetextColor
 
                     Button(action: { handleMenuAction(index) }) {
                         HStack {
@@ -94,7 +97,7 @@ private struct PauseMenuContent: View {
                             }
                             Text(item.title)
                                 .font(.system(size: 18, weight: .semibold, design: .rounded))
-                                .foregroundColor(.white)
+                                .foregroundColor(fgColor)
                         }
                         .padding(.vertical, 12)
                         .padding(.horizontal, 24)

@@ -116,8 +116,8 @@ struct HomeView: View {
                                 isSettingsPresented = true
                             },
                             focusedButtonIndex: $viewModel.focusedButtonIndex,
-                            dataController: dataController,
-                            viewModel: viewModel
+                            dataController: dataController, viewModel: viewModel,
+                            searchQuery: $viewModel.searchQuery
                         )
                         .sheet(isPresented: $viewModel.isPresented) {
                             DocumentPicker { url in
@@ -308,30 +308,39 @@ struct HomeView: View {
         ScrollViewReader { scrollProxy in
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
+                    // Upload button
                     Button(action: {
                         viewModel.isPresented.toggle()
                     }) {
                         addRomIcon()
                     }
-                    .id(3)  // Add id for the upload game button
-                    ForEach(Array(roms.enumerated()), id: \.1) { index, rom in
-                        Button(action: {
-                            navigateToRom(rom)
-                        }) {
-                            romIcon(for: rom, index: index + 4)
-                        }
-                        .id(index + 4)  // Add id for scrolling
-                        
-                        if isEditMode == .active {
+                    .id(3)  // ID for scroll target
+
+                    // Filtered ROMs based on search query
+                    ForEach(Array(roms.enumerated()).filter { index, rom in
+                        viewModel.searchQuery.isEmpty || (rom.name?.localizedCaseInsensitiveContains(viewModel.searchQuery) ?? false)
+                    }, id: \.1) { index, rom in
+                        VStack(spacing: 4) {
+                            // ROM thumbnail and name
                             Button(action: {
-                                withAnimation {
-                                    dataController.romManager.deleteRom(rom: rom)
-                                    roms = dataController.romManager.fetchRoms()
-                                }
+                                navigateToRom(rom)
                             }) {
-                                Image(systemName: "minus.circle.fill")
-                                    .foregroundColor(.red)
-                                    .padding(4)
+                                romIcon(for: rom, index: index + 4)
+                            }
+                            .id(index + 4)
+
+                            // Delete button when in edit mode
+                            if isEditMode == .active {
+                                Button(action: {
+                                    withAnimation {
+                                        dataController.romManager.deleteRom(rom: rom)
+                                        roms = dataController.romManager.fetchRoms()
+                                    }
+                                }) {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                        .padding(.top, 4)
+                                }
                             }
                         }
                     }
@@ -340,7 +349,7 @@ struct HomeView: View {
                 .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
             }
             .onChange(of: viewModel.focusedButtonIndex) { newIndex in
-                if newIndex >= 3 {  // Changed from 4 to 3 to include the upload game cube
+                if newIndex >= 3 {
                     withAnimation {
                         scrollProxy.scrollTo(newIndex, anchor: .center)
                     }
@@ -348,6 +357,7 @@ struct HomeView: View {
             }
         }
     }
+
     
     // MARK: - Helper Functions
     
@@ -525,7 +535,8 @@ struct HomeView: View {
         @Binding var focusedButtonIndex: Int
         let dataController: CoreDataController
         let viewModel: HomeViewModel
-        
+        @Binding var searchQuery: String // 👈 Add this
+
         var body: some View {
             VStack {
                 HStack {
@@ -536,21 +547,22 @@ struct HomeView: View {
                             .frame(width: 27, height: 27)
                             .padding()
                     })
-                    
-                    ZStack(alignment: .trailing) {
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(Color.white)
-                            .opacity(0.5)
-                            .frame(height: 27)
-                        
-                        Image("home-search-bold")
-                            .resizable()
-                            .foregroundColor(.white)
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .padding(.trailing, 10)
-                    }
-                    .frame(maxWidth: .infinity)
+                    Spacer(minLength: 10)
+//                    TextField("Search games...", text: $searchQuery)                        .padding(8)
+//                        .background(Color.white.opacity(0.15))
+//                        .cornerRadius(14)
+//                        .foregroundColor(.white)
+//                        .frame(height: 27)
+//                        .frame(maxWidth: .infinity)
+//                        .overlay(
+//                            HStack {
+//                                Spacer()
+//                                Image(systemName: "magnifyingglass")
+//                                    .foregroundColor(.white)
+//                                    .padding(.trailing, 10)
+//                            }
+//                        )
+
                     
                     BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 1, action: {
                         onSettingsButtonTap()
