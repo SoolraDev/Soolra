@@ -73,61 +73,74 @@ private struct PauseMenuContent: View {
     @EnvironmentObject var themeManager: ThemeManager
     @ObservedObject var pauseViewModel: PauseGameViewModel
 
-    var body: some View {
-        VStack {
-            Spacer() // Push to center vertically
-            
-            VStack(spacing: 24) {
-                Text("Paused")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+    private let columns: [GridItem] = [
+        GridItem(.flexible(minimum: 0), spacing: 16, alignment: .top),
+        GridItem(.flexible(minimum: 0), spacing: 16, alignment: .top)
+    ]
 
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("Paused")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+
+            LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(Array(pauseViewModel.menuItems.enumerated()), id: \.element.id) { index, item in
                     let isSelected = pauseViewModel.selectedMenuIndex == index
                     let iconName = icon(for: item)
                     let fgColor = item.isExit
                         ? Color(red: 209/255, green: 31/255, blue: 38/255)
                         : themeManager.whitetextColor
+                    VStack {
+                        Button(action: { handleMenuAction(index) }) {
+                            VStack(spacing: 6) {
+                                if let iconName {
+                                    Image(systemName: iconName)
+                                        .font(.system(size: 31))
+                                        .foregroundColor(.white)
 
-                    Button(action: { handleMenuAction(index) }) {
-                        HStack {
-                            if let iconName {
-                                Image(systemName: iconName)
-                                    .foregroundColor(.white)
+                                }
+
+                                Text(item.title)
+                                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                    .foregroundColor(fgColor)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(1) // 👈 Enforce single-line layout
+                                    .minimumScaleFactor(0.6) // 👈 Shrink font if needed
+                                    .frame(maxWidth: .infinity)
                             }
-                            Text(item.title)
-                                .font(.system(size: 18, weight: .semibold, design: .rounded))
-                                .foregroundColor(fgColor)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity) // 👈 Fill full available space
+                            .padding(10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(isSelected ? themeManager.keyBackgroundColor.opacity(0.7) : Color.white.opacity(0.1))
+                                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.white.opacity(isSelected ? 0.8 : 0.3), lineWidth: isSelected ? 2 : 1)
+                            )
                         }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 24)
+                        .frame(height: 80) // 👈 FIXED button height
                         .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(isSelected ? themeManager.keyBackgroundColor.opacity(0.7) : Color.white.opacity(0.1))
-                                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white.opacity(isSelected ? 0.8 : 0.3), lineWidth: isSelected ? 2 : 1)
-                        )
+                        .scaleEffect(isSelected ? 1.05 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: isSelected)
                     }
-                    .scaleEffect(isSelected ? 1.05 : 1.0)
-                    .animation(.easeInOut(duration: 0.2), value: isSelected)
+                    .frame(maxWidth: .infinity)
+
                 }
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 32)
-                    .fill(.ultraThinMaterial)
-                    .shadow(radius: 20)
-            )
-            .padding(.horizontal, 20)
-            .frame(maxWidth: 500)
 
-            Spacer() // Push to center vertically
         }
-        .frame(maxHeight: .infinity) // Ensure full height
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 32)
+                .fill(.ultraThinMaterial)
+                .shadow(radius: 20)
+        )
+        .padding(.horizontal, 20)
+        .frame(maxWidth: 500)
     }
 
     private func icon(for item: PauseMenuItem) -> String? {
@@ -165,6 +178,7 @@ private struct PauseMenuContent: View {
 
 
 
+
 private struct PauseGameContentView: View {
     let geometry: GeometryProxy
     let pauseViewModel: PauseGameViewModel
@@ -180,7 +194,7 @@ private struct PauseGameContentView: View {
                     .padding(.horizontal, 20)
                     .frame(maxWidth: 500)
                     .frame(height: geometry.size.height * 0.45) // Confine to top half
-                    .padding(.top, 20) // Slight breathing room from top
+                    .padding(.top, 10) // Slight breathing room from top
 
                 Spacer()
             }
