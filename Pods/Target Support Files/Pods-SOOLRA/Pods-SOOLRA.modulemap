@@ -1,0 +1,6 @@
+framework module Pods_SOOLRA {
+  umbrella header "Pods-SOOLRA-umbrella.h"
+
+  export *
+  module * { export * }
+}

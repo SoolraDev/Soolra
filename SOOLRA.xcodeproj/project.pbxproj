@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -37,11 +37,8 @@
 		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
-		928FA3572DD8B09900F3C848 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 928FA3562DD8B09900F3C848 /* FirebaseAnalyticsWithoutAdIdSupport */; };
-		928FA3592DD8B09900F3C848 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 928FA3582DD8B09900F3C848 /* FirebaseCrashlytics */; };
-		928FA35B2DD8B09900F3C848 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 928FA35A2DD8B09900F3C848 /* FirebasePerformance */; };
-		928FA35D2DD8B09900F3C848 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 928FA35C2DD8B09900F3C848 /* FirebaseRemoteConfig */; };
 		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
+		9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373F8BB57550C87EB6D0573 /* Pods_SOOLRA.framework */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
 		9D123D052CD007EE007508A8 /* D-DINCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */; };
@@ -60,12 +57,14 @@
 		186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+distanceTo.swift"; sourceTree = "<group>"; };
 		187ABE9D28642FF000372297 /* ButtonKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonKey.swift; sourceTree = "<group>"; };
 		18EBB74A2864A13A00903F43 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.release.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.release.xcconfig"; sourceTree = "<group>"; };
 		4C23EA0A2D50048400039871 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4C9253D32D47ED2B00E38366 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		4CB5AA5E2D61B206003E1677 /* MetalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalManager.swift; sourceTree = "<group>"; };
 		4CC26D992D4BABC300F3D262 /* ConsoleCoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCoreManager.swift; sourceTree = "<group>"; };
 		4CCFFDB22D4E94D0002B9F4A /* launchvideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = launchvideo.mp4; sourceTree = "<group>"; };
 		4CEF41C72D21A4670068BC5B /* RomManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RomManager.swift; sourceTree = "<group>"; };
+		5373F8BB57550C87EB6D0573 /* Pods_SOOLRA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SOOLRA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7032EDC02C76059400828A41 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		7032EDC22C761C5800828A41 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		705827972C75766200AB8682 /* Orbitron-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-SemiBold.ttf"; sourceTree = "<group>"; };
@@ -87,18 +86,55 @@
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
 		9D123D062CD008E4007508A8 /* D-DIN.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DIN.ttf"; sourceTree = "<group>"; };
 		9D123D0E2CD00B56007508A8 /* DINCondensed-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DINCondensed-Regular.ttf"; sourceTree = "<group>"; };
+		A38D6A4E20FCEB9F9015DD5E /* Pods-SOOLRA.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.debug.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		4C0CD8AE2D54E31F00B079B5 /* Protocols */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Protocols; sourceTree = "<group>"; };
-		4C0CD8BA2D54E71100B079B5 /* SoolraController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SoolraController; sourceTree = "<group>"; };
-		4C0CD8CE2D54E72800B079B5 /* Game */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Game; sourceTree = "<group>"; };
-		4CC26D9F2D4BAF8000F3D262 /* ConsoleCores */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ConsoleCores; sourceTree = "<group>"; };
-		4CCFFDAD2D4D2B4B002B9F4A /* nes */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = nes; sourceTree = "<group>"; };
-		4CE85E512D55201F004A3CC2 /* gba */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = gba; sourceTree = "<group>"; };
-		4CF12CD52D4293CA004B7CD7 /* Boxart */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Boxart; sourceTree = "<group>"; };
-		92678D5C2DA805B4001CEDD6 /* Cheats */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Cheats; sourceTree = "<group>"; };
-		928FA3412DC228BF00F3C848 /* BundledRoms */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = BundledRoms; sourceTree = "<group>"; };
+		4C0CD8AE2D54E31F00B079B5 /* Protocols */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		4C0CD8BA2D54E71100B079B5 /* SoolraController */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SoolraController;
+			sourceTree = "<group>";
+		};
+		4C0CD8CE2D54E72800B079B5 /* Game */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Game;
+			sourceTree = "<group>";
+		};
+		4CC26D9F2D4BAF8000F3D262 /* ConsoleCores */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ConsoleCores;
+			sourceTree = "<group>";
+		};
+		4CCFFDAD2D4D2B4B002B9F4A /* nes */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = nes;
+			sourceTree = "<group>";
+		};
+		4CE85E512D55201F004A3CC2 /* gba */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = gba;
+			sourceTree = "<group>";
+		};
+		4CF12CD52D4293CA004B7CD7 /* Boxart */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Boxart;
+			sourceTree = "<group>";
+		};
+		92678D5C2DA805B4001CEDD6 /* Cheats */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Cheats;
+			sourceTree = "<group>";
+		};
+		928FA3412DC228BF00F3C848 /* BundledRoms */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BundledRoms;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,11 +143,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */,
-				928FA3592DD8B09900F3C848 /* FirebaseCrashlytics in Frameworks */,
-				928FA35B2DD8B09900F3C848 /* FirebasePerformance in Frameworks */,
-				928FA35D2DD8B09900F3C848 /* FirebaseRemoteConfig in Frameworks */,
-				928FA3572DD8B09900F3C848 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				4CEF41CB2D21A4E40068BC5B /* ZIPFoundation in Frameworks */,
+				9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +183,8 @@
 				183DF16B2862C99E0088FE1C /* Products */,
 				928FA3412DC228BF00F3C848 /* BundledRoms */,
 				928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */,
+				F93A9ADA751C88A045C62C3B /* Pods */,
+				A9EE285B3C1341F385217B4B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -242,6 +277,23 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		A9EE285B3C1341F385217B4B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5373F8BB57550C87EB6D0573 /* Pods_SOOLRA.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F93A9ADA751C88A045C62C3B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A38D6A4E20FCEB9F9015DD5E /* Pods-SOOLRA.debug.xcconfig */,
+				3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -249,9 +301,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 183DF1782862C9A00088FE1C /* Build configuration list for PBXNativeTarget "SOOLRA" */;
 			buildPhases = (
+				7D1131761188BB8727068661 /* [CP] Check Pods Manifest.lock */,
 				183DF1662862C99E0088FE1C /* Sources */,
 				183DF1672862C99E0088FE1C /* Frameworks */,
 				183DF1682862C99E0088FE1C /* Resources */,
+				F0816F3433496413B07B0D56 /* [CP] Embed Pods Frameworks */,
+				922591F72DDC891600030409 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -272,10 +327,6 @@
 			packageProductDependencies = (
 				4CEF41CA2D21A4E40068BC5B /* ZIPFoundation */,
 				92678D762DAA70E6001CEDD6 /* SQLite */,
-				928FA3562DD8B09900F3C848 /* FirebaseAnalyticsWithoutAdIdSupport */,
-				928FA3582DD8B09900F3C848 /* FirebaseCrashlytics */,
-				928FA35A2DD8B09900F3C848 /* FirebasePerformance */,
-				928FA35C2DD8B09900F3C848 /* FirebaseRemoteConfig */,
 			);
 			productName = NesEmulator;
 			productReference = 183DF16A2862C99E0088FE1C /* SOOLRA.app */;
@@ -297,7 +348,6 @@
 				};
 			};
 			buildConfigurationList = 183DF1652862C99E0088FE1C /* Build configuration list for PBXProject "SOOLRA" */;
-			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -308,8 +358,8 @@
 			packageReferences = (
 				4CEF41C92D21A4E40068BC5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite" */,
-				928FA3552DD8B09900F3C848 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 183DF16B2862C99E0088FE1C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -343,6 +393,71 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7D1131761188BB8727068661 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SOOLRA-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		922591F72DDC891600030409 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\n${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}\n",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
+		};
+		F0816F3433496413B07B0D56 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SOOLRA/Pods-SOOLRA-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SOOLRA/Pods-SOOLRA-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SOOLRA/Pods-SOOLRA-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		183DF1662862C99E0088FE1C /* Sources */ = {
@@ -492,15 +607,18 @@
 		};
 		183DF1792862C9A00088FE1C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A38D6A4E20FCEB9F9015DD5E /* Pods-SOOLRA.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconNew;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SOOLRA;
@@ -518,7 +636,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.3;
+				MARKETING_VERSION = 5.7.4;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -542,6 +660,7 @@
 		};
 		183DF17A2862C9A00088FE1C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconNew;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -551,6 +670,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SOOLRA;
@@ -568,7 +688,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.3;
+				MARKETING_VERSION = 5.7.4;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -630,14 +750,6 @@
 				minimumVersion = 0.15.3;
 			};
 		};
-		928FA3552DD8B09900F3C848 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.12.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -650,26 +762,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite" */;
 			productName = SQLite;
-		};
-		928FA3562DD8B09900F3C848 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 928FA3552DD8B09900F3C848 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsWithoutAdIdSupport;
-		};
-		928FA3582DD8B09900F3C848 /* FirebaseCrashlytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 928FA3552DD8B09900F3C848 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCrashlytics;
-		};
-		928FA35A2DD8B09900F3C848 /* FirebasePerformance */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 928FA3552DD8B09900F3C848 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebasePerformance;
-		};
-		928FA35C2DD8B09900F3C848 /* FirebaseRemoteConfig */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 928FA3552DD8B09900F3C848 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseRemoteConfig;
 		};
 /* End XCSwiftPackageProductDependency section */
 
