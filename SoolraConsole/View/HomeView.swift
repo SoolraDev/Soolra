@@ -119,22 +119,34 @@ struct HomeView: View {
                             dataController: dataController, viewModel: viewModel,
                             searchQuery: $viewModel.searchQuery
                         )
-                        .sheet(isPresented: $viewModel.isPresented) {
-                            DocumentPicker { url in
-                                
-                                // Use RomManager to handle adding the ROM
-                                Task {
-                                    isLoading = true
-                                    await dataController.romManager.addRom( url: url)
-                                    withAnimation {
-                                        roms = dataController.romManager.fetchRoms()
-                                        isLoading = false
+                        .fullScreenCover(isPresented: $viewModel.isPresented) {
+                            ZStack(alignment: .top) {
+                                Color.black.opacity(0.6) // background dim
+
+                                VStack(spacing: 0) {
+                                    HalfScreenDocumentPicker { url in
+                                        Task {
+                                            isLoading = true
+                                            await dataController.romManager.addRom(url: url)
+                                            withAnimation {
+                                                roms = dataController.romManager.fetchRoms()
+                                                isLoading = false
+                                            }
+                                            viewModel.isPresented = false
+                                        }
                                     }
+                                    .frame(height: UIScreen.main.bounds.height / 2)
+                                    .background(Color(.systemBackground))
+                                    .cornerRadius(16)
+                                    .shadow(radius: 10)
+
+                                    Spacer()
                                 }
-                                
                             }
-                            .font(.custom("Orbitron-Black", size: 24))
+                            .ignoresSafeArea()
                         }
+
+
                         if viewModel.focusedButtonIndex >= 4 {
                             CurrentItemView(currentRom: roms[viewModel.focusedButtonIndex - 4], currentView: $currentView, focusedButtonIndex: $viewModel.focusedButtonIndex)
                         } else {
