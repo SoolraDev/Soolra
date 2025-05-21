@@ -11,8 +11,9 @@ protocol ControllerServiceDelegate: AnyObject {
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool)
 }
 
-class BluetoothControllerService {
+class BluetoothControllerService: ObservableObject {
     static let shared = BluetoothControllerService()
+    @Published private(set) var isControllerConnected: Bool = false
     weak var delegate: ControllerServiceDelegate?
     
     // Separate state tracking for each stick
@@ -24,6 +25,7 @@ class BluetoothControllerService {
 
     private init() {
         setupControllerObservers()
+        refreshConnectedState()
     }
 
     // MARK: - Setup
@@ -49,11 +51,13 @@ class BluetoothControllerService {
             setupControllerInput(controller: controller)
             print("🎮 Controller connected")
         }
+        refreshConnectedState()
     }
 
     @objc private func controllerDidDisconnect(notification: Notification) {
         print("🎮 Controller disconnected")
         clearAllInputs()
+        refreshConnectedState()
     }
     
     private func clearAllInputs() {
@@ -170,4 +174,11 @@ class BluetoothControllerService {
             return y > 0 ? .up : .down
         }
     }
+    
+    private func refreshConnectedState() {
+        DispatchQueue.main.async {
+            self.isControllerConnected = !GCController.controllers().isEmpty
+        }
+    }
+    
 }

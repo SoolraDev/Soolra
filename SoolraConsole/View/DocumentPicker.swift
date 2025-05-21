@@ -59,16 +59,3 @@ struct DocumentPicker_Previews: PreviewProvider {
         DocumentPicker()
     }
 }
-
-struct HalfScreenDocumentPicker: View {
-    var complete: (URL) -> Void
-    @Environment(\.dismiss) var dismiss
-
-    var body: some View {
-        DocumentPicker(complete: { url in
-            complete(url)
-            dismiss()
-        })
-        .frame(height: UIScreen.main.bounds.height / 2)
-    }
-}

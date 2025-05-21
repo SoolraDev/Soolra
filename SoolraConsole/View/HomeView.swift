@@ -45,7 +45,8 @@ struct HomeView: View {
     @EnvironmentObject var dataController: CoreDataController
     @EnvironmentObject var consoleManager: ConsoleCoreManager
     @EnvironmentObject var saveStateManager: SaveStateManager
-    
+    @ObservedObject private var controllerService = BluetoothControllerService.shared
+
     @StateObject private var viewModel = HomeViewModel.shared
     @StateObject private var engagementTracker = EngagementTracker()
     @State private var isEditMode: EditMode = .inactive
@@ -121,30 +122,47 @@ struct HomeView: View {
                         )
                         .fullScreenCover(isPresented: $viewModel.isPresented) {
                             ZStack(alignment: .top) {
-                                Color.black.opacity(0.6) // background dim
+                                Color.black.opacity(0.6)
 
                                 VStack(spacing: 0) {
-                                    HalfScreenDocumentPicker { url in
-                                        Task {
-                                            isLoading = true
-                                            await dataController.romManager.addRom(url: url)
-                                            withAnimation {
-                                                roms = dataController.romManager.fetchRoms()
-                                                isLoading = false
+                                    if BluetoothControllerService.shared.isControllerConnected {
+                                        // Half-height version
+                                        DocumentPicker { url in
+                                            Task {
+                                                isLoading = true
+                                                await dataController.romManager.addRom(url: url)
+                                                withAnimation {
+                                                    roms = dataController.romManager.fetchRoms()
+                                                    isLoading = false
+                                                }
+                                                viewModel.isPresented = false
                                             }
-                                            viewModel.isPresented = false
                                         }
-                                    }
-                                    .frame(height: UIScreen.main.bounds.height / 2)
-                                    .background(Color(.systemBackground))
-                                    .cornerRadius(16)
-                                    .shadow(radius: 10)
+                                        .frame(height: UIScreen.main.bounds.height / 2)
+                                        .background(Color(.systemBackground))
+                                        .cornerRadius(16)
+                                        .shadow(radius: 10)
 
-                                    Spacer()
+                                        Spacer()
+                                    } else {
+                                        // Full-height version
+                                        DocumentPicker { url in
+                                            Task {
+                                                isLoading = true
+                                                await dataController.romManager.addRom(url: url)
+                                                withAnimation {
+                                                    roms = dataController.romManager.fetchRoms()
+                                                    isLoading = false
+                                                }
+                                                viewModel.isPresented = false
+                                            }
+                                        }
+                                        .ignoresSafeArea() // Let it take over the screen
+                                    }
                                 }
                             }
-                            .ignoresSafeArea()
                         }
+
 
 
                         if viewModel.focusedButtonIndex >= 4 {
