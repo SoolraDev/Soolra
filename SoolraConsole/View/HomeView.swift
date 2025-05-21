@@ -127,7 +127,7 @@ struct HomeView: View {
                                 VStack(spacing: 0) {
                                     if BluetoothControllerService.shared.isControllerConnected {
                                         // Half-height version
-                                        DocumentPicker { url in
+                                        HalfScreenDocumentPicker { url in
                                             Task {
                                                 isLoading = true
                                                 await dataController.romManager.addRom(url: url)
@@ -138,7 +138,6 @@ struct HomeView: View {
                                                 viewModel.isPresented = false
                                             }
                                         }
-                                        .frame(height: UIScreen.main.bounds.height / 2)
                                         .background(Color(.systemBackground))
                                         .cornerRadius(16)
                                         .shadow(radius: 10)

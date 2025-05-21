@@ -59,3 +59,19 @@ struct DocumentPicker_Previews: PreviewProvider {
         DocumentPicker()
     }
 }
+
+struct HalfScreenDocumentPicker: View {
+    var complete: (URL) -> Void
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        GeometryReader { geo in
+            DocumentPicker(complete: { url in
+                complete(url)
+                dismiss()
+            })
+            .frame(height: geo.size.height / 2)
+        }
+    }
+}
+
