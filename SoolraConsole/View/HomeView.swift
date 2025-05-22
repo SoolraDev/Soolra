@@ -379,9 +379,14 @@ struct HomeView: View {
             }
             .onChange(of: viewModel.focusedButtonIndex) { newIndex in
                 if newIndex >= 3 {
-                    withAnimation {
+//                    withAnimation {
                         scrollProxy.scrollTo(newIndex, anchor: .center)
-                    }
+//                    }
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                        withAnimation {
+//                            scrollProxy.scrollTo(newIndex, anchor: .center)
+//                        }
+//                    }
                 }
             }
         }
@@ -405,6 +410,7 @@ struct HomeView: View {
                 await MainActor.run {
                     //withAnimation(.easeInOut(duration: 0.3)) {
                     self.currentView = .game(gameData)
+                    viewModel.focusedButtonIndex = 4
                     //}
                 }
                 engagementTracker.setCurrentRom(rom.name ?? "none")
