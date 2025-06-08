@@ -89,6 +89,16 @@
 		A38D6A4E20FCEB9F9015DD5E /* Pods-SOOLRA.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.debug.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		92C08BFF2DF57665008636DF /* Exceptions for "libretro-common" folder in "SOOLRA" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			additionalCompilerFlagsByRelativePath = {
+				libchdr/mame_sha1.c = "-I$(PROJECT_DIR)/libretro-common";
+			};
+			target = 183DF1692862C99E0088FE1C /* SOOLRA */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4C0CD8AE2D54E31F00B079B5 /* Protocols */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -135,6 +145,19 @@
 			path = BundledRoms;
 			sourceTree = "<group>";
 		};
+		92C082032DF0606C008636DF /* mame */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = mame;
+			sourceTree = "<group>";
+		};
+		92C089FD2DF18BE3008636DF /* libretro-common */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				92C08BFF2DF57665008636DF /* Exceptions for "libretro-common" folder in "SOOLRA" target */,
+			);
+			path = "libretro-common";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +197,7 @@
 		183DF1612862C99E0088FE1C = {
 			isa = PBXGroup;
 			children = (
+				92C089FD2DF18BE3008636DF /* libretro-common */,
 				4CCFFDB22D4E94D0002B9F4A /* launchvideo.mp4 */,
 				4CF12CD52D4293CA004B7CD7 /* Boxart */,
 				4CC26D922D4BA8BC00F3D262 /* Emulators */,
@@ -255,6 +279,7 @@
 				4C23EA0A2D50048400039871 /* Bridging-Header.h */,
 				4CCFFDAD2D4D2B4B002B9F4A /* nes */,
 				4CE85E512D55201F004A3CC2 /* gba */,
+				92C082032DF0606C008636DF /* mame */,
 			);
 			path = Emulators;
 			sourceTree = "<group>";
@@ -322,6 +347,8 @@
 				4CF12CD52D4293CA004B7CD7 /* Boxart */,
 				92678D5C2DA805B4001CEDD6 /* Cheats */,
 				928FA3412DC228BF00F3C848 /* BundledRoms */,
+				92C082032DF0606C008636DF /* mame */,
+				92C089FD2DF18BE3008636DF /* libretro-common */,
 			);
 			name = SOOLRA;
 			packageProductDependencies = (
@@ -620,6 +647,25 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCore/FirebaseCore.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreExtension/FirebaseCoreExtension.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreInternal/FirebaseCoreInternal.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstallations/FirebaseInstallations.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseRemoteConfigInterop/FirebaseRemoteConfigInterop.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseSessions/FirebaseSessions.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransport/GoogleDataTransport.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities/GoogleUtilities.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC/FBLPromises.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromisesSwift/Promises.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb/nanopb.framework/Headers\"",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SOOLRA;
 				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
@@ -636,17 +682,77 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.5;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/SoolraConsole/Core/ConsoleCores/MAME",
+					"$(PROJECT_DIR)/Emulators/MAME",
+					"$(PROJECT_DIR)/Emulators/mame",
+				);
+				MARKETING_VERSION = 5.7.6;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
 					"-DNO_LINK",
+					"\"-D__APPLE_USE_RFC_3542 -D_BSD_SOURCE -D_GNU_SOURCE\"",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-I./Emulators/nes",
 					"-I./Emulators/gba",
 					"-I./Emulators/SFML/include",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"FBLPromises\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreExtension\"",
+					"-framework",
+					"\"FirebaseCoreInternal\"",
+					"-framework",
+					"\"FirebaseCrashlytics\"",
+					"-framework",
+					"\"FirebaseInstallations\"",
+					"-framework",
+					"\"FirebaseRemoteConfigInterop\"",
+					"-framework",
+					"\"FirebaseSessions\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GoogleAppMeasurement\"",
+					"-framework",
+					"\"GoogleAppMeasurementIdentitySupport\"",
+					"-framework",
+					"\"GoogleDataTransport\"",
+					"-framework",
+					"\"GoogleUtilities\"",
+					"-framework",
+					"\"Promises\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"nanopb\"",
+					"-Wl",
+					"-force_load",
+					"$(PROJECT_DIR)/Emulators/mame/mame2003_plus_libretro_ios.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.soolra.soolra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -672,6 +778,25 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCore/FirebaseCore.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreExtension/FirebaseCoreExtension.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreInternal/FirebaseCoreInternal.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstallations/FirebaseInstallations.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseRemoteConfigInterop/FirebaseRemoteConfigInterop.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseSessions/FirebaseSessions.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransport/GoogleDataTransport.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities/GoogleUtilities.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC/FBLPromises.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromisesSwift/Promises.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb/nanopb.framework/Headers\"",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SOOLRA;
 				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
@@ -688,17 +813,77 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.5;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/SoolraConsole/Core/ConsoleCores/MAME",
+					"$(PROJECT_DIR)/Emulators/MAME",
+					"$(PROJECT_DIR)/Emulators/mame",
+				);
+				MARKETING_VERSION = 5.7.6;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
 					"-DNO_LINK",
+					"\"-D__APPLE_USE_RFC_3542 -D_BSD_SOURCE -D_GNU_SOURCE\"",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-I./Emulators/nes",
 					"-I./Emulators/gba",
 					"-I./Emulators/SFML/include",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"FBLPromises\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreExtension\"",
+					"-framework",
+					"\"FirebaseCoreInternal\"",
+					"-framework",
+					"\"FirebaseCrashlytics\"",
+					"-framework",
+					"\"FirebaseInstallations\"",
+					"-framework",
+					"\"FirebaseRemoteConfigInterop\"",
+					"-framework",
+					"\"FirebaseSessions\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GoogleAppMeasurement\"",
+					"-framework",
+					"\"GoogleAppMeasurementIdentitySupport\"",
+					"-framework",
+					"\"GoogleDataTransport\"",
+					"-framework",
+					"\"GoogleUtilities\"",
+					"-framework",
+					"\"Promises\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"nanopb\"",
+					"-Wl",
+					"-force_load",
+					"$(PROJECT_DIR)/Emulators/mame/mame2003_plus_libretro_ios.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.soolra.soolra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
