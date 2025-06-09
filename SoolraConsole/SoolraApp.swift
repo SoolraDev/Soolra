@@ -3,6 +3,8 @@
 //
 //  Copyright © 2025 SOOLRA. All rights reserved.
 //
+//@_silgen_name("test_libretro_core")
+//func test_libretro_core()
 
 import AVFoundation
 import SwiftUI
@@ -224,6 +226,7 @@ struct SoolraApp: App {
 
     init() {
         // Initialize Metal device first and handle potential errors
+        
         do {
 
             let metal = try MetalManager()
@@ -253,6 +256,7 @@ struct SoolraApp: App {
         UINavigationBar.appearance().tintColor = .black
         appearance.backgroundColor = .none
         appearance.configureWithOpaqueBackground()
+        test_libretro_core_loaded()
     }
 
     var body: some Scene {

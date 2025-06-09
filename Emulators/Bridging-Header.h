@@ -1,9 +1,3 @@
-//
-//  SOOLRA
-//
-//  Copyright © 2025 SOOLRA. All rights reserved.
-//
-
 #ifndef Bridging_Header_h
 #define Bridging_Header_h
 
@@ -11,9 +5,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// Our bridge headers - note these must be C-compatible interfaces
+// C-compatible libretro test interface
+#include "libretard_test.h"
+
+// Leave your C++ includes as-is (they will be for internal use only)
 #include "nes/SoolraNESBridge.hpp"
 #include "gba/SoolraGBABridge.hpp"
 
 #endif /* Bridging_Header_h */
-
