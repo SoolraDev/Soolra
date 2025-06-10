@@ -121,7 +121,7 @@ public class ConsoleCoreManager: ObservableObject {
         
         startInputProcessing()
     }
-    
+
     private func startInputProcessing() {
         // Process inputs every 1/60th of a second
         inputProcessingTimer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { [weak self] _ in

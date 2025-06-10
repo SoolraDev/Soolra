@@ -34,7 +34,10 @@
 		70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BD249F2C6BF6F10070B5F9 /* Colors.swift */; };
 		92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 92678D762DAA70E6001CEDD6 /* SQLite */; };
 		92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D802DAA76F5001CEDD6 /* Cheat.swift */; };
-		92798D362DF6FC3A00673237 /* mame2003_plus_libretro_ios 7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 92798D352DF6FC3A00673237 /* mame2003_plus_libretro_ios 7.a */; };
+		92798D382DF7232D00673237 /* LibretroBridge.c in Sources */ = {isa = PBXBuildFile; fileRef = 92798D372DF7232600673237 /* LibretroBridge.c */; };
+		92798D3B2DF7261100673237 /* sf2.zip in Resources */ = {isa = PBXBuildFile; fileRef = 92798D3A2DF7261100673237 /* sf2.zip */; };
+		9279911F2DF7755500673237 /* mame2003_plus_libretro_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9279911D2DF7754D00673237 /* mame2003_plus_libretro_ios.a */; };
+		927991242DF77DD100673237 /* fucku.c in Sources */ = {isa = PBXBuildFile; fileRef = 927991232DF77DBE00673237 /* fucku.c */; };
 		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
@@ -79,14 +82,18 @@
 		70838FDB2C6BC96500B7AE46 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		70BD249F2C6BF6F10070B5F9 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		92678D802DAA76F5001CEDD6 /* Cheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheat.swift; sourceTree = "<group>"; };
-		92798D352DF6FC3A00673237 /* mame2003_plus_libretro_ios 7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "mame2003_plus_libretro_ios 7.a"; sourceTree = "<group>"; };
+		92798D372DF7232600673237 /* LibretroBridge.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LibretroBridge.c; sourceTree = "<group>"; };
+		92798D392DF7233700673237 /* LibretroBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibretroBridge.h; sourceTree = "<group>"; };
+		92798D3A2DF7261100673237 /* sf2.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = sf2.zip; sourceTree = "<group>"; };
+		92798D452DF739E100673237 /* libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
+		9279911D2DF7754D00673237 /* mame2003_plus_libretro_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = mame2003_plus_libretro_ios.a; sourceTree = "<group>"; };
+		927991232DF77DBE00673237 /* fucku.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fucku.c; sourceTree = "<group>"; };
 		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
 		92E0ACAA2DF6DCB200D5EC21 /* libretard_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretard_test.h; sourceTree = "<group>"; };
 		92E0ACAB2DF6DCC900D5EC21 /* libretard_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretard_test.c; sourceTree = "<group>"; };
-		92E0ACAD2DF6DD4300D5EC21 /* libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
 		9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed.ttf"; sourceTree = "<group>"; };
 		9D123D022CD0046B007508A8 /* Ebrima.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ebrima.ttf; sourceTree = "<group>"; };
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -148,10 +155,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92798D362DF6FC3A00673237 /* mame2003_plus_libretro_ios 7.a in Frameworks */,
 				92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */,
 				4CEF41CB2D21A4E40068BC5B /* ZIPFoundation in Frameworks */,
 				9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */,
+				9279911F2DF7755500673237 /* mame2003_plus_libretro_ios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,7 +199,8 @@
 				928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */,
 				F93A9ADA751C88A045C62C3B /* Pods */,
 				A9EE285B3C1341F385217B4B /* Frameworks */,
-				92798D352DF6FC3A00673237 /* mame2003_plus_libretro_ios 7.a */,
+				92798D3A2DF7261100673237 /* sf2.zip */,
+				9279911D2DF7754D00673237 /* mame2003_plus_libretro_ios.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -260,12 +268,15 @@
 		4CC26D922D4BA8BC00F3D262 /* Emulators */ = {
 			isa = PBXGroup;
 			children = (
+				92798D392DF7233700673237 /* LibretroBridge.h */,
+				927991232DF77DBE00673237 /* fucku.c */,
+				92798D372DF7232600673237 /* LibretroBridge.c */,
 				92E0ACAA2DF6DCB200D5EC21 /* libretard_test.h */,
 				92E0ACAB2DF6DCC900D5EC21 /* libretard_test.c */,
 				4C23EA0A2D50048400039871 /* Bridging-Header.h */,
 				4CCFFDAD2D4D2B4B002B9F4A /* nes */,
 				4CE85E512D55201F004A3CC2 /* gba */,
-				92E0ACAD2DF6DD4300D5EC21 /* libretro.h */,
+				92798D452DF739E100673237 /* libretro.h */,
 			);
 			path = Emulators;
 			sourceTree = "<group>";
@@ -398,6 +409,7 @@
 				7058279E2C75766300AB8682 /* Orbitron-Bold.ttf in Resources */,
 				9D123D052CD007EE007508A8 /* D-DINCondensed-Bold.ttf in Resources */,
 				9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */,
+				92798D3B2DF7261100673237 /* sf2.zip in Resources */,
 				183DF1722862C9A00088FE1C /* Assets.xcassets in Resources */,
 				705827A12C75766300AB8682 /* Orbitron-ExtraBold.ttf in Resources */,
 			);
@@ -475,6 +487,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				927991242DF77DD100673237 /* fucku.c in Sources */,
 				92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */,
 				7032EDC32C761C5800828A41 /* ThemeManager.swift in Sources */,
 				70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */,
@@ -495,6 +508,7 @@
 				7032EDC12C76059400828A41 /* SettingsView.swift in Sources */,
 				187ABE9E28642FF000372297 /* ButtonKey.swift in Sources */,
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
+				92798D382DF7232D00673237 /* LibretroBridge.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,6 +666,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				MACH_O_TYPE = mh_execute;
 				MARKETING_VERSION = 5.7.5;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
@@ -663,6 +678,56 @@
 					"-I./Emulators/nes",
 					"-I./Emulators/gba",
 					"-I./Emulators/SFML/include",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"FBLPromises\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreExtension\"",
+					"-framework",
+					"\"FirebaseCoreInternal\"",
+					"-framework",
+					"\"FirebaseCrashlytics\"",
+					"-framework",
+					"\"FirebaseInstallations\"",
+					"-framework",
+					"\"FirebaseRemoteConfigInterop\"",
+					"-framework",
+					"\"FirebaseSessions\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GoogleAppMeasurement\"",
+					"-framework",
+					"\"GoogleAppMeasurementIdentitySupport\"",
+					"-framework",
+					"\"GoogleDataTransport\"",
+					"-framework",
+					"\"GoogleUtilities\"",
+					"-framework",
+					"\"Promises\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"nanopb\"",
+					"-Wl,-force_load,$(SRCROOT)/mame2003_plus_libretro_ios.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.soolra.soolra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -708,6 +773,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				MACH_O_TYPE = mh_execute;
 				MARKETING_VERSION = 5.7.5;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
@@ -719,6 +785,56 @@
 					"-I./Emulators/nes",
 					"-I./Emulators/gba",
 					"-I./Emulators/SFML/include",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"FBLPromises\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreExtension\"",
+					"-framework",
+					"\"FirebaseCoreInternal\"",
+					"-framework",
+					"\"FirebaseCrashlytics\"",
+					"-framework",
+					"\"FirebaseInstallations\"",
+					"-framework",
+					"\"FirebaseRemoteConfigInterop\"",
+					"-framework",
+					"\"FirebaseSessions\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GoogleAppMeasurement\"",
+					"-framework",
+					"\"GoogleAppMeasurementIdentitySupport\"",
+					"-framework",
+					"\"GoogleDataTransport\"",
+					"-framework",
+					"\"GoogleUtilities\"",
+					"-framework",
+					"\"Promises\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"nanopb\"",
+					"-Wl,-force_load,$(SRCROOT)/mame2003_plus_libretro_ios.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.soolra.soolra;
 				PRODUCT_NAME = "$(TARGET_NAME)";

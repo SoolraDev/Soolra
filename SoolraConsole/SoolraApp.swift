@@ -256,7 +256,32 @@ struct SoolraApp: App {
         UINavigationBar.appearance().tintColor = .black
         appearance.backgroundColor = .none
         appearance.configureWithOpaqueBackground()
+        
+        
         test_libretro_core_loaded()
+        libretro_initialize_core()
+
+//        if let zipPath = Bundle.main.path(forResource: "Chase", ofType: "nes") {
+        if let zipPath = Bundle.main.path(forResource: "sf2", ofType: "zip") {
+            if FileManager.default.fileExists(atPath: zipPath) {
+                print("✅ File exists at: \(zipPath)")
+            } else {
+                print("❌ File missing at: \(zipPath)")
+            }
+
+            print("✅ Found zip at: \(zipPath)")
+            let loaded = libretro_load_game(zipPath)
+            if loaded {
+                print("Game loaded")
+            } else {
+                print("❌ Failed to load game")
+            }
+        } else {
+            print("❌ sf2.zip not found in bundle")
+        }
+
+
+        libretro_unload_core()
     }
 
     var body: some Scene {
