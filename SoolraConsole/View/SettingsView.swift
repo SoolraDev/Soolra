@@ -50,7 +50,7 @@ struct SettingsView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(viewModel.selectedIndex == 0 ? Color.white : Color.clear, lineWidth: 2)
                         )
-                    
+
                     Picker("Keyboard Color", selection: $themeManager.keyboardColor) {
                         ForEach(ThemeManager.KeyboardColor.allCases, id: \.self) { color in
                             Text(color.rawValue.capitalized)
@@ -60,7 +60,7 @@ struct SettingsView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(viewModel.selectedIndex == 1 ? Color.white : Color.clear, lineWidth: 2)
                     )
-                    
+
                     NavigationLink("Manage Games") {
                         ManageRomsView().environmentObject(dataController)
                     }
@@ -69,11 +69,22 @@ struct SettingsView: View {
                             .stroke(viewModel.selectedIndex == 2 ? Color.white : Color.clear, lineWidth: 2)
                     )
                 }
-                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-                .navigationTitle("Settings")
-                .listStyle(GroupedListStyle())
             }
-        }
+            .navigationBarTitle("Settings", displayMode: .inline)
+            .navigationBarItems(leading:
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                }
+            )
+            .listStyle(GroupedListStyle())
+        }.preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+
+
         .onAppear {
             // Set the controller delegate to SettingsViewModel when view appears
             BluetoothControllerService.shared.delegate = viewModel
