@@ -30,7 +30,7 @@ class PauseGameViewModel: ObservableObject {
 
     @Published var isFastForwardEnabled: Bool = false
 
-    private var exitAction: (() -> Task<Void, Never>)?
+    static var exitAction: (() -> Task<Void, Never>)?
     weak var consoleManager: ConsoleCoreManager?
     let currentRom: Rom
 
@@ -40,7 +40,7 @@ class PauseGameViewModel: ObservableObject {
     }
     
     func setExitAction(_ action: @escaping () -> Task<Void, Never>) {
-        self.exitAction = action
+        Self.exitAction = action
     }
     
     func showPauseMenuOnForeground() {
@@ -191,7 +191,7 @@ class PauseGameViewModel: ObservableObject {
         showPauseMenu = true
         
         // Start exit process and await its completion
-        if let action = exitAction {
+        if let action = PauseGameViewModel.exitAction {
             Task {
                 await action().value
             }

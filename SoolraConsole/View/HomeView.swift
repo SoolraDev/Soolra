@@ -56,7 +56,7 @@ struct HomeView: View {
     @State private var isLoading: Bool = false
     @StateObject private var controllerViewModel = ControllerViewModel()
     @State private var isLoadingGame: Bool = false
-    
+
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
     var backgroundImage: UIImage? {
@@ -231,6 +231,18 @@ struct HomeView: View {
             viewModel.updateRomCount(roms.count)
             engagementTracker.startTracking()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .launchRomFromExternalSource)) { notification in
+            guard let rom = notification.object as? Rom else { return }
+            print("rom is ", rom);
+            Task {
+//                await consoleManager.shutdown()
+                if let exitTask = PauseGameViewModel.exitAction?() {
+                            await exitTask.value
+                        }
+                print("rom is ", rom);
+                navigateToRom(rom)
+            }
+        }
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
         }
@@ -403,9 +415,7 @@ struct HomeView: View {
                 
                 // Load everything before transitioning view
                 let gameData = try await loadRom(rom: rom, consoleManager: consoleManager)
-                
                 consoleManager.cheatCodesManager = CheatCodesManager(consoleManager: consoleManager)
-                
                 // Once everything is ready, update the view
                 await MainActor.run {
                     //withAnimation(.easeInOut(duration: 0.3)) {
@@ -721,3 +731,6 @@ extension Collection {
     }
 }
 
+extension Notification.Name {
+    static let launchRomFromExternalSource = Notification.Name("launchRomFromExternalSource")
+}

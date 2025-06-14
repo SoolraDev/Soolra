@@ -53,6 +53,7 @@ struct GameView: View {
     @ObservedObject var pauseViewModel: PauseGameViewModel
     @EnvironmentObject var controllerViewModel: ControllerViewModel
     @Environment(\.managedObjectContext) private var context
+    @State private var appLaunchedFromExternalRom = false
     
     init(data: GameViewData, currentView: Binding<CurrentView>, pauseViewModel: PauseGameViewModel) {
         self.name = data.name
@@ -81,11 +82,16 @@ struct GameView: View {
                     }
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .launchRomFromExternalSource)) { _ in
+                appLaunchedFromExternalRom = true
+            }
+
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 print("🎮 App will resign active - ensuring game is paused")
                 pauseViewModel.ensurePaused()
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                guard !appLaunchedFromExternalRom else { return }
                 print("🎮 App did become active - showing pause menu")
                 // Force show the pause menu regardless of current state
                 pauseViewModel.showPauseMenuOnForeground()

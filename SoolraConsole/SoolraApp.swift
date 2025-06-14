@@ -16,12 +16,12 @@ public class AudioSessionManager: ObservableObject {
     @Published public private(set) var isAudioSessionActive = true
     public var onAudioSessionStateChange: ((Bool) -> Void)?
     @StateObject private var themeManager = ThemeManager()
-
+    
     public init() {
         setUpAudioSession()
         addObservers()
     }
-
+    
     private func setUpAudioSession() {
         do {
             let audioSession = AVAudioSession.sharedInstance()
@@ -37,7 +37,7 @@ public class AudioSessionManager: ObservableObject {
             onAudioSessionStateChange?(false)
         }
     }
-
+    
     private func addObservers() {
         audioSessionObserver = NotificationCenter.default.addObserver(
             forName: AVAudioSession.mediaServicesWereResetNotification,
@@ -46,7 +46,7 @@ public class AudioSessionManager: ObservableObject {
         ) { [weak self] _ in
             self?.setUpAudioSession()
         }
-
+        
         routeChangeObserver = NotificationCenter.default.addObserver(
             forName: AVAudioSession.routeChangeNotification,
             object: nil,
@@ -185,7 +185,7 @@ public class AudioSessionManager: ObservableObject {
             }
         }
     }
-
+    
     deinit {
         if let observer = audioSessionObserver {
             NotificationCenter.default.removeObserver(observer)
@@ -199,14 +199,26 @@ public class AudioSessionManager: ObservableObject {
     }
 }
 
+class RomLaunchCoordinator: ObservableObject {
+    static let shared = RomLaunchCoordinator()
+    @Published var pendingRomURL: URL?
+}
+
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-
-    return true
-  }
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        guard url.pathExtension.lowercased() == "nes" else { return false }
+        RomLaunchCoordinator.shared.pendingRomURL = url
+        return true
+    }
+    
 }
 
 
@@ -217,21 +229,23 @@ struct SoolraApp: App {
     @StateObject private var audioSessionManager = AudioSessionManager()
     @StateObject private var metalManager: MetalManager
     @StateObject private var consoleManager: ConsoleCoreManager
+    @StateObject private var romCoordinator = RomLaunchCoordinator.shared
+    
     @State private var isShowingSplash = true
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
     @State private var initializationError: Error?
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
+    
     init() {
         // Initialize Metal device first and handle potential errors
         do {
-
+            
             let metal = try MetalManager()
             _metalManager = StateObject(wrappedValue: metal)
             
             // Initialize console manager with metal manager
             let console = try ConsoleCoreManager(metalManager: metal)
-            _consoleManager = StateObject(wrappedValue: console)            
+            _consoleManager = StateObject(wrappedValue: console)
         } catch {
             // If initialization fails, we need to provide default values
             // but we'll store the error to show it to the user
@@ -242,7 +256,7 @@ struct SoolraApp: App {
             _consoleManager = StateObject(wrappedValue: console)
             initializationError = error
         }
-
+        
         // Configure UI appearance
         let appearance = UINavigationBarAppearance()
         appearance.titleTextAttributes = [.font: UIFont(name: "Orbitron-Black", size: 24)!]
@@ -254,7 +268,7 @@ struct SoolraApp: App {
         appearance.backgroundColor = .none
         appearance.configureWithOpaqueBackground()
     }
-
+    
     var body: some Scene {
         WindowGroup {
             if let error = initializationError {
@@ -277,6 +291,21 @@ struct SoolraApp: App {
                     .environmentObject(consoleManager)
                     .environmentObject(metalManager)
                     .environmentObject(SaveStateManager.shared)
+                    .onOpenURL { url in
+                        guard url.pathExtension.lowercased() == "nes" else { return }
+                        Task {
+                            print("📥 Importing ROM from external URL: \(url)")
+                            await dataController.romManager.addRom(url: url)
+                            let updatedRoms = dataController.romManager.fetchRoms()
+                            let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.last
+                            // Navigate to game screen on main actor
+                            if let rom = newRom {
+                                await MainActor.run {
+                                    NotificationCenter.default.post(name: .launchRomFromExternalSource, object: rom)
+                                }
+                            }
+                        }
+                    }
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
                         Analytics.logEvent("app_loaded", parameters: [

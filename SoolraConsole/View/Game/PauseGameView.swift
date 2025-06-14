@@ -81,26 +81,26 @@ private struct PauseBackgroundView: View {
 private struct PauseMenuContent: View {
     @EnvironmentObject var themeManager: ThemeManager
     @ObservedObject var pauseViewModel: PauseGameViewModel
-
+    
     private let columns: [GridItem] = [
         GridItem(.flexible(minimum: 0), spacing: 16, alignment: .top),
         GridItem(.flexible(minimum: 0), spacing: 16, alignment: .top)
     ]
-
-
+    
+    
     var body: some View {
         VStack(spacing: 12) {
             Text("Paused")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
-
+            
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(Array(pauseViewModel.menuItems.enumerated()), id: \.element.id) { index, item in
                     let isSelected = pauseViewModel.selectedMenuIndex == index
                     let iconName = icon(for: item)
                     let fgColor = item.isExit
-                        ? Color(red: 209/255, green: 31/255, blue: 38/255)
-                        : themeManager.whitetextColor
+                    ? Color(red: 209/255, green: 31/255, blue: 38/255)
+                    : themeManager.whitetextColor
                     VStack {
                         Button(action: { handleMenuAction(index) }) {
                             VStack(spacing: 6) {
@@ -108,9 +108,9 @@ private struct PauseMenuContent: View {
                                     Image(systemName: iconName)
                                         .font(.system(size: 31))
                                         .foregroundColor(.white)
-
+                                    
                                 }
-
+                                
                                 Text(item.title)
                                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                                     .foregroundColor(fgColor)
@@ -137,10 +137,10 @@ private struct PauseMenuContent: View {
                         .animation(.easeInOut(duration: 0.2), value: isSelected)
                     }
                     .frame(maxWidth: .infinity)
-
+                    
                 }
             }
-
+            
         }
         .padding()
         .background(
@@ -151,7 +151,7 @@ private struct PauseMenuContent: View {
         .padding(.horizontal, 20)
         .frame(maxWidth: 500)
     }
-
+    
     private func icon(for item: PauseMenuItem) -> String? {
         switch item {
         case .resume: return "play.circle.fill"
@@ -162,10 +162,10 @@ private struct PauseMenuContent: View {
         case .loadState: return "square.and.arrow.up"
         }
     }
-
+    
     private func handleMenuAction(_ index: Int) {
         let item = pauseViewModel.menuItems[index]
-
+        
         switch item {
         case .resume:
             pauseViewModel.togglePause()
@@ -183,6 +183,7 @@ private struct PauseMenuContent: View {
             pauseViewModel.showLoadStateView = true
         }
     }
+    
 }
 
 

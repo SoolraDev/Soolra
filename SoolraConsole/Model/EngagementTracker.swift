@@ -15,7 +15,7 @@ class EngagementTracker: ObservableObject {
     func startTracking() {
         stopTracking() // stop any previous timer
         
-        timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
             Analytics.logEvent("session_heartbeat", parameters: [
                 "current_rom": self.currentRom,
                 "timestamp": Date().timeIntervalSince1970
