@@ -233,13 +233,10 @@ struct HomeView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .launchRomFromExternalSource)) { notification in
             guard let rom = notification.object as? Rom else { return }
-            print("rom is ", rom);
             Task {
-//                await consoleManager.shutdown()
                 if let exitTask = PauseGameViewModel.exitAction?() {
                             await exitTask.value
                         }
-                print("rom is ", rom);
                 navigateToRom(rom)
             }
         }
@@ -535,6 +532,8 @@ struct HomeView: View {
                     // try await Task.sleep(nanoseconds: 1_000_000_000) // 1second
                     
                     // Then navigate away
+                    roms = dataController.romManager.fetchRoms()
+                    viewModel.updateRomCount(roms.count)
                     currentView = .grid
                 } catch {
                     print("Error during shutdown: \(error)")
