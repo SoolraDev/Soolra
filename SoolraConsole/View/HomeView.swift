@@ -164,7 +164,7 @@ struct HomeView: View {
 
 
 
-                        if viewModel.focusedButtonIndex >= 4 {
+                        if viewModel.focusedButtonIndex >= 4 && !roms.isEmpty{
                             CurrentItemView(currentRom: roms[viewModel.focusedButtonIndex - 4], currentView: $currentView, focusedButtonIndex: $viewModel.focusedButtonIndex)
                         } else {
                             CurrentItemView(currentRom: nil, currentView: $currentView, focusedButtonIndex: $viewModel.focusedButtonIndex, addRomAction: {
@@ -231,15 +231,36 @@ struct HomeView: View {
             viewModel.updateRomCount(roms.count)
             engagementTracker.startTracking()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .launchRomFromExternalSource)) { notification in
-            guard let rom = notification.object as? Rom else { return }
+        .onOpenURL { url in
+            guard ["nes", "gba"].contains(url.pathExtension.lowercased()) else { return }
             Task {
-                if let exitTask = PauseGameViewModel.exitAction?() {
-                            await exitTask.value
-                        }
-                navigateToRom(rom)
+                print("📥 Importing ROM from external URL: \(url)")
+                isLoading = true
+                await dataController.romManager.addRom(url: url)
+                isLoading = false
+                let updatedRoms = dataController.romManager.fetchRoms()
+                let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.last
+                // Navigate to game screen on main actor
+                if let rom = newRom {
+                    NotificationCenter.default.post(name: .launchRomFromExternalSource, object: rom)
+                    if let exitTask = PauseGameViewModel.exitAction?() {
+                        await exitTask.value
+                    }
+                    navigateToRom(rom)
+                } else {
+                    print("XXX Failed to navigate to new rom")
+                }
             }
         }
+//        .onReceive(NotificationCenter.default.publisher(for: .launchRomFromExternalSource)) { notification in
+//            guard let rom = notification.object as? Rom else { return }
+//            Task {
+//                if let exitTask = PauseGameViewModel.exitAction?() {
+//                            await exitTask.value
+//                        }
+//                navigateToRom(rom)
+//            }
+//        }
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
         }

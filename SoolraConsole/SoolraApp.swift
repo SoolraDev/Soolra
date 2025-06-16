@@ -199,12 +199,6 @@ public class AudioSessionManager: ObservableObject {
     }
 }
 
-class RomLaunchCoordinator: ObservableObject {
-    static let shared = RomLaunchCoordinator()
-    @Published var pendingRomURL: URL?
-}
-
-
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -212,13 +206,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         return true
     }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        guard url.pathExtension.lowercased() == "nes" else { return false }
-        RomLaunchCoordinator.shared.pendingRomURL = url
-        return true
-    }
-    
+
 }
 
 
@@ -229,7 +217,6 @@ struct SoolraApp: App {
     @StateObject private var audioSessionManager = AudioSessionManager()
     @StateObject private var metalManager: MetalManager
     @StateObject private var consoleManager: ConsoleCoreManager
-    @StateObject private var romCoordinator = RomLaunchCoordinator.shared
     
     @State private var isShowingSplash = true
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
@@ -291,21 +278,23 @@ struct SoolraApp: App {
                     .environmentObject(consoleManager)
                     .environmentObject(metalManager)
                     .environmentObject(SaveStateManager.shared)
-                    .onOpenURL { url in
-                        guard url.pathExtension.lowercased() == "nes" else { return }
-                        Task {
-                            print("📥 Importing ROM from external URL: \(url)")
-                            await dataController.romManager.addRom(url: url)
-                            let updatedRoms = dataController.romManager.fetchRoms()
-                            let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.last
-                            // Navigate to game screen on main actor
-                            if let rom = newRom {
-                                await MainActor.run {
-                                    NotificationCenter.default.post(name: .launchRomFromExternalSource, object: rom)
-                                }
-                            }
-                        }
-                    }
+//                    .onOpenURL { url in
+//                        guard ["nes", "gba"].contains(url.pathExtension.lowercased()) else { return }
+//                        Task {
+//                            print("📥 Importing ROM from external URL: \(url)")
+//                            isLoading = true
+//                            await dataController.romManager.addRom(url: url)
+//                            isLoading = false
+//                            let updatedRoms = dataController.romManager.fetchRoms()
+//                            let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.last
+//                            // Navigate to game screen on main actor
+//                            if let rom = newRom {
+//                                await MainActor.run {
+//                                    NotificationCenter.default.post(name: .launchRomFromExternalSource, object: rom)
+//                                }
+//                            }
+//                        }
+//                    }
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
                         Analytics.logEvent("app_loaded", parameters: [
