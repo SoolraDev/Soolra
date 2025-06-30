@@ -3,29 +3,22 @@
 #include "Core/System.h"
 #include "Core/CoreParameter.h"
 
-void start_ppsspp_core() {
-    // 1. Set up graphics context (e.g., Metal/GL) and other services
-
-    // 2. Prepare CoreParameter
+// SoolraPSPBridge.cpp
+void start_ppsspp_core_with_path(const char *iso_path) {
     CoreParameter coreParam;
-    coreParam.fileToStart = Path("/path/to/your/game.iso");
-//    coreParam.graphicsContext = yourGraphicsContextPointer;
+    coreParam.fileToStart = Path(iso_path);
     coreParam.enableSound = true;
-    // ... set other fields as needed
 
-    // 3. Start PPSSPP core
     bool started = PSP_InitStart(coreParam);
     if (!started) {
-        // Handle error
+        printf("Failed to start PPSSPP\n");
+        return;
     }
 
-    // 4. Poll for completion
     std::string errorString;
     while (PSP_InitUpdate(&errorString) == BootState::Booting) {
-        // Optionally sleep or update UI
-        printf("Hello, PPSSPP!\n");
+        printf("Booting PPSSPP...\n");
     }
 
-    // 5. Emulation is now running!
+    printf("PPSSPP is now running!\n");
 }
-

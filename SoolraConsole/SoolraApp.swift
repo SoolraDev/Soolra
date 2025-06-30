@@ -257,7 +257,7 @@ struct SoolraApp: App {
         
         
         
-        start_ppsspp_core()
+        launchGame()
     }
     
     var body: some Scene {
@@ -309,6 +309,16 @@ struct SoolraApp: App {
         }
     }
 }
+func launchGame() {
+    let isoName = "mk.iso" // Replace with actual filename
+    let isoPath = FileManager.default
+        .urls(for: .documentDirectory, in: .userDomainMask)[0]
+        .appendingPathComponent(isoName)
+        .path
+
+    start_ppsspp_core_with_path(isoPath)
+}
+
 
 // Add a simple error view to show initialization errors
 struct ErrorView: View {
