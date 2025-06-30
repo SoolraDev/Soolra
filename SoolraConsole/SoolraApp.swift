@@ -254,6 +254,10 @@ struct SoolraApp: App {
         UINavigationBar.appearance().tintColor = .black
         appearance.backgroundColor = .none
         appearance.configureWithOpaqueBackground()
+        
+        
+        
+        start_ppsspp_core()
     }
     
     var body: some Scene {

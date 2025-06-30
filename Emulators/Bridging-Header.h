@@ -14,6 +14,7 @@
 // Our bridge headers - note these must be C-compatible interfaces
 #include "nes/SoolraNESBridge.hpp"
 #include "gba/SoolraGBABridge.hpp"
+#include "SoolraPSPBridge.h"
 
 #endif /* Bridging_Header_h */
 
