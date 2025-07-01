@@ -1434,6 +1434,7 @@
 					/Users/yoshi/Desktop/ppsspp,
 					/Users/yoshi/Desktop/ppsspp/Core,
 					/Users/yoshi/Desktop/ppsspp/Common,
+					/Users/yoshi/Desktop/ppsspp/ios,
 					/Users/yoshi/Desktop/ppsspp/ffmpeg/ios/universal/include,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";
@@ -1565,6 +1566,7 @@
 					/Users/yoshi/Desktop/ppsspp,
 					/Users/yoshi/Desktop/ppsspp/Core,
 					/Users/yoshi/Desktop/ppsspp/Common,
+					/Users/yoshi/Desktop/ppsspp/ios,
 					/Users/yoshi/Desktop/ppsspp/ffmpeg/ios/universal/include,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/info.plist";

@@ -6,8 +6,12 @@
 #include "Common/System/NativeApp.h"
 #include "GPU/GPUState.h"
 #include "Common/File/FileUtil.h"
+
+
+
 #include <cstdio>
 #import <AVFoundation/AVFoundation.h>
+
 
 
 extern "C" int GetScreenWidth() {
@@ -30,7 +34,9 @@ void start_ppsspp_core_with_path(const char *iso_path) {
 
     // === Core selection ===
     coreParam.cpuCore = CPUCore::INTERPRETER;       // iOS does not allow JIT
-    coreParam.gpuCore = GPUCORE_GLES;
+//    coreParam.gpuCore = GPUCORE_GLES;
+    coreParam.gpuCore = GPUCORE_SOFTWARE;     // ✅ Use software rendering
+
 
     // === Graphics context ===
     coreParam.graphicsContext = nullptr;  // 🚨 no GL context
@@ -75,5 +81,10 @@ void start_ppsspp_core_with_path(const char *iso_path) {
         printf("Booting PPSSPP...\n");
     }
 
-    printf("PPSSPP is now running!\n");
+    printf("PPSSPP is done Booting!\n");
+    
+    if (PSP_IsInited()) {
+        printf("✅ PPSSPP core is initialized and running a game.\n");
+    }
+
 }
