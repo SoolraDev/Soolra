@@ -1,6 +1,7 @@
 #include "SoolraPSPBridge.h"
 
 #include "Core/System.h"
+#include "Core/Core.h"
 #include "Core/CoreParameter.h"
 #include "Common/GraphicsContext.h"
 #include "Common/System/NativeApp.h"
@@ -22,6 +23,10 @@ extern "C" int GetScreenHeight() {
     return 720;
 }
 
+extern "C" const uint16_t *ppsspp_getRGB565FrameBuffer() {
+    if (!gpu) return nullptr;
+    return gpu->FramebufferManager()->GetDisplayFramebuffer();
+}
 
 void start_ppsspp_core_with_path(const char *iso_path) {
     const char *docPathCStr = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0] UTF8String];
@@ -86,5 +91,15 @@ void start_ppsspp_core_with_path(const char *iso_path) {
     if (PSP_IsInited()) {
         printf("✅ PPSSPP core is initialized and running a game.\n");
     }
+    
+    Core_NextFrame();
+    Core_NextFrame();
+    Core_NextFrame();
+    Core_NextFrame();
+    Core_NextFrame();
+    Core_NextFrame();
+    Core_NextFrame();
+    
+   
 
 }
