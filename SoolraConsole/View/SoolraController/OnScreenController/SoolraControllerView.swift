@@ -40,6 +40,8 @@ struct SoolraControllerView: View {
                 }
                 MergedFunctionalKeyView(onButtonPress: onButtonPress)
                     .environmentObject(consoleManager)
+                ShoulderButtonView(onButtonPress: onButtonPress)
+                    .environmentObject(consoleManager)
                 HStack {
                     JoystickView(onButtonPress: onButtonPress)
                         .zIndex(1)

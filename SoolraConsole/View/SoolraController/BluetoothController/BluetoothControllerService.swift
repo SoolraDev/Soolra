@@ -90,6 +90,12 @@ class BluetoothControllerService: ObservableObject {
         gamepad.buttonY.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .y, pressed: pressed)
         }
+        gamepad.leftShoulder.pressedChangedHandler = { [weak self] _, _, pressed in
+            self?.delegate?.controllerDidPress(action: .l, pressed: pressed)
+        }
+        gamepad.rightShoulder.pressedChangedHandler = { [weak self] _, _, pressed in
+            self?.delegate?.controllerDidPress(action: .r, pressed: pressed)
+        }
 
         // D-pad handlers
         gamepad.dpad.up.pressedChangedHandler = { [weak self] _, _, pressed in
