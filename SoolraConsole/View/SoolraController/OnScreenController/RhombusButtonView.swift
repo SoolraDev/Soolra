@@ -92,6 +92,7 @@ struct RhombusButtonView: View {
                         consoleManager.handleControllerAction(.a, pressed: false)
                     })
             )
+            
         }
         .frame(width: 135, height: 135)
     }

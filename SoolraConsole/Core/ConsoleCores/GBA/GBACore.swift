@@ -254,9 +254,9 @@ class GBACore: ConsoleCore {
             bridge.activateInput(Int(GBAButton.start.rawValue))
         case .select:
             bridge.activateInput(Int(GBAButton.select.rawValue))
-        case .x:
+        case .x, .r:
             bridge.activateInput(Int(GBAButton.r.rawValue))  // Map X to R trigger
-        case .y:
+        case .y, .l:
             bridge.activateInput(Int(GBAButton.l.rawValue))  // Map Y to L trigger
         case .menu, .upRight, .upLeft, .downRight, .downLeft:
             // Explicitly ignore unsupported buttons
@@ -288,9 +288,9 @@ class GBACore: ConsoleCore {
             bridge.deactivateInput(Int(GBAButton.start.rawValue))
         case .select:
             bridge.deactivateInput(Int(GBAButton.select.rawValue))
-        case .x:
+        case .x, .r:
             bridge.deactivateInput(Int(GBAButton.r.rawValue))  // Map X to R trigger
-        case .y:
+        case .y, .l:
             bridge.deactivateInput(Int(GBAButton.l.rawValue))  // Map Y to L trigger
         case .menu, .upRight, .upLeft, .downRight, .downLeft:
             // Explicitly ignore unsupported buttons
