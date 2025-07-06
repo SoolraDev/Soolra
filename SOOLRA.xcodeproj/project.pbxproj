@@ -14,7 +14,6 @@
 		183DF1752862C9A00088FE1C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 183DF1742862C9A00088FE1C /* Preview Assets.xcassets */; };
 		185B91812869EE8C003F88F5 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 185B917F2869EE8C003F88F5 /* Model.xcdatamodeld */; };
 		186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */; };
-		187ABE9E28642FF000372297 /* ButtonKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187ABE9D28642FF000372297 /* ButtonKey.swift */; };
 		18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EBB74A2864A13A00903F43 /* HomeView.swift */; };
 		4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9253D32D47ED2B00E38366 /* HapticManager.swift */; };
 		4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB5AA5E2D61B206003E1677 /* MetalManager.swift */; };
@@ -55,7 +54,6 @@
 		183DF1742862C9A00088FE1C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		185B91802869EE8C003F88F5 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+distanceTo.swift"; sourceTree = "<group>"; };
-		187ABE9D28642FF000372297 /* ButtonKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonKey.swift; sourceTree = "<group>"; };
 		18EBB74A2864A13A00903F43 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.release.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.release.xcconfig"; sourceTree = "<group>"; };
 		4C23EA0A2D50048400039871 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
@@ -228,7 +226,6 @@
 			children = (
 				928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */,
 				4CEF41C72D21A4670068BC5B /* RomManager.swift */,
-				187ABE9D28642FF000372297 /* ButtonKey.swift */,
 				92678D802DAA76F5001CEDD6 /* Cheat.swift */,
 				928FA3232DC0DC0100F3C848 /* SaveState.swift */,
 			);
@@ -481,7 +478,6 @@
 				180C86F0286B3F02009E7C0D /* HomeView+ViewModel.swift in Sources */,
 				4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */,
 				7032EDC12C76059400828A41 /* SettingsView.swift in Sources */,
-				187ABE9E28642FF000372297 /* ButtonKey.swift in Sources */,
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
