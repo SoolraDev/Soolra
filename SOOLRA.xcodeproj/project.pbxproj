@@ -632,7 +632,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.7;
+				MARKETING_VERSION = 5.7.8;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -684,7 +684,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.7;
+				MARKETING_VERSION = 5.7.8;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
