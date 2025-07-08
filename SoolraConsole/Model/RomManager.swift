@@ -487,7 +487,7 @@ class RomArtworkLoader {
         return try await withTimeout(seconds: 10) {
                 
             if let matchedFilename = self.findClosestMatchingFilename(for: romName, consoleType: consoleType),
-               let image = try await self.fetchArtwork(for: matchedFilename.replacingOccurrences(of: ".png", with: ""), consoleType: consoleType) {
+               let image = try await self.fetchArtwork(for: matchedFilename.replacingOccurrences(of: ".png", with: ""), consoleType: consoleType, originalFilename: romName) {
                 print("Found artwork for \(romName) (\(consoleType)): \(matchedFilename)")
                 return image
             }
@@ -518,19 +518,28 @@ class RomArtworkLoader {
         }
     }
     
-    private func fetchArtwork(for romName: String, consoleType: ConsoleCoreManager.ConsoleType) async throws -> UIImage? {
+    private func fetchArtwork(for romName: String, consoleType: ConsoleCoreManager.ConsoleType, originalFilename: String) async throws -> UIImage? {
+        // 1. Try to load local artwork first
+        let localFileName = "\(originalFilename)_artwork"
+        if let localURL = Bundle.main.url(forResource: localFileName, withExtension: "png"),
+           let data = try? Data(contentsOf: localURL),
+           let image = UIImage(data: data) {
+            return image
+        }
+
+        // 2. If not found, fallback to remote fetch
         let platformMapping: [ConsoleCoreManager.ConsoleType: String] = [
             .nes: "Nintendo%20-%20Nintendo%20Entertainment%20System",
             .gba: "Nintendo%20-%20Game%20Boy%20Advance"
         ]
-        
+
         guard let platform = platformMapping[consoleType] else { return nil }
-        
+
         let romNameUrl = romName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? romName
         let urlString = "https://thumbnails.libretro.com/\(platform)/Named_Boxarts/\(romNameUrl).png"
-        
+
         guard let url = URL(string: urlString) else { return nil }
-        
+
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             return UIImage(data: data)
@@ -539,6 +548,6 @@ class RomArtworkLoader {
             return nil
         }
     }
-    
+
     
 }

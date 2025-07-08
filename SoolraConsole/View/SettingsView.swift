@@ -69,6 +69,18 @@ struct SettingsView: View {
                             .stroke(viewModel.selectedIndex == 2 ? Color.white : Color.clear, lineWidth: 2)
                     )
                 }
+
+                Section(header: Text("Currently Supported Emulator Cores")) {
+                    Text("Nintendo Entertainment System (NES)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Text("Game Boy Advance (GBA)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+
             }
             .navigationBarTitle("Settings", displayMode: .inline)
             .navigationBarItems(leading:
