@@ -49,6 +49,8 @@ struct HomeView: View {
 
     @StateObject private var viewModel = HomeViewModel.shared
     @StateObject private var engagementTracker = EngagementTracker()
+    @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState.shared
+
     @State private var isEditMode: EditMode = .inactive
     @State private var isSettingsPresented: Bool = false
     @State private var currentView: CurrentView = .grid
@@ -174,7 +176,7 @@ struct HomeView: View {
                         TitleSortingView(titleText: "All Games", sortingText: "A-Z")
                             .padding(.top, 10)
                         
-                        if roms.isEmpty {
+                        if roms.isEmpty && !isLoading {
                             emptyView
                         } else {
                             // scroll down
@@ -227,9 +229,13 @@ struct HomeView: View {
             
         }
         .onAppear {
-            roms = dataController.romManager.fetchRoms()
-            viewModel.updateRomCount(roms.count)
             engagementTracker.startTracking()
+            if defaultRomsLoadingState.isLoading {
+                isLoading = true
+            } else {
+                roms = dataController.romManager.fetchRoms()
+                viewModel.updateRomCount(roms.count)
+            }
         }
         .onOpenURL { url in
             guard ["nes", "gba"].contains(url.pathExtension.lowercased()) else { return }
@@ -261,6 +267,14 @@ struct HomeView: View {
 //                navigateToRom(rom)
 //            }
 //        }
+        .onChange(of: defaultRomsLoadingState.isLoading) { loading in
+            if !loading {
+                roms = dataController.romManager.fetchRoms()
+                viewModel.updateRomCount(roms.count)
+                isLoading = false
+            }
+        }
+
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
         }
