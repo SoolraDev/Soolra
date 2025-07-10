@@ -24,7 +24,11 @@ class RomManager {
     // MARK: - Public Methods
     func fetchRoms() -> [Rom] {
         let request = NSFetchRequest<Rom>(entityName: "Rom")
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Rom.name, ascending: true)]
+        request.sortDescriptors = [
+            NSSortDescriptor(key: #keyPath(Rom.createdAt), ascending: false),
+            NSSortDescriptor(key: #keyPath(Rom.name), ascending: true)
+        ]
+
         
         do {
             let roms = try context.fetch(request)
@@ -254,6 +258,7 @@ class RomManager {
             rom.isValid = FileManager.default.fileExists(atPath: relativeUrl.path)
             rom.imageData = imageData
             rom.consoleType = getConsoleType(from: url)?.rawValue ?? "unknown"
+            rom.createdAt    = Date()
             save()
         }
     }
