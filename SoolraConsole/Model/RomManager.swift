@@ -287,41 +287,84 @@ class RomManager {
         }
     }
     
-    
     func initDefaultRoms() async {
         let fm = FileManager.default
         guard let resourceURL = Bundle.main.resourceURL else { return }
         let destDir = getSoolraDirectory()
 
         do {
-            let allFiles = try fm.contentsOfDirectory(at: resourceURL,
-                                                      includingPropertiesForKeys: nil)
+            let allFiles = try fm.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys: nil)
+
             for file in allFiles {
                 let ext = file.pathExtension.lowercased()
- 
-                guard ConsoleCoreManager.ConsoleType.allFileExtensions.contains(ext)
-                    else { continue }
-                
+                guard ConsoleCoreManager.ConsoleType.allFileExtensions.contains(ext) else { continue }
+
                 guard let romName = getRomName(from: file) else {
                     print("⚠️ Skipping file with invalid ROM name: \(file.lastPathComponent)")
                     continue
                 }
-                guard !UserDefaults.standard.isROMDeleted(romName)
-                    else { continue }
-                
-                let dest = destDir.appendingPathComponent(file.lastPathComponent)
-                guard !fm.fileExists(atPath: dest.path) else { continue }
 
-                try fm.copyItem(at: file, to: dest)
-                print("✅ Copied \(file.lastPathComponent)")
-                
-                // **await** the Core Data insert before moving on
-                await createRomEntity(name: romName, url: dest)
+                guard !UserDefaults.standard.isROMDeleted(romName) else { continue }
+
+                let dest = destDir.appendingPathComponent(file.lastPathComponent)
+                let exists = fm.fileExists(atPath: dest.path)
+
+                // Always create the ROM entity regardless of copy status
+                if !romExists(name: romName, url: dest) {
+                    await createRomEntity(name: romName, url: dest)
+                }
+
+                // Copy file in background if not already copied
+                if !exists {
+                    DispatchQueue.global(qos: .utility).async {
+                        do {
+                            try fm.copyItem(at: file, to: dest)
+                            print("✅ Copied \(file.lastPathComponent)")
+                        } catch {
+                            print("❌ Failed to copy \(file.lastPathComponent): \(error)")
+                        }
+                    }
+                }
             }
         } catch {
             print("❌ initDefaultRoms failed:", error)
         }
     }
+
+//    func initDefaultRoms() async {
+//        let fm = FileManager.default
+//        guard let resourceURL = Bundle.main.resourceURL else { return }
+//        let destDir = getSoolraDirectory()
+//
+//        do {
+//            let allFiles = try fm.contentsOfDirectory(at: resourceURL,
+//                                                      includingPropertiesForKeys: nil)
+//            for file in allFiles {
+//                let ext = file.pathExtension.lowercased()
+// 
+//                guard ConsoleCoreManager.ConsoleType.allFileExtensions.contains(ext)
+//                    else { continue }
+//                
+//                guard let romName = getRomName(from: file) else {
+//                    print("⚠️ Skipping file with invalid ROM name: \(file.lastPathComponent)")
+//                    continue
+//                }
+//                guard !UserDefaults.standard.isROMDeleted(romName)
+//                    else { continue }
+//                
+//                let dest = destDir.appendingPathComponent(file.lastPathComponent)
+//                guard !fm.fileExists(atPath: dest.path) else { continue }
+//
+//                try fm.copyItem(at: file, to: dest)
+//                print("✅ Copied \(file.lastPathComponent)")
+//                
+//                // **await** the Core Data insert before moving on
+//                await createRomEntity(name: romName, url: dest)
+//            }
+//        } catch {
+//            print("❌ initDefaultRoms failed:", error)
+//        }
+//    }
     
     func countDefaultRomsinBundleOnFirstLaunch() {
         guard UserDefaults.standard.object(forKey: "numOfDefaultRomsInBundle") == nil else {
@@ -487,7 +530,12 @@ class RomArtworkLoader {
     
     func getRomArtwork(romName: String, consoleType: ConsoleCoreManager.ConsoleType) async throws -> UIImage? {
         
-        
+        if let localURL = Bundle.main.url(forResource: romName, withExtension: "png"),
+           let data = try? Data(contentsOf: localURL),
+           let image = UIImage(data: data) {
+            return image
+        }
+
         // Try with closest matching filename within timeout
         return try await withTimeout(seconds: 10) {
                 
@@ -524,15 +572,7 @@ class RomArtworkLoader {
     }
     
     private func fetchArtwork(for romName: String, consoleType: ConsoleCoreManager.ConsoleType, originalFilename: String) async throws -> UIImage? {
-        // 1. Try to load local artwork first
-        let localFileName = "\(originalFilename)_artwork"
-        if let localURL = Bundle.main.url(forResource: localFileName, withExtension: "png"),
-           let data = try? Data(contentsOf: localURL),
-           let image = UIImage(data: data) {
-            return image
-        }
 
-        // 2. If not found, fallback to remote fetch
         let platformMapping: [ConsoleCoreManager.ConsoleType: String] = [
             .nes: "Nintendo%20-%20Nintendo%20Entertainment%20System",
             .gba: "Nintendo%20-%20Game%20Boy%20Advance"
