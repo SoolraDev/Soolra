@@ -67,10 +67,6 @@
 		9203421E2E2563C600D129F8 /* Gba Microjam 23.png in Resources */ = {isa = PBXBuildFile; fileRef = 9203421D2E2563C600D129F8 /* Gba Microjam 23.png */; };
 		920342212E259CEF00D129F8 /* Arcade Mania.png in Resources */ = {isa = PBXBuildFile; fileRef = 920342202E259CEF00D129F8 /* Arcade Mania.png */; };
 		920342222E259CEF00D129F8 /* Arcade Mania.gba in Resources */ = {isa = PBXBuildFile; fileRef = 9203421F2E259CEF00D129F8 /* Arcade Mania.gba */; };
-		920342252E259DA500D129F8 /* PiuGBA.png in Resources */ = {isa = PBXBuildFile; fileRef = 920342242E259DA500D129F8 /* PiuGBA.png */; };
-		920342262E259DA500D129F8 /* PiuGBA.gba in Resources */ = {isa = PBXBuildFile; fileRef = 920342232E259DA500D129F8 /* PiuGBA.gba */; };
-		920342282E259E0600D129F8 /* Rhythmic Reindeer.png in Resources */ = {isa = PBXBuildFile; fileRef = 920342272E259E0600D129F8 /* Rhythmic Reindeer.png */; };
-		9203422A2E259E0D00D129F8 /* Rhythmic Reindeer.gba in Resources */ = {isa = PBXBuildFile; fileRef = 920342292E259E0D00D129F8 /* Rhythmic Reindeer.gba */; };
 		9203422C2E259E5F00D129F8 /* Symbol Merged.gba in Resources */ = {isa = PBXBuildFile; fileRef = 9203422B2E259E5F00D129F8 /* Symbol Merged.gba */; };
 		9203422E2E259E6600D129F8 /* Symbol Merged.png in Resources */ = {isa = PBXBuildFile; fileRef = 9203422D2E259E6600D129F8 /* Symbol Merged.png */; };
 		920342312E259EB500D129F8 /* Feline.gba in Resources */ = {isa = PBXBuildFile; fileRef = 9203422F2E259EB500D129F8 /* Feline.gba */; };
@@ -113,8 +109,6 @@
 		9203427A2E25ADB000D129F8 /* Nomad 2.png in Resources */ = {isa = PBXBuildFile; fileRef = 920342792E25ADB000D129F8 /* Nomad 2.png */; };
 		9203427C2E25AF9F00D129F8 /* Titei Senki.gba in Resources */ = {isa = PBXBuildFile; fileRef = 9203427B2E25AF9F00D129F8 /* Titei Senki.gba */; };
 		9203427E2E25AFA500D129F8 /* Titei Senki.png in Resources */ = {isa = PBXBuildFile; fileRef = 9203427D2E25AFA500D129F8 /* Titei Senki.png */; };
-		920342802E25AFFC00D129F8 /* Paper Scissor Rocks.gba in Resources */ = {isa = PBXBuildFile; fileRef = 9203427F2E25AFFC00D129F8 /* Paper Scissor Rocks.gba */; };
-		920342822E25AFFF00D129F8 /* Paper Scissor Rocks.png in Resources */ = {isa = PBXBuildFile; fileRef = 920342812E25AFFF00D129F8 /* Paper Scissor Rocks.png */; };
 		920342842E25B02100D129F8 /* GBATactics.gba in Resources */ = {isa = PBXBuildFile; fileRef = 920342832E25B02100D129F8 /* GBATactics.gba */; };
 		920342862E25B02500D129F8 /* GBATactics.png in Resources */ = {isa = PBXBuildFile; fileRef = 920342852E25B02500D129F8 /* GBATactics.png */; };
 		920342882E25B05A00D129F8 /* Battleship.gba in Resources */ = {isa = PBXBuildFile; fileRef = 920342872E25B05A00D129F8 /* Battleship.gba */; };
@@ -137,6 +131,31 @@
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
 		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
+		92EF51552E266FCC008D609E /* Hearts Cafe.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51542E266FCC008D609E /* Hearts Cafe.gba */; };
+		92EF51572E266FD9008D609E /* Hearts Cafe.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51562E266FD9008D609E /* Hearts Cafe.png */; };
+		92EF51592E267047008D609E /* Dungeon.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51582E267047008D609E /* Dungeon.gba */; };
+		92EF515B2E26704C008D609E /* Dungeon.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF515A2E26704C008D609E /* Dungeon.png */; };
+		92EF515D2E2670CB008D609E /* PipeSpin.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF515C2E2670CB008D609E /* PipeSpin.gba */; };
+		92EF515F2E2670CC008D609E /* PipeSpin.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF515E2E2670CC008D609E /* PipeSpin.png */; };
+		92EF51612E26716D008D609E /* GBA Puzzle Bobble.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51602E26716D008D609E /* GBA Puzzle Bobble.gba */; };
+		92EF51632E26716E008D609E /* GBA Puzzle Bobble.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51622E26716E008D609E /* GBA Puzzle Bobble.png */; };
+		92EF51662E2671AA008D609E /* Inheritors of the Oubliette.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51642E2671AA008D609E /* Inheritors of the Oubliette.gba */; };
+		92EF51672E2671AA008D609E /* Inheritors of the Oubliette.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51652E2671AA008D609E /* Inheritors of the Oubliette.png */; };
+		92EF51692E26721F008D609E /* Attack on Voxelburg.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51682E26721F008D609E /* Attack on Voxelburg.gba */; };
+		92EF516B2E267220008D609E /* Attack on Voxelburg.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF516A2E267220008D609E /* Attack on Voxelburg.png */; };
+		92EF516D2E267260008D609E /* Solar Guard.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF516C2E267260008D609E /* Solar Guard.gba */; };
+		92EF516F2E267261008D609E /* Solar Guard.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF516E2E267261008D609E /* Solar Guard.png */; };
+		92EF51722E267294008D609E /* MineBoyAdvance.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51702E267294008D609E /* MineBoyAdvance.gba */; };
+		92EF51732E267294008D609E /* MineBoyAdvance.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51712E267294008D609E /* MineBoyAdvance.png */; };
+		92EF51752E2672BE008D609E /* Glacia Dungeon.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51742E2672BE008D609E /* Glacia Dungeon.gba */; };
+		92EF51772E2672BE008D609E /* Glacia Dungeon.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51762E2672BE008D609E /* Glacia Dungeon.png */; };
+		92EF51792E2672E6008D609E /* Piranha Crisis.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51782E2672E6008D609E /* Piranha Crisis.gba */; };
+		92EF517B2E2672E7008D609E /* Piranha Crisis.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF517A2E2672E7008D609E /* Piranha Crisis.png */; };
+		92EF517E2E267422008D609E /* WaimanuGBA.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF517C2E267422008D609E /* WaimanuGBA.gba */; };
+		92EF517F2E267422008D609E /* WaimanuGBA.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF517D2E267422008D609E /* WaimanuGBA.png */; };
+		92EF51812E26744D008D609E /* RavenX.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51802E26744D008D609E /* RavenX.gba */; };
+		92EF51832E267456008D609E /* RavenX.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51822E267456008D609E /* RavenX.png */; };
+		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373F8BB57550C87EB6D0573 /* Pods_SOOLRA.framework */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
@@ -210,10 +229,6 @@
 		9203421D2E2563C600D129F8 /* Gba Microjam 23.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gba Microjam 23.png"; sourceTree = "<group>"; };
 		9203421F2E259CEF00D129F8 /* Arcade Mania.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arcade Mania.gba"; sourceTree = "<group>"; };
 		920342202E259CEF00D129F8 /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
-		920342232E259DA500D129F8 /* PiuGBA.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = PiuGBA.gba; sourceTree = "<group>"; };
-		920342242E259DA500D129F8 /* PiuGBA.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PiuGBA.png; sourceTree = "<group>"; };
-		920342272E259E0600D129F8 /* Rhythmic Reindeer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Rhythmic Reindeer.png"; sourceTree = "<group>"; };
-		920342292E259E0D00D129F8 /* Rhythmic Reindeer.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rhythmic Reindeer.gba"; sourceTree = "<group>"; };
 		9203422B2E259E5F00D129F8 /* Symbol Merged.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Symbol Merged.gba"; sourceTree = "<group>"; };
 		9203422D2E259E6600D129F8 /* Symbol Merged.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Symbol Merged.png"; sourceTree = "<group>"; };
 		9203422F2E259EB500D129F8 /* Feline.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feline.gba; sourceTree = "<group>"; };
@@ -256,8 +271,6 @@
 		920342792E25ADB000D129F8 /* Nomad 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Nomad 2.png"; sourceTree = "<group>"; };
 		9203427B2E25AF9F00D129F8 /* Titei Senki.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Titei Senki.gba"; sourceTree = "<group>"; };
 		9203427D2E25AFA500D129F8 /* Titei Senki.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Titei Senki.png"; sourceTree = "<group>"; };
-		9203427F2E25AFFC00D129F8 /* Paper Scissor Rocks.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Paper Scissor Rocks.gba"; sourceTree = "<group>"; };
-		920342812E25AFFF00D129F8 /* Paper Scissor Rocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Paper Scissor Rocks.png"; sourceTree = "<group>"; };
 		920342832E25B02100D129F8 /* GBATactics.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = GBATactics.gba; sourceTree = "<group>"; };
 		920342852E25B02500D129F8 /* GBATactics.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GBATactics.png; sourceTree = "<group>"; };
 		920342872E25B05A00D129F8 /* Battleship.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = Battleship.gba; sourceTree = "<group>"; };
@@ -279,6 +292,31 @@
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
+		92EF51542E266FCC008D609E /* Hearts Cafe.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hearts Cafe.gba"; sourceTree = "<group>"; };
+		92EF51562E266FD9008D609E /* Hearts Cafe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Hearts Cafe.png"; sourceTree = "<group>"; };
+		92EF51582E267047008D609E /* Dungeon.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = Dungeon.gba; sourceTree = "<group>"; };
+		92EF515A2E26704C008D609E /* Dungeon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Dungeon.png; sourceTree = "<group>"; };
+		92EF515C2E2670CB008D609E /* PipeSpin.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = PipeSpin.gba; sourceTree = "<group>"; };
+		92EF515E2E2670CC008D609E /* PipeSpin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PipeSpin.png; sourceTree = "<group>"; };
+		92EF51602E26716D008D609E /* GBA Puzzle Bobble.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GBA Puzzle Bobble.gba"; sourceTree = "<group>"; };
+		92EF51622E26716E008D609E /* GBA Puzzle Bobble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GBA Puzzle Bobble.png"; sourceTree = "<group>"; };
+		92EF51642E2671AA008D609E /* Inheritors of the Oubliette.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inheritors of the Oubliette.gba"; sourceTree = "<group>"; };
+		92EF51652E2671AA008D609E /* Inheritors of the Oubliette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Inheritors of the Oubliette.png"; sourceTree = "<group>"; };
+		92EF51682E26721F008D609E /* Attack on Voxelburg.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Attack on Voxelburg.gba"; sourceTree = "<group>"; };
+		92EF516A2E267220008D609E /* Attack on Voxelburg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Attack on Voxelburg.png"; sourceTree = "<group>"; };
+		92EF516C2E267260008D609E /* Solar Guard.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Solar Guard.gba"; sourceTree = "<group>"; };
+		92EF516E2E267261008D609E /* Solar Guard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Solar Guard.png"; sourceTree = "<group>"; };
+		92EF51702E267294008D609E /* MineBoyAdvance.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = MineBoyAdvance.gba; sourceTree = "<group>"; };
+		92EF51712E267294008D609E /* MineBoyAdvance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MineBoyAdvance.png; sourceTree = "<group>"; };
+		92EF51742E2672BE008D609E /* Glacia Dungeon.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Glacia Dungeon.gba"; sourceTree = "<group>"; };
+		92EF51762E2672BE008D609E /* Glacia Dungeon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Glacia Dungeon.png"; sourceTree = "<group>"; };
+		92EF51782E2672E6008D609E /* Piranha Crisis.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Piranha Crisis.gba"; sourceTree = "<group>"; };
+		92EF517A2E2672E7008D609E /* Piranha Crisis.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Piranha Crisis.png"; sourceTree = "<group>"; };
+		92EF517C2E267422008D609E /* WaimanuGBA.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = WaimanuGBA.gba; sourceTree = "<group>"; };
+		92EF517D2E267422008D609E /* WaimanuGBA.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WaimanuGBA.png; sourceTree = "<group>"; };
+		92EF51802E26744D008D609E /* RavenX.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = RavenX.gba; sourceTree = "<group>"; };
+		92EF51822E267456008D609E /* RavenX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RavenX.png; sourceTree = "<group>"; };
+		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
 		9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed.ttf"; sourceTree = "<group>"; };
 		9D123D022CD0046B007508A8 /* Ebrima.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ebrima.ttf; sourceTree = "<group>"; };
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -430,6 +468,7 @@
 		183DF1D62862FBD10088FE1C /* View */ = {
 			isa = PBXGroup;
 			children = (
+				92EF51842E2693B0008D609E /* LicenseListView.swift */,
 				4C0CD8CE2D54E72800B079B5 /* Game */,
 				4C0CD8BA2D54E71100B079B5 /* SoolraController */,
 				180A47A12866E4EA00A82F16 /* DocumentPicker.swift */,
@@ -488,10 +527,10 @@
 				920342512E25A1E700D129F8 /* WhereIsTheBall.png */,
 				920342552E25A21500D129F8 /* The Axe.png */,
 				920341B02E253AAE00D129F8 /* Astrohawk.png */,
+				92EF51542E266FCC008D609E /* Hearts Cafe.gba */,
+				92EF51562E266FD9008D609E /* Hearts Cafe.png */,
 				920342872E25B05A00D129F8 /* Battleship.gba */,
-				9203427F2E25AFFC00D129F8 /* Paper Scissor Rocks.gba */,
 				920342892E25B06000D129F8 /* Battleship.png */,
-				920342812E25AFFF00D129F8 /* Paper Scissor Rocks.png */,
 				920341B22E253AAE00D129F8 /* Chase.png */,
 				920342832E25B02100D129F8 /* GBATactics.gba */,
 				920342852E25B02500D129F8 /* GBATactics.png */,
@@ -534,13 +573,35 @@
 				920342992E25B6A200D129F8 /* SeSnake.png */,
 				920342652E25ABF400D129F8 /* Hearts.png */,
 				920341FF2E25613900D129F8 /* The Purple Night.png */,
+				92EF516C2E267260008D609E /* Solar Guard.gba */,
 				920342012E25614400D129F8 /* The Purple Night.gba */,
 				920342032E2561A100D129F8 /* THCTW.gba */,
+				92EF517A2E2672E7008D609E /* Piranha Crisis.png */,
+				92EF51742E2672BE008D609E /* Glacia Dungeon.gba */,
+				92EF51822E267456008D609E /* RavenX.png */,
+				92EF51782E2672E6008D609E /* Piranha Crisis.gba */,
+				92EF51762E2672BE008D609E /* Glacia Dungeon.png */,
+				92EF517C2E267422008D609E /* WaimanuGBA.gba */,
+				92EF517D2E267422008D609E /* WaimanuGBA.png */,
+				92EF51802E26744D008D609E /* RavenX.gba */,
 				920342052E2561AD00D129F8 /* THCTW.png */,
 				920342072E2561FB00D129F8 /* Dungeon Puzzlers Lament.gba */,
+				92EF51702E267294008D609E /* MineBoyAdvance.gba */,
+				92EF51712E267294008D609E /* MineBoyAdvance.png */,
+				92EF516E2E267261008D609E /* Solar Guard.png */,
+				92EF51682E26721F008D609E /* Attack on Voxelburg.gba */,
+				92EF515C2E2670CB008D609E /* PipeSpin.gba */,
+				92EF516A2E267220008D609E /* Attack on Voxelburg.png */,
+				92EF51602E26716D008D609E /* GBA Puzzle Bobble.gba */,
 				920342082E2561FB00D129F8 /* Dungeon Puzzlers Lament.png */,
+				92EF51642E2671AA008D609E /* Inheritors of the Oubliette.gba */,
+				92EF51652E2671AA008D609E /* Inheritors of the Oubliette.png */,
 				9203420B2E25628A00D129F8 /* Tremblay Island.gba */,
+				92EF51622E26716E008D609E /* GBA Puzzle Bobble.png */,
 				9203420C2E25628A00D129F8 /* Tremblay Island.png */,
+				92EF51582E267047008D609E /* Dungeon.gba */,
+				92EF515A2E26704C008D609E /* Dungeon.png */,
+				92EF515E2E2670CC008D609E /* PipeSpin.png */,
 				9203420F2E2562CF00D129F8 /* Blind Jump.gba */,
 				920342112E2562D400D129F8 /* Blind Jump.png */,
 				920342132E25630500D129F8 /* Covid Adventure.gba */,
@@ -550,10 +611,6 @@
 				9203421D2E2563C600D129F8 /* Gba Microjam 23.png */,
 				9203421F2E259CEF00D129F8 /* Arcade Mania.gba */,
 				920342202E259CEF00D129F8 /* Arcade Mania.png */,
-				920342232E259DA500D129F8 /* PiuGBA.gba */,
-				920342242E259DA500D129F8 /* PiuGBA.png */,
-				920342272E259E0600D129F8 /* Rhythmic Reindeer.png */,
-				920342292E259E0D00D129F8 /* Rhythmic Reindeer.gba */,
 				9203422B2E259E5F00D129F8 /* Symbol Merged.gba */,
 				9203422D2E259E6600D129F8 /* Symbol Merged.png */,
 				9203422F2E259EB500D129F8 /* Feline.gba */,
@@ -673,42 +730,45 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D123D0F2CD00B56007508A8 /* DINCondensed-Regular.ttf in Resources */,
+				92EF516F2E267261008D609E /* Solar Guard.png in Resources */,
 				920342462E25A0F100D129F8 /* Tigermoth.png in Resources */,
 				9203421E2E2563C600D129F8 /* Gba Microjam 23.png in Resources */,
 				920342212E259CEF00D129F8 /* Arcade Mania.png in Resources */,
 				920342882E25B05A00D129F8 /* Battleship.gba in Resources */,
 				9203428E2E25B5B600D129F8 /* Blast Arena.png in Resources */,
+				92EF517E2E267422008D609E /* WaimanuGBA.gba in Resources */,
+				92EF517F2E267422008D609E /* WaimanuGBA.png in Resources */,
 				920342222E259CEF00D129F8 /* Arcade Mania.gba in Resources */,
 				920342312E259EB500D129F8 /* Feline.gba in Resources */,
 				9203424E2E25A1B500D129F8 /* Skyland.png in Resources */,
 				920342842E25B02100D129F8 /* GBATactics.gba in Resources */,
 				920342322E259EB500D129F8 /* Feline.png in Resources */,
-				920342822E25AFFF00D129F8 /* Paper Scissor Rocks.png in Resources */,
 				920341FE2E25610800D129F8 /* Lane.png in Resources */,
 				920341FC2E25610400D129F8 /* Lane.gba in Resources */,
 				920341F62E255CE200D129F8 /* Pnakys.png in Resources */,
 				920342002E25613900D129F8 /* The Purple Night.png in Resources */,
 				9203427C2E25AF9F00D129F8 /* Titei Senki.gba in Resources */,
-				920342802E25AFFC00D129F8 /* Paper Scissor Rocks.gba in Resources */,
+				92EF51552E266FCC008D609E /* Hearts Cafe.gba in Resources */,
+				92EF51692E26721F008D609E /* Attack on Voxelburg.gba in Resources */,
 				9203424A2E25A17700D129F8 /* Space Game.png in Resources */,
 				9203425A2E25A28700D129F8 /* Gabdeo.png in Resources */,
 				9203423E2E25A03D00D129F8 /* Chocolate Hunter Runa.png in Resources */,
-				920342252E259DA500D129F8 /* PiuGBA.png in Resources */,
-				920342262E259DA500D129F8 /* PiuGBA.gba in Resources */,
 				920341D42E253AAE00D129F8 /* MeteoRain.png in Resources */,
 				920341D82E253AAE00D129F8 /* Pong.png in Resources */,
 				920342422E25A09800D129F8 /* HEXES.png in Resources */,
 				920341DA2E253AAE00D129F8 /* Astrohawk.png in Resources */,
 				920341DD2E253AAE00D129F8 /* Chase.nes in Resources */,
 				920342392E259F8B00D129F8 /* XNIQ.gba in Resources */,
+				92EF515D2E2670CB008D609E /* PipeSpin.gba in Resources */,
 				9203423A2E259F8B00D129F8 /* XNIQ.png in Resources */,
+				92EF517B2E2672E7008D609E /* Piranha Crisis.png in Resources */,
 				920341E02E253AAE00D129F8 /* Pong.gba in Resources */,
+				92EF516B2E267220008D609E /* Attack on Voxelburg.png in Resources */,
 				9203429E2E25B6CB00D129F8 /* GO.png in Resources */,
 				920341E42E253AAE00D129F8 /* Radicorn.png in Resources */,
 				920341F82E255D9F00D129F8 /* Smart Gamble.gba in Resources */,
 				920342092E2561FB00D129F8 /* Dungeon Puzzlers Lament.gba in Resources */,
 				9203420A2E2561FB00D129F8 /* Dungeon Puzzlers Lament.png in Resources */,
-				9203422A2E259E0D00D129F8 /* Rhythmic Reindeer.gba in Resources */,
 				9203421A2E25635500D129F8 /* Math and Logic.png in Resources */,
 				920341F22E25402D00D129F8 /* Christmas Advance.gba in Resources */,
 				920342642E25ABEE00D129F8 /* Hearts.gba in Resources */,
@@ -721,13 +781,14 @@
 				920341EB2E253AAE00D129F8 /* Chase.png in Resources */,
 				920342442E25A0EA00D129F8 /* Tigermoth.gba in Resources */,
 				920342782E25ADA300D129F8 /* Nomad 2.gba in Resources */,
-				920342282E259E0600D129F8 /* Rhythmic Reindeer.png in Resources */,
 				9203429C2E25B6C200D129F8 /* GO.gba in Resources */,
+				92EF51812E26744D008D609E /* RavenX.gba in Resources */,
 				920342722E25ACEA00D129F8 /* MatchIt.png in Resources */,
 				9203420D2E25628A00D129F8 /* Tremblay Island.gba in Resources */,
 				9203424C2E25A1AF00D129F8 /* Skyland.gba in Resources */,
 				9203420E2E25628A00D129F8 /* Tremblay Island.png in Resources */,
 				920342862E25B02500D129F8 /* GBATactics.png in Resources */,
+				92EF51752E2672BE008D609E /* Glacia Dungeon.gba in Resources */,
 				920341ED2E253AAE00D129F8 /* MeteoRain.gba in Resources */,
 				920341EE2E253AAE00D129F8 /* Astrohawk.gba in Resources */,
 				920342362E259F0700D129F8 /* DCPR.png in Resources */,
@@ -735,12 +796,15 @@
 				920342062E2561AD00D129F8 /* THCTW.png in Resources */,
 				920341FA2E255DAB00D129F8 /* Smart Gamble.png in Resources */,
 				920342982E25B69D00D129F8 /* SeSnake.gba in Resources */,
+				92EF516D2E267260008D609E /* Solar Guard.gba in Resources */,
 				9203422E2E259E6600D129F8 /* Symbol Merged.png in Resources */,
 				9203425E2E25A3F700D129F8 /* Minicraft.png in Resources */,
 				920341F42E255CBC00D129F8 /* Pnakys.gba in Resources */,
 				920342A12E25B6F200D129F8 /* Cats Curse.gba in Resources */,
 				920342622E25AB9400D129F8 /* SFcave.png in Resources */,
+				92EF515B2E26704C008D609E /* Dungeon.png in Resources */,
 				9203428C2E25B5B100D129F8 /* Blast Arena.gba in Resources */,
+				92EF51772E2672BE008D609E /* Glacia Dungeon.png in Resources */,
 				920342542E25A21000D129F8 /* The Axe.gba in Resources */,
 				705827A02C75766300AB8682 /* Orbitron-Regular.ttf in Resources */,
 				9D123D072CD008E4007508A8 /* D-DIN.ttf in Resources */,
@@ -750,26 +814,34 @@
 				920342482E25A17100D129F8 /* Space Game.gba in Resources */,
 				9203422C2E259E5F00D129F8 /* Symbol Merged.gba in Resources */,
 				920342522E25A1E700D129F8 /* WhereIsTheBall.png in Resources */,
+				92EF51632E26716E008D609E /* GBA Puzzle Bobble.png in Resources */,
 				705827A22C75766300AB8682 /* Orbitron-Black.ttf in Resources */,
 				920342682E25AC7100D129F8 /* Blowhole.gba in Resources */,
 				920342662E25ABF400D129F8 /* Hearts.png in Resources */,
 				7058279D2C75766300AB8682 /* Orbitron-SemiBold.ttf in Resources */,
 				9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */,
 				7058279F2C75766300AB8682 /* Orbitron-Medium.ttf in Resources */,
+				92EF51792E2672E6008D609E /* Piranha Crisis.gba in Resources */,
 				9203423C2E25A03400D129F8 /* Chocolate Hunter Runa.gba in Resources */,
 				920342582E25A28100D129F8 /* Gabdeo.gba in Resources */,
 				9203426A2E25AC7900D129F8 /* Blowhole.png in Resources */,
 				7058279E2C75766300AB8682 /* Orbitron-Bold.ttf in Resources */,
 				920342502E25A1DB00D129F8 /* WhereIsTheBall.gba in Resources */,
+				92EF51832E267456008D609E /* RavenX.png in Resources */,
+				92EF515F2E2670CC008D609E /* PipeSpin.png in Resources */,
 				920342742E25AD3900D129F8 /* Codename Monkey Bots.gba in Resources */,
+				92EF51592E267047008D609E /* Dungeon.gba in Resources */,
 				920342102E2562CF00D129F8 /* Blind Jump.gba in Resources */,
 				920342702E25ACDA00D129F8 /* MatchIt.gba in Resources */,
 				920342042E2561A100D129F8 /* THCTW.gba in Resources */,
 				920342182E25635100D129F8 /* Math and Logic.gba in Resources */,
+				92EF51662E2671AA008D609E /* Inheritors of the Oubliette.gba in Resources */,
+				92EF51672E2671AA008D609E /* Inheritors of the Oubliette.png in Resources */,
 				9203427E2E25AFA500D129F8 /* Titei Senki.png in Resources */,
 				920342762E25AD4200D129F8 /* Codename Monkey Bots.png in Resources */,
 				9203425C2E25A3F300D129F8 /* Minicraft.gba in Resources */,
 				920342342E259F0100D129F8 /* DCPR.gba in Resources */,
+				92EF51612E26716D008D609E /* GBA Puzzle Bobble.gba in Resources */,
 				9203426E2E25ACB000D129F8 /* luminesweeper.png in Resources */,
 				920342122E2562D400D129F8 /* Blind Jump.png in Resources */,
 				9203429A2E25B6A200D129F8 /* SeSnake.png in Resources */,
@@ -780,8 +852,11 @@
 				920341F02E25401C00D129F8 /* Christmas Advance.png in Resources */,
 				920342602E25AB8900D129F8 /* SFcave.gba in Resources */,
 				9D123D052CD007EE007508A8 /* D-DINCondensed-Bold.ttf in Resources */,
+				92EF51572E266FD9008D609E /* Hearts Cafe.png in Resources */,
 				9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */,
 				920342402E25A08F00D129F8 /* HEXES.gba in Resources */,
+				92EF51722E267294008D609E /* MineBoyAdvance.gba in Resources */,
+				92EF51732E267294008D609E /* MineBoyAdvance.png in Resources */,
 				183DF1722862C9A00088FE1C /* Assets.xcassets in Resources */,
 				920342142E25630500D129F8 /* Covid Adventure.gba in Resources */,
 				705827A12C75766300AB8682 /* Orbitron-ExtraBold.ttf in Resources */,
@@ -863,6 +938,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */,
+				92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */,
 				7032EDC32C761C5800828A41 /* ThemeManager.swift in Sources */,
 				70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */,
 				4CC26D9A2D4BABC600F3D262 /* ConsoleCoreManager.swift in Sources */,
@@ -1033,7 +1109,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.8;
+				MARKETING_VERSION = 5.8.0;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1085,7 +1161,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.7.8;
+				MARKETING_VERSION = 5.8.0;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
