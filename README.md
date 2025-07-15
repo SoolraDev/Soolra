@@ -64,9 +64,9 @@ Soolra is a multi-system game emulator designed for modern Apple platforms, brin
 
 ## License
 
-Because Soolra incorporates emulator cores that are GPL-licensed, this project must be released under the GNU General Public License version 2.0 (GPLv2). Nevertheless, for the portions of code that we have personally created, I grant explicit permission to use, modify, and redistribute that code freely, with or without crediting me, and without any legal repercussions. The only exception to this permission is if you intend to publish your derivative work on the Apple App Store - in such cases, you must obtain explicit written consent from me first. All third-party dependencies and emulator cores continue to be governed by their respective original licenses.
+Because Soolra incorporates emulator cores that are GPL-licensed, this project must be released under the GNU General Public License version 3.0 (GPLv3). Nevertheless, for the portions of code that we have personally created, I grant explicit permission to use, modify, and redistribute that code freely, with or without crediting me, and without any legal repercussions. The only exception to this permission is if you intend to publish your derivative work on the Apple App Store - in such cases, you must obtain explicit written consent from me first. All third-party dependencies and emulator cores continue to be governed by their respective original licenses.
 
-For the complete GPLv2 license text, see the [LICENSE](LICENSE) file.
+For the complete GPLv3 license text, see the [LICENSE](LICENSE) file.
 
 ## Disclaimer
 
