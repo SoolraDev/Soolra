@@ -46,11 +46,11 @@ struct HomeView: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
     @EnvironmentObject var saveStateManager: SaveStateManager
     @ObservedObject private var controllerService = BluetoothControllerService.shared
-
+    
     @StateObject private var viewModel = HomeViewModel.shared
     @StateObject private var engagementTracker = EngagementTracker()
     @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState.shared
-
+    
     @State private var isEditMode: EditMode = .inactive
     @State private var isSettingsPresented: Bool = false
     @State private var currentView: CurrentView = .grid
@@ -58,7 +58,7 @@ struct HomeView: View {
     @State private var isLoading: Bool = false
     @StateObject private var controllerViewModel = ControllerViewModel()
     @State private var isLoadingGame: Bool = false
-
+    
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
     var backgroundImage: UIImage? {
@@ -125,7 +125,7 @@ struct HomeView: View {
                         .fullScreenCover(isPresented: $viewModel.isPresented) {
                             ZStack(alignment: .top) {
                                 Color.black.opacity(0.6)
-
+                                
                                 VStack(spacing: 0) {
                                     if BluetoothControllerService.shared.isControllerConnected {
                                         // Half-height version
@@ -143,7 +143,7 @@ struct HomeView: View {
                                         .background(Color(.systemBackground))
                                         .cornerRadius(16)
                                         .shadow(radius: 10)
-
+                                        
                                         Spacer()
                                     } else {
                                         // Full-height version
@@ -163,9 +163,9 @@ struct HomeView: View {
                                 }
                             }
                         }
-
-
-
+                        
+                        
+                        
                         if viewModel.focusedButtonIndex >= 4 && !roms.isEmpty{
                             CurrentItemView(currentRom: roms[viewModel.focusedButtonIndex - 4], currentView: $currentView, focusedButtonIndex: $viewModel.focusedButtonIndex)
                         } else {
@@ -238,14 +238,14 @@ struct HomeView: View {
             }
         }
         .onOpenURL { url in
-            guard ["nes", "gba"].contains(url.pathExtension.lowercased()) else { return }
+            guard ["nes", "gba", "zip" ].contains(url.pathExtension.lowercased()) else { return }
             Task {
                 print("📥 Importing ROM from external URL: \(url)")
                 isLoading = true
                 await dataController.romManager.addRom(url: url)
                 isLoading = false
                 let updatedRoms = dataController.romManager.fetchRoms()
-                let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.last
+                let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.first
                 // Navigate to game screen on main actor
                 if let rom = newRom {
                     NotificationCenter.default.post(name: .launchRomFromExternalSource, object: rom)
@@ -258,15 +258,6 @@ struct HomeView: View {
                 }
             }
         }
-//        .onReceive(NotificationCenter.default.publisher(for: .launchRomFromExternalSource)) { notification in
-//            guard let rom = notification.object as? Rom else { return }
-//            Task {
-//                if let exitTask = PauseGameViewModel.exitAction?() {
-//                            await exitTask.value
-//                        }
-//                navigateToRom(rom)
-//            }
-//        }
         .onChange(of: defaultRomsLoadingState.isLoading) { loading in
             if !loading {
                 roms = dataController.romManager.fetchRoms()
@@ -274,7 +265,7 @@ struct HomeView: View {
                 isLoading = false
             }
         }
-
+        
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
         }
@@ -388,7 +379,7 @@ struct HomeView: View {
                         addRomIcon()
                     }
                     .id(3)  // ID for scroll target
-
+                    
                     // Filtered ROMs based on search query
                     ForEach(Array(roms.enumerated()).filter { index, rom in
                         viewModel.searchQuery.isEmpty || (rom.name?.localizedCaseInsensitiveContains(viewModel.searchQuery) ?? false)
@@ -401,7 +392,7 @@ struct HomeView: View {
                                 romIcon(for: rom, index: index + 4)
                             }
                             .id(index + 4)
-
+                            
                             // Delete button when in edit mode
                             if isEditMode == .active {
                                 Button(action: {
@@ -423,19 +414,19 @@ struct HomeView: View {
             }
             .onChange(of: viewModel.focusedButtonIndex) { newIndex in
                 if newIndex >= 3 {
-//                    withAnimation {
-                        scrollProxy.scrollTo(newIndex, anchor: .center)
-//                    }
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                        withAnimation {
-//                            scrollProxy.scrollTo(newIndex, anchor: .center)
-//                        }
-//                    }
+                    //                    withAnimation {
+                    scrollProxy.scrollTo(newIndex, anchor: .center)
+                    //                    }
+                    //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    //                        withAnimation {
+                    //                            scrollProxy.scrollTo(newIndex, anchor: .center)
+                    //                        }
+                    //                    }
                 }
             }
         }
     }
-
+    
     
     // MARK: - Helper Functions
     
@@ -615,7 +606,7 @@ struct HomeView: View {
         let dataController: CoreDataController
         let viewModel: HomeViewModel
         @Binding var searchQuery: String // 👈 Add this
-
+        
         var body: some View {
             VStack {
                 HStack {
@@ -627,21 +618,21 @@ struct HomeView: View {
                             .padding()
                     })
                     Spacer(minLength: 10)
-//                    TextField("Search games...", text: $searchQuery)                        .padding(8)
-//                        .background(Color.white.opacity(0.15))
-//                        .cornerRadius(14)
-//                        .foregroundColor(.white)
-//                        .frame(height: 27)
-//                        .frame(maxWidth: .infinity)
-//                        .overlay(
-//                            HStack {
-//                                Spacer()
-//                                Image(systemName: "magnifyingglass")
-//                                    .foregroundColor(.white)
-//                                    .padding(.trailing, 10)
-//                            }
-//                        )
-
+                    //                    TextField("Search games...", text: $searchQuery)                        .padding(8)
+                    //                        .background(Color.white.opacity(0.15))
+                    //                        .cornerRadius(14)
+                    //                        .foregroundColor(.white)
+                    //                        .frame(height: 27)
+                    //                        .frame(maxWidth: .infinity)
+                    //                        .overlay(
+                    //                            HStack {
+                    //                                Spacer()
+                    //                                Image(systemName: "magnifyingglass")
+                    //                                    .foregroundColor(.white)
+                    //                                    .padding(.trailing, 10)
+                    //                            }
+                    //                        )
+                    
                     
                     BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 1, action: {
                         onSettingsButtonTap()

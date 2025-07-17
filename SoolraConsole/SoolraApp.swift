@@ -278,23 +278,6 @@ struct SoolraApp: App {
                     .environmentObject(consoleManager)
                     .environmentObject(metalManager)
                     .environmentObject(SaveStateManager.shared)
-//                    .onOpenURL { url in
-//                        guard ["nes", "gba"].contains(url.pathExtension.lowercased()) else { return }
-//                        Task {
-//                            print("📥 Importing ROM from external URL: \(url)")
-//                            isLoading = true
-//                            await dataController.romManager.addRom(url: url)
-//                            isLoading = false
-//                            let updatedRoms = dataController.romManager.fetchRoms()
-//                            let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.last
-//                            // Navigate to game screen on main actor
-//                            if let rom = newRom {
-//                                await MainActor.run {
-//                                    NotificationCenter.default.post(name: .launchRomFromExternalSource, object: rom)
-//                                }
-//                            }
-//                        }
-//                    }
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
                         Analytics.logEvent("app_loaded", parameters: [
