@@ -5,14 +5,14 @@ struct LicenseListView: View {
         List {
             Section(header: Text("Math and Logic").font(.headline)) {
                 Text("""
-Developed by kva64 and published under the MIT License License.
+Developed by kva64 and published under the MIT License.
 Source: https://gitlab.com/mode7heaven/advance_demo
 License: http://opensource.org/licenses/mit-license.html
 """)
             }
             Section(header: Text("Arcade Mania").font(.headline)) {
                 Text("""
-Developed by DaviAMSilva and published under the MIT License License.
+Developed by DaviAMSilva and published under the MIT License.
 Source: https://dlhb.gamebrew.org/gbahomebrews/arcademaniagba.7z
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -47,7 +47,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Blind Jump").font(.headline)) {
                 Text("""
-Developed by Evan Bowman and published under the MIT License License.
+Developed by Evan Bowman and published under the MIT License.
 Source: https://github.com/evanbowman/blind-jump-portable
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -68,7 +68,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Chocolate Hunter Runa").font(.headline)) {
                 Text("""
-Developed by Lsh Games (Runa457) and published under the MIT License License.
+Developed by Lsh Games (Runa457) and published under the MIT License.
 Source: https://github.com/Runa457/chocolate_hunter_runa
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -82,14 +82,14 @@ License: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             }
             Section(header: Text("Covid Adventure").font(.headline)) {
                 Text("""
-Developed by klomp and published under the MIT License License.
+Developed by klomp and published under the MIT License.
 Source: https://github.com/stuij/rath/tree/main/forth/to-asm
 License: http://opensource.org/licenses/mit-license.html
 """)
             }
             Section(header: Text("DCPR").font(.headline)) {
                 Text("""
-Developed by MilanFIN and published under the MIT License License.
+Developed by MilanFIN and published under the MIT License.
 Source: https://github.com/MilanFIN/dcpr/
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -103,14 +103,14 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Feline").font(.headline)) {
                 Text("""
-Developed by Jono Shields and published under the MIT License License.
+Developed by Jono Shields and published under the MIT License.
 Source: https://github.com/foopod/gbaGamejam2021
 License: http://opensource.org/licenses/mit-license.html
 """)
             }
             Section(header: Text("Gabdeo").font(.headline)) {
                 Text("""
-Developed by yaplus and published under the MIT License License.
+Developed by yaplus and published under the MIT License.
 Source: https://github.com/yaplus/Gabdro-GBA
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -124,7 +124,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Gba Microjam 23").font(.headline)) {
                 Text("""
-Developed by Various authors and published under the MIT License License.
+Developed by Various authors and published under the MIT License.
 Source: https://github.com/gbadev-org/microjam23
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -166,7 +166,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("HEXES").font(.headline)) {
                 Text("""
-Developed by Dania Rifki and published under the MIT License License.
+Developed by Dania Rifki and published under the MIT License.
 Source: https://github.com/EigenlightArts/HEXES
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -201,7 +201,7 @@ License: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             }
             Section(header: Text("MeteoRain").font(.headline)) {
                 Text("""
-Developed by Dr. Ludos and published under the MIT License License.
+Developed by Dr. Ludos and published under the MIT License.
 Source: https://github.com/drludos/meteorain-gba
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -250,7 +250,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Radicorn").font(.headline)) {
                 Text("""
-Developed by TimDeve and published under the MIT License License.
+Developed by TimDeve and published under the MIT License.
 Source: https://github.com/TimDeve/radicorn
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -271,7 +271,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Skyland").font(.headline)) {
                 Text("""
-Developed by Evan Bowman and published under the MIT License License.
+Developed by Evan Bowman and published under the MIT License.
 Source: https://github.com/evanbowman/skyland
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -292,7 +292,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Space Game").font(.headline)) {
                 Text("""
-Developed by Elliott Ayling and published under the MIT License License.
+Developed by Elliott Ayling and published under the MIT License.
 Source: https://github.com/EllAyling/Game-Boy-Advance-Space-Game
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -306,14 +306,14 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
             }
             Section(header: Text("Symbol Merged").font(.headline)) {
                 Text("""
-Developed by copyrat90 (Guyeon Yu) and published under the MIT License License.
+Developed by copyrat90 (Guyeon Yu) and published under the MIT License.
 Source: https://github.com/copyrat90/sym_merged
 License: http://opensource.org/licenses/mit-license.html
 """)
             }
             Section(header: Text("The Axe").font(.headline)) {
                 Text("""
-Developed by Maximilian II and published under the MIT License License.
+Developed by Maximilian II and published under the MIT License.
 Source: https://github.com/maximilian8181/The-Axe-GBA
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -348,7 +348,7 @@ License: https://www.mozilla.org/en-US/MPL/2.0/
             }
             Section(header: Text("Tigermoth").font(.headline)) {
                 Text("""
-Developed by Marq Watkin (pmprog) and published under the MIT License License.
+Developed by Marq Watkin (pmprog) and published under the MIT License.
 Source: https://github.com/pmprog/TigermothGBA/
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -362,7 +362,7 @@ License: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             }
             Section(header: Text("Tremblay Island").font(.headline)) {
                 Text("""
-Developed by Cinemint and published under the MIT License License.
+Developed by Cinemint and published under the MIT License.
 Source: https://github.com/EHowardHill/Tremblay-Island
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -376,14 +376,14 @@ License: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
             }
             Section(header: Text("WhereIsTheBall").font(.headline)) {
                 Text("""
-Developed by kevin20012 and published under the MIT License License.
+Developed by kevin20012 and published under the MIT License.
 Source: https://github.com/johedan20012/WhereIsTheBall
 License: http://opensource.org/licenses/mit-license.html
 """)
             }
             Section(header: Text("XNIQ").font(.headline)) {
                 Text("""
-Developed by exelotl, Rik, Pyro_Pyro and published under the MIT License License.
+Developed by exelotl, Rik, Pyro_Pyro and published under the MIT License.
 Source: https://dlhb.gamebrew.org/gbahomebrews/xniq_alpha.zip
 License: http://opensource.org/licenses/mit-license.html
 """)
@@ -395,6 +395,77 @@ Source: https://dlhb.gamebrew.org/gbahomebrews/yet_another_sfcave_v1.0.zip
 License: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 """)
             }
+            
+            Section(header: Text("Super Tilt Bros").font(.headline)) {
+                Text("""
+Developed by sgadrat and published under the WTFPL License.
+Source: https://github.com/sgadrat/super-tilt-bro
+License: https://www.wtfpl.net/about/
+""")
+            }
+            
+            Section(header: Text("Nove The Squirrel").font(.headline)) {
+                Text("""
+Developed by NovaSquirrel and published under the GPL-3 License.
+Source: https://github.com/NovaSquirrel/NovaTheSquirrel
+License: https://www.gnu.org/licenses/gpl-3.0.html
+""")
+            }
+            Section(header: Text("Famidash").font(.headline)) {
+                Text("""
+Developed by TFDSoft and published under the MIT License.
+Source: https://github.com/NovaSquirrel/NovaTheSquirrel
+License: http://opensource.org/licenses/mit-license.html
+""")
+            }
+            
+            Section(header: Text("Falling").font(.headline)) {
+                Text("""
+Developed by xram64 and published under the MIT License.
+Source: https://github.com/xram64/falling-nes
+License: http://opensource.org/licenses/mit-license.html
+""")
+            }
+            
+            Section(header: Text("DABG").font(.headline)) {
+                Text("""
+Developed by NovaSquirrel and published under the ZLIB License.
+Source: https://github.com/NovaSquirrel/DABG
+License: https://www.zlib.net/zlib_license.html
+""")
+            }
+            
+            Section(header: Text("openNesSnake").font(.headline)) {
+                Text("""
+Developed by sebastiandine and published under the ZLIB License.
+Source: https://github.com/sebastiandine/openNES-Snake
+License: https://www.zlib.net/zlib_license.html
+""")
+            }
+            
+            Section(header: Text("openNesBreakout").font(.headline)) {
+                Text("""
+Developed by sebastiandine and published under the ZLIB License.
+Source: https://github.com/sebastiandine/openNES-Snake
+License: https://www.zlib.net/zlib_license.html
+""")
+            }
+            
+            Section(header: Text("CocoBattleRoyale").font(.headline)) {
+                Text("""
+Developed by psywave-games and published under the GPL-3 License.
+Source: https://github.com/psywave-games/coco-battle-royale-2
+License: https://www.gnu.org/licenses/gpl-3.0.html
+""")
+            }
+            
+            Section(header: Text("CocoBattleRoyale").font(.headline)) {
+                Text("""
+Developed by AnthonyBongers and released into the public domain.
+Source: https://github.com/AnthonyBongers/GhostsAndGraves
+""")
+            }
+            
         }
     }
 }

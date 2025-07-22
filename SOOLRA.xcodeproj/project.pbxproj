@@ -156,6 +156,24 @@
 		92EF51812E26744D008D609E /* RavenX.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51802E26744D008D609E /* RavenX.gba */; };
 		92EF51832E267456008D609E /* RavenX.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51822E267456008D609E /* RavenX.png */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
+		92EF51872E2FBB17008D609E /* Super Tilt Bro.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51862E2FBB17008D609E /* Super Tilt Bro.nes */; };
+		92EF51892E2FBB8C008D609E /* Super Tilt Bros.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51882E2FBB8C008D609E /* Super Tilt Bros.png */; };
+		92EF518B2E2FBCED008D609E /* NovaTheSquirrel.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF518A2E2FBCED008D609E /* NovaTheSquirrel.nes */; };
+		92EF518D2E2FBD8D008D609E /* NovaTheSquirrel.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF518C2E2FBD8D008D609E /* NovaTheSquirrel.png */; };
+		92EF51902E2FBE71008D609E /* Famidash.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF518E2E2FBE71008D609E /* Famidash.nes */; };
+		92EF51912E2FBE71008D609E /* Famidash.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF518F2E2FBE71008D609E /* Famidash.png */; };
+		92EF51942E2FC400008D609E /* Falling.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51922E2FC400008D609E /* Falling.nes */; };
+		92EF51952E2FC400008D609E /* Falling.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51932E2FC400008D609E /* Falling.png */; };
+		92EF51972E2FC603008D609E /* dabg.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51962E2FC603008D609E /* dabg.nes */; };
+		92EF51992E2FC61A008D609E /* dabg.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51982E2FC61A008D609E /* dabg.png */; };
+		92EF519B2E2FC92E008D609E /* openNesSnake.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF519A2E2FC92E008D609E /* openNesSnake.png */; };
+		92EF519D2E2FC93B008D609E /* openNesSnake.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF519C2E2FC93B008D609E /* openNesSnake.nes */; };
+		92EF519F2E2FC98B008D609E /* openNesBreakout.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF519E2E2FC98B008D609E /* openNesBreakout.png */; };
+		92EF51A12E2FC9A9008D609E /* openNesBreakout.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51A02E2FC9A9008D609E /* openNesBreakout.nes */; };
+		92EF51A32E2FCE04008D609E /* CocoBattleRoyale.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51A22E2FCE04008D609E /* CocoBattleRoyale.nes */; };
+		92EF51A52E2FCE12008D609E /* CocoBattleRoyale.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51A42E2FCE12008D609E /* CocoBattleRoyale.png */; };
+		92EF51A72E2FD05A008D609E /* Ghosts_And_Graves.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51A62E2FD05A008D609E /* Ghosts_And_Graves.nes */; };
+		92EF51A92E2FD0B3008D609E /* Ghosts_And_Graves.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF51A82E2FD0B3008D609E /* Ghosts_And_Graves.png */; };
 		9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373F8BB57550C87EB6D0573 /* Pods_SOOLRA.framework */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
@@ -317,6 +335,24 @@
 		92EF51802E26744D008D609E /* RavenX.gba */ = {isa = PBXFileReference; lastKnownFileType = file; path = RavenX.gba; sourceTree = "<group>"; };
 		92EF51822E267456008D609E /* RavenX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RavenX.png; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
+		92EF51862E2FBB17008D609E /* Super Tilt Bro.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Super Tilt Bro.nes"; sourceTree = "<group>"; };
+		92EF51882E2FBB8C008D609E /* Super Tilt Bros.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Super Tilt Bros.png"; sourceTree = "<group>"; };
+		92EF518A2E2FBCED008D609E /* NovaTheSquirrel.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = NovaTheSquirrel.nes; sourceTree = "<group>"; };
+		92EF518C2E2FBD8D008D609E /* NovaTheSquirrel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NovaTheSquirrel.png; sourceTree = "<group>"; };
+		92EF518E2E2FBE71008D609E /* Famidash.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = Famidash.nes; sourceTree = "<group>"; };
+		92EF518F2E2FBE71008D609E /* Famidash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Famidash.png; sourceTree = "<group>"; };
+		92EF51922E2FC400008D609E /* Falling.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = Falling.nes; sourceTree = "<group>"; };
+		92EF51932E2FC400008D609E /* Falling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Falling.png; sourceTree = "<group>"; };
+		92EF51962E2FC603008D609E /* dabg.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = dabg.nes; sourceTree = "<group>"; };
+		92EF51982E2FC61A008D609E /* dabg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dabg.png; sourceTree = "<group>"; };
+		92EF519A2E2FC92E008D609E /* openNesSnake.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = openNesSnake.png; sourceTree = "<group>"; };
+		92EF519C2E2FC93B008D609E /* openNesSnake.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = openNesSnake.nes; sourceTree = "<group>"; };
+		92EF519E2E2FC98B008D609E /* openNesBreakout.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = openNesBreakout.png; sourceTree = "<group>"; };
+		92EF51A02E2FC9A9008D609E /* openNesBreakout.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = openNesBreakout.nes; sourceTree = "<group>"; };
+		92EF51A22E2FCE04008D609E /* CocoBattleRoyale.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = CocoBattleRoyale.nes; sourceTree = "<group>"; };
+		92EF51A42E2FCE12008D609E /* CocoBattleRoyale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CocoBattleRoyale.png; sourceTree = "<group>"; };
+		92EF51A62E2FD05A008D609E /* Ghosts_And_Graves.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ghosts_And_Graves.nes; sourceTree = "<group>"; };
+		92EF51A82E2FD0B3008D609E /* Ghosts_And_Graves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ghosts_And_Graves.png; sourceTree = "<group>"; };
 		9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed.ttf"; sourceTree = "<group>"; };
 		9D123D022CD0046B007508A8 /* Ebrima.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ebrima.ttf; sourceTree = "<group>"; };
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -511,7 +547,10 @@
 		920341CF2E253AAE00D129F8 /* BundledRoms */ = {
 			isa = PBXGroup;
 			children = (
+				92EF51882E2FBB8C008D609E /* Super Tilt Bros.png */,
 				9203423B2E25A03400D129F8 /* Chocolate Hunter Runa.gba */,
+				92EF518C2E2FBD8D008D609E /* NovaTheSquirrel.png */,
+				92EF518A2E2FBCED008D609E /* NovaTheSquirrel.nes */,
 				9203421B2E2563BA00D129F8 /* Gba Microjam 23.gba */,
 				920341C12E253AAE00D129F8 /* Astrohawk.gba */,
 				920341C32E253AAE00D129F8 /* Chase.nes */,
@@ -519,6 +558,7 @@
 				920341CA2E253AAE00D129F8 /* Pong.gba */,
 				9203428B2E25B5B100D129F8 /* Blast Arena.gba */,
 				9203428D2E25B5B600D129F8 /* Blast Arena.png */,
+				92EF51862E2FBB17008D609E /* Super Tilt Bro.nes */,
 				920341CB2E253AAE00D129F8 /* Radicorn.gba */,
 				920341F12E25402D00D129F8 /* Christmas Advance.gba */,
 				9203424D2E25A1B500D129F8 /* Skyland.png */,
@@ -543,9 +583,16 @@
 				920341BA2E253AAE00D129F8 /* Radicorn.png */,
 				920342612E25AB9400D129F8 /* SFcave.png */,
 				920341F32E255CBC00D129F8 /* Pnakys.gba */,
+				92EF519C2E2FC93B008D609E /* openNesSnake.nes */,
 				920341F52E255CE200D129F8 /* Pnakys.png */,
 				920342592E25A28700D129F8 /* Gabdeo.png */,
+				92EF519E2E2FC98B008D609E /* openNesBreakout.png */,
+				92EF51A02E2FC9A9008D609E /* openNesBreakout.nes */,
 				920342692E25AC7900D129F8 /* Blowhole.png */,
+				92EF51A22E2FCE04008D609E /* CocoBattleRoyale.nes */,
+				92EF51A62E2FD05A008D609E /* Ghosts_And_Graves.nes */,
+				92EF51A82E2FD0B3008D609E /* Ghosts_And_Graves.png */,
+				92EF51A42E2FCE12008D609E /* CocoBattleRoyale.png */,
 				920341F72E255D9F00D129F8 /* Smart Gamble.gba */,
 				920342792E25ADB000D129F8 /* Nomad 2.png */,
 				920342772E25ADA300D129F8 /* Nomad 2.gba */,
@@ -555,6 +602,7 @@
 				920342752E25AD4200D129F8 /* Codename Monkey Bots.png */,
 				920341F92E255DAB00D129F8 /* Smart Gamble.png */,
 				9203425B2E25A3F300D129F8 /* Minicraft.gba */,
+				92EF519A2E2FC92E008D609E /* openNesSnake.png */,
 				920342712E25ACEA00D129F8 /* MatchIt.png */,
 				9203426B2E25ACAA00D129F8 /* luminesweeper.gba */,
 				920341FB2E25610400D129F8 /* Lane.gba */,
@@ -601,8 +649,12 @@
 				9203420C2E25628A00D129F8 /* Tremblay Island.png */,
 				92EF51582E267047008D609E /* Dungeon.gba */,
 				92EF515A2E26704C008D609E /* Dungeon.png */,
+				92EF51962E2FC603008D609E /* dabg.nes */,
+				92EF51982E2FC61A008D609E /* dabg.png */,
 				92EF515E2E2670CC008D609E /* PipeSpin.png */,
 				9203420F2E2562CF00D129F8 /* Blind Jump.gba */,
+				92EF51922E2FC400008D609E /* Falling.nes */,
+				92EF51932E2FC400008D609E /* Falling.png */,
 				920342112E2562D400D129F8 /* Blind Jump.png */,
 				920342132E25630500D129F8 /* Covid Adventure.gba */,
 				920342152E25630A00D129F8 /* Covid Adventure.png */,
@@ -629,6 +681,8 @@
 				9203425F2E25AB8900D129F8 /* SFcave.gba */,
 				9203428F2E25B62E00D129F8 /* Derelict.gba */,
 				920342902E25B62E00D129F8 /* Derelict.png */,
+				92EF518E2E2FBE71008D609E /* Famidash.nes */,
+				92EF518F2E2FBE71008D609E /* Famidash.png */,
 			);
 			path = BundledRoms;
 			sourceTree = "<group>";
@@ -730,18 +784,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D123D0F2CD00B56007508A8 /* DINCondensed-Regular.ttf in Resources */,
+				92EF51A32E2FCE04008D609E /* CocoBattleRoyale.nes in Resources */,
 				92EF516F2E267261008D609E /* Solar Guard.png in Resources */,
+				92EF518B2E2FBCED008D609E /* NovaTheSquirrel.nes in Resources */,
 				920342462E25A0F100D129F8 /* Tigermoth.png in Resources */,
 				9203421E2E2563C600D129F8 /* Gba Microjam 23.png in Resources */,
 				920342212E259CEF00D129F8 /* Arcade Mania.png in Resources */,
 				920342882E25B05A00D129F8 /* Battleship.gba in Resources */,
 				9203428E2E25B5B600D129F8 /* Blast Arena.png in Resources */,
 				92EF517E2E267422008D609E /* WaimanuGBA.gba in Resources */,
+				92EF51A72E2FD05A008D609E /* Ghosts_And_Graves.nes in Resources */,
 				92EF517F2E267422008D609E /* WaimanuGBA.png in Resources */,
 				920342222E259CEF00D129F8 /* Arcade Mania.gba in Resources */,
+				92EF51A12E2FC9A9008D609E /* openNesBreakout.nes in Resources */,
 				920342312E259EB500D129F8 /* Feline.gba in Resources */,
 				9203424E2E25A1B500D129F8 /* Skyland.png in Resources */,
 				920342842E25B02100D129F8 /* GBATactics.gba in Resources */,
+				92EF51972E2FC603008D609E /* dabg.nes in Resources */,
+				92EF51942E2FC400008D609E /* Falling.nes in Resources */,
+				92EF51952E2FC400008D609E /* Falling.png in Resources */,
 				920342322E259EB500D129F8 /* Feline.png in Resources */,
 				920341FE2E25610800D129F8 /* Lane.png in Resources */,
 				920341FC2E25610400D129F8 /* Lane.gba in Resources */,
@@ -754,12 +815,15 @@
 				9203425A2E25A28700D129F8 /* Gabdeo.png in Resources */,
 				9203423E2E25A03D00D129F8 /* Chocolate Hunter Runa.png in Resources */,
 				920341D42E253AAE00D129F8 /* MeteoRain.png in Resources */,
+				92EF519D2E2FC93B008D609E /* openNesSnake.nes in Resources */,
 				920341D82E253AAE00D129F8 /* Pong.png in Resources */,
 				920342422E25A09800D129F8 /* HEXES.png in Resources */,
 				920341DA2E253AAE00D129F8 /* Astrohawk.png in Resources */,
+				92EF518D2E2FBD8D008D609E /* NovaTheSquirrel.png in Resources */,
 				920341DD2E253AAE00D129F8 /* Chase.nes in Resources */,
 				920342392E259F8B00D129F8 /* XNIQ.gba in Resources */,
 				92EF515D2E2670CB008D609E /* PipeSpin.gba in Resources */,
+				92EF51A92E2FD0B3008D609E /* Ghosts_And_Graves.png in Resources */,
 				9203423A2E259F8B00D129F8 /* XNIQ.png in Resources */,
 				92EF517B2E2672E7008D609E /* Piranha Crisis.png in Resources */,
 				920341E02E253AAE00D129F8 /* Pong.gba in Resources */,
@@ -768,12 +832,16 @@
 				920341E42E253AAE00D129F8 /* Radicorn.png in Resources */,
 				920341F82E255D9F00D129F8 /* Smart Gamble.gba in Resources */,
 				920342092E2561FB00D129F8 /* Dungeon Puzzlers Lament.gba in Resources */,
+				92EF51892E2FBB8C008D609E /* Super Tilt Bros.png in Resources */,
 				9203420A2E2561FB00D129F8 /* Dungeon Puzzlers Lament.png in Resources */,
 				9203421A2E25635500D129F8 /* Math and Logic.png in Resources */,
 				920341F22E25402D00D129F8 /* Christmas Advance.gba in Resources */,
+				92EF51902E2FBE71008D609E /* Famidash.nes in Resources */,
+				92EF51912E2FBE71008D609E /* Famidash.png in Resources */,
 				920342642E25ABEE00D129F8 /* Hearts.gba in Resources */,
 				920341E92E253AAE00D129F8 /* Radicorn.gba in Resources */,
 				9203421C2E2563BA00D129F8 /* Gba Microjam 23.gba in Resources */,
+				92EF519B2E2FC92E008D609E /* openNesSnake.png in Resources */,
 				9203427A2E25ADB000D129F8 /* Nomad 2.png in Resources */,
 				920342962E25B66C00D129F8 /* Quantum Survival.png in Resources */,
 				920342562E25A21500D129F8 /* The Axe.png in Resources */,
@@ -788,6 +856,7 @@
 				9203424C2E25A1AF00D129F8 /* Skyland.gba in Resources */,
 				9203420E2E25628A00D129F8 /* Tremblay Island.png in Resources */,
 				920342862E25B02500D129F8 /* GBATactics.png in Resources */,
+				92EF519F2E2FC98B008D609E /* openNesBreakout.png in Resources */,
 				92EF51752E2672BE008D609E /* Glacia Dungeon.gba in Resources */,
 				920341ED2E253AAE00D129F8 /* MeteoRain.gba in Resources */,
 				920341EE2E253AAE00D129F8 /* Astrohawk.gba in Resources */,
@@ -800,6 +869,7 @@
 				9203422E2E259E6600D129F8 /* Symbol Merged.png in Resources */,
 				9203425E2E25A3F700D129F8 /* Minicraft.png in Resources */,
 				920341F42E255CBC00D129F8 /* Pnakys.gba in Resources */,
+				92EF51872E2FBB17008D609E /* Super Tilt Bro.nes in Resources */,
 				920342A12E25B6F200D129F8 /* Cats Curse.gba in Resources */,
 				920342622E25AB9400D129F8 /* SFcave.png in Resources */,
 				92EF515B2E26704C008D609E /* Dungeon.png in Resources */,
@@ -819,6 +889,7 @@
 				920342682E25AC7100D129F8 /* Blowhole.gba in Resources */,
 				920342662E25ABF400D129F8 /* Hearts.png in Resources */,
 				7058279D2C75766300AB8682 /* Orbitron-SemiBold.ttf in Resources */,
+				92EF51A52E2FCE12008D609E /* CocoBattleRoyale.png in Resources */,
 				9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */,
 				7058279F2C75766300AB8682 /* Orbitron-Medium.ttf in Resources */,
 				92EF51792E2672E6008D609E /* Piranha Crisis.gba in Resources */,
@@ -830,6 +901,7 @@
 				92EF51832E267456008D609E /* RavenX.png in Resources */,
 				92EF515F2E2670CC008D609E /* PipeSpin.png in Resources */,
 				920342742E25AD3900D129F8 /* Codename Monkey Bots.gba in Resources */,
+				92EF51992E2FC61A008D609E /* dabg.png in Resources */,
 				92EF51592E267047008D609E /* Dungeon.gba in Resources */,
 				920342102E2562CF00D129F8 /* Blind Jump.gba in Resources */,
 				920342702E25ACDA00D129F8 /* MatchIt.gba in Resources */,
@@ -1109,7 +1181,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.8.1;
+				MARKETING_VERSION = 5.8.2;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1161,7 +1233,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.8.1;
+				MARKETING_VERSION = 5.8.2;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
