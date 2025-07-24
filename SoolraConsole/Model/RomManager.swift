@@ -13,7 +13,7 @@ import FirebaseAnalytics
 class RomManager {
     private let context: NSManagedObjectContext
     private let saveStateManager: SaveStateManager
-        
+    
     init(context: NSManagedObjectContext, saveStateManager: SaveStateManager) {
         self.context = context
         self.saveStateManager = saveStateManager
@@ -28,7 +28,7 @@ class RomManager {
             NSSortDescriptor(key: #keyPath(Rom.createdAt), ascending: false),
             NSSortDescriptor(key: #keyPath(Rom.name), ascending: true)
         ]
-
+        
         
         do {
             let roms = try context.fetch(request)
@@ -93,11 +93,11 @@ class RomManager {
         try FileManager.default.copyItem(at: url, to: destinationURL)
         await createRomEntity(name: romName, url: destinationURL)
         Analytics.logEvent("rom_added", parameters: [
-                        "rom_name": romName,
-                        "timestamp": Date().timeIntervalSince1970
-                    ])
+            "rom_name": romName,
+            "timestamp": Date().timeIntervalSince1970
+        ])
     }
-
+    
     private func handleZipFile(_ url: URL) async throws {
         let soolraDirectory = getSoolraDirectory()
         let tempDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -137,15 +137,15 @@ class RomManager {
                 try FileManager.default.moveItem(at: tempRomUrl, to: destinationURL)
                 await createRomEntity(name: romName, url: destinationURL)
                 Analytics.logEvent("rom_added", parameters: [
-                                "rom_name": romName,
-                                "timestamp": Date().timeIntervalSince1970
-                            ])
+                    "rom_name": romName,
+                    "timestamp": Date().timeIntervalSince1970
+                ])
             } catch {
                 print("Error moving ROM file \(romName): \(error.localizedDescription)")
             }
         }
     }
-
+    
     private func extractZipFile(at url: URL, to destination: URL) throws {
         do {
             let archive = try Archive(url: url, accessMode: .read)
@@ -160,11 +160,11 @@ class RomManager {
             }
         } catch {
             throw NSError(domain: "ZipError",
-                         code: -1,
-                         userInfo: [NSLocalizedDescriptionKey: "Failed to extract zip file: \(error.localizedDescription)"])
+                          code: -1,
+                          userInfo: [NSLocalizedDescriptionKey: "Failed to extract zip file: \(error.localizedDescription)"])
         }
     }
-
+    
     func deleteRom(rom: Rom) {
         guard let url = rom.url else {
             context.delete(rom)
@@ -219,8 +219,8 @@ class RomManager {
         if !FileManager.default.fileExists(atPath: soolraDirectory.path) {
             do {
                 try FileManager.default.createDirectory(at: soolraDirectory,
-                                                      withIntermediateDirectories: true,
-                                                      attributes: nil)
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
             } catch {
                 print("Error creating Soolra folder: \(error.localizedDescription)")
             }
@@ -229,7 +229,7 @@ class RomManager {
         return soolraDirectory
     }
     
-
+    
     
     // MARK: - Private Methods - CoreData
     private func createRomEntity(name: String, url: URL) async {
@@ -291,29 +291,31 @@ class RomManager {
         let fm = FileManager.default
         guard let resourceURL = Bundle.main.resourceURL else { return }
         let destDir = getSoolraDirectory()
-
+        
         do {
             let allFiles = try fm.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys: nil)
+//            let romsDirectory = resourceURL.appendingPathComponent("BundledRoms/ROMs")
+//            let allFiles = try fm.contentsOfDirectory(at: romsDirectory, includingPropertiesForKeys: nil)
 
             for file in allFiles {
                 let ext = file.pathExtension.lowercased()
                 guard ConsoleCoreManager.ConsoleType.allFileExtensions.contains(ext) else { continue }
-
+                
                 guard let romName = getRomName(from: file) else {
                     print("⚠️ Skipping file with invalid ROM name: \(file.lastPathComponent)")
                     continue
                 }
-
+                
                 guard !UserDefaults.standard.isROMDeleted(romName) else { continue }
-
+                
                 let dest = destDir.appendingPathComponent(file.lastPathComponent)
                 let exists = fm.fileExists(atPath: dest.path)
-
+                
                 // Always create the ROM entity regardless of copy status
                 if !romExists(name: romName, url: dest) {
                     await createRomEntity(name: romName, url: dest)
                 }
-
+                
                 // Copy file in background if not already copied
                 if !exists {
                     DispatchQueue.global(qos: .utility).async {
@@ -330,65 +332,32 @@ class RomManager {
             print("❌ initDefaultRoms failed:", error)
         }
     }
+    
 
-//    func initDefaultRoms() async {
-//        let fm = FileManager.default
-//        guard let resourceURL = Bundle.main.resourceURL else { return }
-//        let destDir = getSoolraDirectory()
-//
-//        do {
-//            let allFiles = try fm.contentsOfDirectory(at: resourceURL,
-//                                                      includingPropertiesForKeys: nil)
-//            for file in allFiles {
-//                let ext = file.pathExtension.lowercased()
-// 
-//                guard ConsoleCoreManager.ConsoleType.allFileExtensions.contains(ext)
-//                    else { continue }
-//                
-//                guard let romName = getRomName(from: file) else {
-//                    print("⚠️ Skipping file with invalid ROM name: \(file.lastPathComponent)")
-//                    continue
-//                }
-//                guard !UserDefaults.standard.isROMDeleted(romName)
-//                    else { continue }
-//                
-//                let dest = destDir.appendingPathComponent(file.lastPathComponent)
-//                guard !fm.fileExists(atPath: dest.path) else { continue }
-//
-//                try fm.copyItem(at: file, to: dest)
-//                print("✅ Copied \(file.lastPathComponent)")
-//                
-//                // **await** the Core Data insert before moving on
-//                await createRomEntity(name: romName, url: dest)
-//            }
-//        } catch {
-//            print("❌ initDefaultRoms failed:", error)
-//        }
-//    }
     
     func countDefaultRomsinBundleOnFirstLaunch() {
         guard UserDefaults.standard.object(forKey: "numOfDefaultRomsInBundle") == nil else {
             return
         }
         let fileManager = FileManager.default
-            guard let resourceURL = Bundle.main.resourceURL else {
-                print("❌ Resource URL not found.")
-                UserDefaults.standard.setNumOfdefaultRomsInBundle(to: 0)
-                return
-            }
-
-            do {
-                let files = try fileManager.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys: nil)
-                let count = files.filter { url in
-                    ConsoleCoreManager.ConsoleType.allFileExtensions.contains(url.pathExtension.lowercased())
-                }.count
-
-                UserDefaults.standard.setNumOfdefaultRomsInBundle(to: count)
-            } catch {
-                print("❌ Failed to count default ROMs: \(error)")
-                UserDefaults.standard.setNumOfdefaultRomsInBundle(to: 0)
-            }
+        guard let resourceURL = Bundle.main.resourceURL else {
+            print("❌ Resource URL not found.")
+            UserDefaults.standard.setNumOfdefaultRomsInBundle(to: 0)
+            return
         }
+        
+        do {
+            let files = try fileManager.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys: nil)
+            let count = files.filter { url in
+                ConsoleCoreManager.ConsoleType.allFileExtensions.contains(url.pathExtension.lowercased())
+            }.count
+            
+            UserDefaults.standard.setNumOfdefaultRomsInBundle(to: count)
+        } catch {
+            print("❌ Failed to count default ROMs: \(error)")
+            UserDefaults.standard.setNumOfdefaultRomsInBundle(to: 0)
+        }
+    }
     
     func resetDeletedDefaultRoms() {
         UserDefaults.standard.deletedDefaultRoms.removeAll()
@@ -410,32 +379,32 @@ extension UserDefaults {
     }
     
     var numOfdefaultRomsInBundle: Int {
-            get {
-                integer(forKey: numOfdefaultRomsInBundleKey)
-            }
-            set {
-                set(newValue, forKey: numOfdefaultRomsInBundleKey)
-            }
+        get {
+            integer(forKey: numOfdefaultRomsInBundleKey)
         }
+        set {
+            set(newValue, forKey: numOfdefaultRomsInBundleKey)
+        }
+    }
     
-
+    
     func addDeletedROM(name: String) {
         var current = deletedDefaultRoms
         current.insert(name)
         deletedDefaultRoms = current
     }
-
+    
     func isROMDeleted(_ name: String) -> Bool {
         return deletedDefaultRoms.contains(name)
     }
     
     func setNumOfdefaultRomsInBundle(to count: Int) {
-            if object(forKey: "numOfdefaultRomsInBundle") == nil {
-                set(count, forKey: "numOfdefaultRomsInBundle")
-            }
+        if object(forKey: "numOfdefaultRomsInBundle") == nil {
+            set(count, forKey: "numOfdefaultRomsInBundle")
         }
+    }
     
-
+    
     
     
 }
@@ -535,10 +504,16 @@ class RomArtworkLoader {
            let image = UIImage(data: data) {
             return image
         }
+//        if let localURL = Bundle.main.url(forResource: romName, withExtension: "png", subdirectory: "BundledRoms/Artwork"),
+//           let data = try? Data(contentsOf: localURL),
+//           let image = UIImage(data: data) {
+//            return image
+//        }
 
+        
         // Try with closest matching filename within timeout
         return try await withTimeout(seconds: 10) {
-                
+            
             if let matchedFilename = self.findClosestMatchingFilename(for: romName, consoleType: consoleType),
                let image = try await self.fetchArtwork(for: matchedFilename.replacingOccurrences(of: ".png", with: ""), consoleType: consoleType, originalFilename: romName) {
                 print("Found artwork for \(romName) (\(consoleType)): \(matchedFilename)")
@@ -572,19 +547,19 @@ class RomArtworkLoader {
     }
     
     private func fetchArtwork(for romName: String, consoleType: ConsoleCoreManager.ConsoleType, originalFilename: String) async throws -> UIImage? {
-
+        
         let platformMapping: [ConsoleCoreManager.ConsoleType: String] = [
             .nes: "Nintendo%20-%20Nintendo%20Entertainment%20System",
             .gba: "Nintendo%20-%20Game%20Boy%20Advance"
         ]
-
+        
         guard let platform = platformMapping[consoleType] else { return nil }
-
+        
         let romNameUrl = romName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? romName
         let urlString = "https://thumbnails.libretro.com/\(platform)/Named_Boxarts/\(romNameUrl).png"
-
+        
         guard let url = URL(string: urlString) else { return nil }
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             return UIImage(data: data)
@@ -593,6 +568,6 @@ class RomArtworkLoader {
             return nil
         }
     }
-
+    
     
 }

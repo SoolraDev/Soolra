@@ -465,6 +465,21 @@ Developed by AnthonyBongers and released into the public domain.
 Source: https://github.com/AnthonyBongers/GhostsAndGraves
 """)
             }
+            Section(header: Text("CodeMaster").font(.headline)) {
+                Text("""
+Developed by DanielVukelich and published under the GPL-3 License.
+Source: https://github.com/DanielVukelich/Codemaster-NES-homebrew
+License: https://www.gnu.org/licenses/gpl-3.0.html
+""")
+            }
+            
+            Section(header: Text("Sweet Dreams Nonogram").font(.headline)) {
+                Text("""
+Developed by wendelscardua and published under the MIT License.
+Source: https://github.com/wendelscardua/sweet-dreams-nonogram
+License: http://opensource.org/licenses/mit-license.html
+""")
+            }
             
         }
     }
