@@ -93,6 +93,7 @@
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
 		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
 		92E024272E363DDB0002B6E6 /* DummyGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92E024262E363DD90002B6E6 /* DummyGraphicsContext.cpp */; };
+		92E0242A2E37811E0002B6E6 /* DummyShaderModule.h in Sources */ = {isa = PBXBuildFile; fileRef = 92E024292E37811E0002B6E6 /* DummyShaderModule.h */; };
 		9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373F8BB57550C87EB6D0573 /* Pods_SOOLRA.framework */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
@@ -452,6 +453,9 @@
 		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
 		92E024252E363DC50002B6E6 /* DummyGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyGraphicsContext.h; sourceTree = "<group>"; };
 		92E024262E363DD90002B6E6 /* DummyGraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DummyGraphicsContext.cpp; sourceTree = "<group>"; };
+		92E024282E3641B10002B6E6 /* DummyDrawContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyDrawContext.h; sourceTree = "<group>"; };
+		92E024292E37811E0002B6E6 /* DummyShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyShaderModule.h; sourceTree = "<group>"; };
+		92E0242B2E3784A40002B6E6 /* DummyObjects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyObjects.h; sourceTree = "<group>"; };
 		9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed.ttf"; sourceTree = "<group>"; };
 		9D123D022CD0046B007508A8 /* Ebrima.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ebrima.ttf; sourceTree = "<group>"; };
 		9D123D042CD007EE007508A8 /* D-DINCondensed-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "D-DINCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -597,7 +601,10 @@
 		183DF1612862C99E0088FE1C = {
 			isa = PBXGroup;
 			children = (
+				92E0242B2E3784A40002B6E6 /* DummyObjects.h */,
+				92E024292E37811E0002B6E6 /* DummyShaderModule.h */,
 				92E024252E363DC50002B6E6 /* DummyGraphicsContext.h */,
+				92E024282E3641B10002B6E6 /* DummyDrawContext.h */,
 				92E024262E363DD90002B6E6 /* DummyGraphicsContext.cpp */,
 				924DBDBF2E114EE4001EF4F6 /* SoolraPSPBridge.mm */,
 				924DBDBD2E114EB4001EF4F6 /* SoolraPSPBridge.h */,
@@ -1266,6 +1273,7 @@
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
 				928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */,
 				183DF16E2862C99E0088FE1C /* SoolraApp.swift in Sources */,
+				92E0242A2E37811E0002B6E6 /* DummyShaderModule.h in Sources */,
 				92E024272E363DDB0002B6E6 /* DummyGraphicsContext.cpp in Sources */,
 				185B91812869EE8C003F88F5 /* Model.xcdatamodeld in Sources */,
 				180C86F0286B3F02009E7C0D /* HomeView+ViewModel.swift in Sources */,

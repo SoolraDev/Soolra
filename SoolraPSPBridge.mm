@@ -12,6 +12,7 @@
 
 #include "Common/File/FileUtil.h"
 #include "Core/SaveState.h"
+#include "GPU/Common/PresentationCommon.h"
 
 
 #include <cstdio>
@@ -34,6 +35,7 @@ extern "C" int GetScreenHeight() {
 #include "GPU/Software/SoftGpu.h"
 #include "GPU/Common/GPUDebugInterface.h"
 
+PresentationCommon *g_presentation = nullptr;
 
 extern "C" const uint16_t *ppsspp_getRGB565FrameBuffer() {
     static std::vector<uint16_t> rgb565Buffer;
@@ -162,14 +164,21 @@ void start_ppsspp_core_with_path(const char *iso_path) {
         // Let the CPU thread spin up
         usleep(16000);  // ~1 frame (60 FPS)
     }
-
-    // Run multiple frames to kick everything off
-    for (int i = 0; i < 120; i++) {
-        if (!Core_NextFrame()) {
-            printf("⚠️ Core_NextFrame failed at frame %d\n", i);
-            break;
-        }
+    // Prevent reuse of stale g_presentation state
+    extern PresentationCommon *g_presentation;
+    if (g_presentation) {
+        g_presentation->DeviceLost();
+        delete g_presentation;
+        g_presentation = nullptr;
     }
+
+    NativeInitGraphics(&dummyCtx);
+    // Run NativeFrame loop to let the core and GPU actually advance
+    for (int i = 0; i < 120; ++i) {
+        NativeFrame(&dummyCtx);
+        usleep(16000);  // Simulate ~60 FPS
+    }
+
     // Step 3: Load the savestate
 //    std::string isoStr(iso_path);
 //    std::string savePath;

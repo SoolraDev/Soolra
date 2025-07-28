@@ -1,20 +1,26 @@
 #pragma once
 
 #include "Common/GraphicsContext.h"
+#include "DummyDrawContext.h"
 #include "Common/GPU/thin3d.h"
 
 class DummyGraphicsContext : public GraphicsContext {
 public:
-    DummyGraphicsContext() = default;
-    ~DummyGraphicsContext() override = default;
+    DummyGraphicsContext() {
+            drawContext_ = new DummyDrawContext();
+        }
+
+        ~DummyGraphicsContext() {
+            delete drawContext_;
+        }
+
+        Draw::DrawContext *GetDrawContext() override {
+            return drawContext_;
+        }
 
     // Required pure virtual methods
     void Shutdown() override {}
     void Resize() override {}
-
-    Draw::DrawContext *GetDrawContext() override {
-        return nullptr;
-    }
 
     // Optional virtuals — override if necessary
     bool InitFromRenderThread(std::string *errorMessage) override {
@@ -35,4 +41,6 @@ public:
     void *GetAPIContext() override { return nullptr; }
 
     void Poll() override {}
+private:
+    DummyDrawContext *drawContext_;
 };
