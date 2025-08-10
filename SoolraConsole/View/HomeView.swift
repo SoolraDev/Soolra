@@ -608,7 +608,9 @@ struct HomeView: View {
         @Binding var searchQuery: String // 👈 Add this
         
         var body: some View {
+            
             VStack {
+                
                 HStack {
                     BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 0, action: { }, content: {
                         Image("home-logo")
