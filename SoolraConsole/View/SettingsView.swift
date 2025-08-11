@@ -78,26 +78,6 @@ struct SettingsView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(viewModel.selectedIndex == 2 ? Color.white : Color.clear, lineWidth: 2)
                     )
-                    Button("Unity Game") {
-                        showWebView = true
-                    }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.selectedIndex == 3 ? Color.white : Color.clear, lineWidth: 2)
-                    )
-                    .fullScreenCover(isPresented: $showWebView) {
-                        HalfScreenWebView()
-                    }
-                    Button("Play Slither.io") {
-                        showSlither = true
-                    }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.selectedIndex == 4 ? Color.white : Color.clear, lineWidth: 2)
-                    )
-                    .fullScreenCover(isPresented: $showSlither) {
-                        SlitherView()
-                    }
 
 
                 }

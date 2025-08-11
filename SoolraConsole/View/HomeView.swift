@@ -24,7 +24,8 @@ enum CurrentView: Equatable {
     case grid
     case gameDetail(Rom)
     case game(GameViewData)
-    
+    case web(WebGame)
+
     static func == (lhs: CurrentView, rhs: CurrentView) -> Bool {
         switch (lhs, rhs) {
         case (.grid, .grid):
@@ -33,6 +34,8 @@ enum CurrentView: Equatable {
             return rom1 == rom2
         case (.game(let data1), .game(let data2)):
             return data1 == data2
+        case (.web(let g1), .web(let g2)):
+            return g1.id == g2.id
         default:
             return false
         }
@@ -58,7 +61,9 @@ struct HomeView: View {
     @State private var isLoading: Bool = false
     @StateObject private var controllerViewModel = ControllerViewModel()
     @State private var isLoadingGame: Bool = false
-    
+    @State private var items: [(LibraryKind, LibraryItem)] = []
+    @State private var webGames: [WebGame] = WebGameCatalog.all()
+
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
     var backgroundImage: UIImage? {
@@ -199,6 +204,11 @@ struct HomeView: View {
             case .game(let gameData):
                 GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
                     .environmentObject(gameData.consoleManager)
+            case .web(let webGame):
+                WebGameContainerView(game: webGame) {
+                    currentView = .grid
+                }
+
             }
             
             // Loading overlay
@@ -235,6 +245,7 @@ struct HomeView: View {
             } else {
                 roms = dataController.romManager.fetchRoms()
                 viewModel.updateRomCount(roms.count)
+                rebuildItems()
             }
         }
         .onOpenURL { url in
@@ -262,12 +273,14 @@ struct HomeView: View {
             if !loading {
                 roms = dataController.romManager.fetchRoms()
                 viewModel.updateRomCount(roms.count)
+                rebuildItems()
                 isLoading = false
             }
         }
         
         .onChange(of: roms.count) { newCount in
             viewModel.updateRomCount(newCount)
+            rebuildItems()
         }
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
@@ -292,6 +305,7 @@ struct HomeView: View {
             if !isSettingsPresented {
                 roms = dataController.romManager.fetchRoms()
                 viewModel.updateRomCount(roms.count)
+                rebuildItems()
                 viewModel.onAppear()
             }
         }
@@ -303,6 +317,14 @@ struct HomeView: View {
         .environmentObject(controllerViewModel)
     }
     
+    func rebuildItems() {
+        let romItems: [(LibraryKind, LibraryItem)] = roms.map { (.rom($0), $0 as LibraryItem) }
+        let webItems: [(LibraryKind, LibraryItem)] = webGames.map { (.web($0), $0 as LibraryItem) }
+        // Decide ordering rules; here we interleave after the upload tile or simply append:
+        items = romItems + webItems
+    }
+
+    
     private func loadDefaultRoms() {
         Task {
             isLoading = true
@@ -311,6 +333,7 @@ struct HomeView: View {
             await MainActor.run {
                 roms = dataController.romManager.fetchRoms()
                 viewModel.updateRomCount(roms.count)
+                rebuildItems()
                 isLoading = false
             }
         }
@@ -372,38 +395,54 @@ struct HomeView: View {
         ScrollViewReader { scrollProxy in
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
+                    
                     // Upload button
                     Button(action: {
                         viewModel.isPresented.toggle()
                     }) {
                         addRomIcon()
                     }
-                    .id(3)  // ID for scroll target
-                    
-                    // Filtered ROMs based on search query
-                    ForEach(Array(roms.enumerated()).filter { index, rom in
-                        viewModel.searchQuery.isEmpty || (rom.name?.localizedCaseInsensitiveContains(viewModel.searchQuery) ?? false)
-                    }, id: \.1) { index, rom in
+                    .id(3)
+
+                    // Precompute filtered enumerated items
+                    let enumeratedItems: [(offset: Int, element: (LibraryKind, LibraryItem))] =
+                        Array(items.enumerated())
+                            .filter { pair in
+                                let (_, item) = pair.element
+                                return viewModel.searchQuery.isEmpty ||
+                                       item.searchKey.localizedCaseInsensitiveContains(viewModel.searchQuery)
+                            }
+
+                    ForEach(enumeratedItems, id: \.element.1.id) { pair in
+                        let index = pair.offset
+                        let kind = pair.element.0
+                        let item = pair.element.1
+
                         VStack(spacing: 4) {
-                            // ROM thumbnail and name
-                            Button(action: {
-                                navigateToRom(rom)
-                            }) {
-                                romIcon(for: rom, index: index + 4)
+                            Button {
+                                if case .rom(let rom) = kind {
+                                    navigateToRom(rom)
+                                } else if case .web(let webGame) = kind {
+                                    navigateToWeb(webGame)
+                                }
+                            } label: {
+                                libraryIcon(for: kind, item: item, index: index + 4)
                             }
                             .id(index + 4)
-                            
-                            // Delete button when in edit mode
+
                             if isEditMode == .active {
-                                Button(action: {
-                                    withAnimation {
-                                        dataController.romManager.deleteRom(rom: rom)
-                                        roms = dataController.romManager.fetchRoms()
+                                if case .rom(let rom) = kind {
+                                    Button {
+                                        withAnimation {
+                                            dataController.romManager.deleteRom(rom: rom)
+                                            roms = dataController.romManager.fetchRoms()
+                                            rebuildItems()
+                                        }
+                                    } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .foregroundColor(.red)
+                                            .padding(.top, 4)
                                     }
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                        .padding(.top, 4)
                                 }
                             }
                         }
@@ -414,21 +453,25 @@ struct HomeView: View {
             }
             .onChange(of: viewModel.focusedButtonIndex) { newIndex in
                 if newIndex >= 3 {
-                    //                    withAnimation {
                     scrollProxy.scrollTo(newIndex, anchor: .center)
-                    //                    }
-                    //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    //                        withAnimation {
-                    //                            scrollProxy.scrollTo(newIndex, anchor: .center)
-                    //                        }
-                    //                    }
                 }
             }
         }
     }
+
+
     
     
     // MARK: - Helper Functions
+    
+    private func navigateToWeb(_ game: WebGame) {
+        Task { @MainActor in
+            self.currentView = .web(game)
+            viewModel.focusedButtonIndex = 4
+            engagementTracker.setCurrentRom(game.name) // optional reuse
+        }
+    }
+
     
     private func navigateToRom(_ rom: Rom) {
         Task {
@@ -501,6 +544,49 @@ struct HomeView: View {
         .contentShape(Rectangle())
     }
     
+    @ViewBuilder
+    private func libraryIcon(for kind: LibraryKind, item: LibraryItem, index: Int) -> some View {
+        switch kind {
+        case .rom(let rom):
+            romIcon(for: rom, index: index)  // existing UI
+
+        case .web:
+            VStack(spacing: 3) {
+                if let uiImage = item.iconImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 88, height: 70)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(viewModel.focusedButtonIndex == index ? .white : .clear, lineWidth: 4)
+                                .padding(1)
+                        )
+                } else {
+                    Image(systemName: "globe")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 88, height: 70)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(.white, lineWidth: 1)
+                        )
+                }
+
+                Text(item.displayName)
+                    .font(.custom("Ebrima", size: 13))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+            }
+            .frame(width: 88)
+            .cornerRadius(8)
+            .shadow(radius: 4)
+            .contentShape(Rectangle())
+        }
+    }
+
+    
     private func addRomIcon() -> some View {
         VStack(spacing: 3) {
             Image("home-new-item-big")
@@ -560,6 +646,7 @@ struct HomeView: View {
                     // Then navigate away
                     roms = dataController.romManager.fetchRoms()
                     viewModel.updateRomCount(roms.count)
+                    rebuildItems()
                     currentView = .grid
                 } catch {
                     print("Error during shutdown: \(error)")
