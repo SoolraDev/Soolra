@@ -19,7 +19,7 @@ final class Game2048ViewModel: ObservableObject, WebGameViewModel, ControllerSer
         case .right: pressed ? keyDown(which: 39) : keyUp(which: 39)
         case .up:    pressed ? keyDown(which: 38) : keyUp(which: 38)
         case .down:  pressed ? keyDown(which: 40) : keyUp(which: 40)
-        case .b:
+        case .b, .select, .menu:
             if pressed {
                 DispatchQueue.main.async { [weak self] in
                     self?.dismiss?()

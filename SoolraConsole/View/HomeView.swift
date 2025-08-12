@@ -67,14 +67,16 @@ struct HomeView: View {
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
     var backgroundImage: UIImage? {
-        if viewModel.focusedButtonIndex >= 4,
-           let rom = roms[safe: viewModel.focusedButtonIndex - 4],
-           let imageData = rom.imageData,
-           let image = UIImage(data: imageData) {
-            return image
+        guard let (kind, item) = focusedLibraryTuple() else { return nil }
+        switch kind {
+        case .rom(let rom):
+            return rom.imageData.flatMap(UIImage.init(data:))
+        case .web:
+            return item.iconImage
         }
-        return nil
     }
+
+
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -170,23 +172,43 @@ struct HomeView: View {
                         }
                         
                         
-                        
-                        if viewModel.focusedButtonIndex >= 4 && !roms.isEmpty{
-                            CurrentItemView(currentRom: roms[viewModel.focusedButtonIndex - 4], currentView: $currentView, focusedButtonIndex: $viewModel.focusedButtonIndex)
+                        if let (kind, item) = focusedLibraryTuple() {
+                            switch kind {
+                            case .rom(let rom):
+                                CurrentItemView(
+                                    currentRom: rom,
+                                    currentView: $currentView,
+                                    focusedButtonIndex: $viewModel.focusedButtonIndex
+                                )
+                            case .web:
+                                CurrentItemView(
+                                    currentRom: nil,
+                                    currentView: $currentView,
+                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
+                                    addRomAction: nil,
+                                    overrideImage: item.iconImage,        // <— web-game icon
+                                    overrideTitle: item.displayName       // <— web-game name
+                                )
+                            }
                         } else {
-                            CurrentItemView(currentRom: nil, currentView: $currentView, focusedButtonIndex: $viewModel.focusedButtonIndex, addRomAction: {
-                                viewModel.isPresented = true
-                            })
+                            CurrentItemView(
+                                currentRom: nil,
+                                currentView: $currentView,
+                                focusedButtonIndex: $viewModel.focusedButtonIndex,
+                                addRomAction: { viewModel.isPresented = true }
+                            )
                         }
+
+
                         TitleSortingView(titleText: "All Games", sortingText: "A-Z")
                             .padding(.top, 10)
                         
-                        if roms.isEmpty && !isLoading {
+                        if items.isEmpty && !isLoading {
                             emptyView
                         } else {
-                            // scroll down
                             romGridView
                         }
+
                         // load the SoolraControllerView without pauseViewModel
                         SoolraControllerView(currentView: $currentView, onButtonPress: { action in
                             viewModel.controllerDidPress(action: action, pressed: true)
@@ -205,9 +227,28 @@ struct HomeView: View {
                 GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
                     .environmentObject(gameData.consoleManager)
             case .web(let webGame):
-                WebGameContainerView(game: webGame) {
-                    currentView = .grid
+                GeometryReader { geo in
+                    ZStack {
+                        Color.black.edgesIgnoringSafeArea(.all)
+                        VStack(spacing: 0) {
+                            // show the web game only on the top half
+                            WebGameContainerView(game: webGame) {
+                                currentView = .grid
+                            }
+                            .frame(height: geo.size.height * 0.5)
+
+//                            Spacer()
+
+                            // keep joystick visible & active just like on grid
+                            SoolraControllerView(currentView: $currentView, onButtonPress: { _ in
+                                // handled via .onChange below
+                            })
+                            .frame(width: geo.size.width, height: geo.size.height * 0.48)
+                            .edgesIgnoringSafeArea(.bottom)
+                        }
+                    }
                 }
+
 
             }
             
@@ -284,10 +325,15 @@ struct HomeView: View {
         }
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
-                let indexToSelect = index - 4
-                if indexToSelect >= 0 && indexToSelect < roms.count {
-                    let rom = roms[indexToSelect]
-                    navigateToRom(rom)
+                let idx = index - 4
+                if idx >= 0 && idx < items.count {
+                    let (kind, _) = items[idx]
+                    switch kind {
+                    case .rom(let rom):
+                        navigateToRom(rom)
+                    case .web(let game):
+                        navigateToWeb(game)
+                    }
                 } else if index == 1 {
                     isSettingsPresented = true
                 } else if index == 2 || index == 3 {
@@ -296,11 +342,27 @@ struct HomeView: View {
             }
             viewModel.selectedGameIndex = nil
         }
-        .onChange(of: controllerViewModel.lastAction) { object in
-            if let object = object, object.pressed, currentView == .grid {
-                viewModel.controllerDidPress(action: object.action, pressed: object.pressed)
+
+        .onChange(of: controllerViewModel.lastAction) { evt in
+            guard let evt = evt else { return }
+            switch currentView {
+            case .grid:
+                // keep your existing grid behavior
+                viewModel.controllerDidPress(action: evt.action, pressed: evt.pressed)
+
+            case .web:
+                // forward to the web-game VM (set as Bluetooth delegate in the wrapper)
+                BluetoothControllerService.shared.delegate?.controllerDidPress(
+                    action: evt.action,
+                    pressed: evt.pressed
+                )
+
+            default:
+                break
             }
         }
+
+
         .onChange(of: isSettingsPresented) { newValue in
             if !isSettingsPresented {
                 roms = dataController.romManager.fetchRoms()
@@ -321,10 +383,15 @@ struct HomeView: View {
         let romItems: [(LibraryKind, LibraryItem)] = roms.map { (.rom($0), $0 as LibraryItem) }
         let webItems: [(LibraryKind, LibraryItem)] = webGames.map { (.web($0), $0 as LibraryItem) }
         // Decide ordering rules; here we interleave after the upload tile or simply append:
-        items = romItems + webItems
+        items =  webItems + romItems
     }
 
-    
+    private func focusedLibraryTuple() -> (LibraryKind, LibraryItem)? {
+        let idx = viewModel.focusedButtonIndex - 4
+        guard idx >= 0, idx < items.count else { return nil }
+        return items[idx]
+    }
+
     private func loadDefaultRoms() {
         Task {
             isLoading = true
@@ -341,23 +408,27 @@ struct HomeView: View {
     
     
     private func controllerActionButtonPressed() {
-        let focusedButtonIndex = viewModel.focusedButtonIndex
-        if focusedButtonIndex == 1 {
+        let i = viewModel.focusedButtonIndex
+        switch i {
+        case 1:
             isSettingsPresented = true
-            
-        } else if focusedButtonIndex == 2 {
+        case 2:
             viewModel.isPresented = true
-            
-        } else if focusedButtonIndex == 3 {
+        case 3:
             viewModel.isPresented.toggle()
-        } else {
-            let indexToSelect = focusedButtonIndex - 4
-            if indexToSelect >= 0 {
-                let rom = roms[indexToSelect]
+        default:
+            let idx = i - 4
+            guard idx >= 0, idx < items.count else { return }
+            let (kind, _) = items[idx]
+            switch kind {
+            case .rom(let rom):
                 navigateToRom(rom)
+            case .web(let game):
+                navigateToWeb(game)
             }
         }
     }
+
     
     // MARK: - Subviews
     
@@ -472,7 +543,7 @@ struct HomeView: View {
         }
     }
 
-    
+
     private func navigateToRom(_ rom: Rom) {
         Task {
             do {
@@ -753,6 +824,11 @@ struct HomeView: View {
         @Binding var currentView: CurrentView
         @Binding var focusedButtonIndex: Int
         var addRomAction: (() -> Void)? = nil
+
+        // NEW:
+        var overrideImage: UIImage? = nil
+        var overrideTitle: String? = nil
+
         var body: some View {
             HStack(alignment: .top, spacing: 16) {
                 Button(action: {
@@ -763,7 +839,11 @@ struct HomeView: View {
                     }
                 }) {
                     Group {
-                        if let data = currentRom?.imageData, let uiImage = UIImage(data: data) {
+                        if let img = overrideImage {
+                            // show web‑game icon (or any custom image)
+                            CustomImageView(image: Image(uiImage: img), width: 118, height: 105)
+                                .frame(width: 134, height: 120)
+                        } else if let data = currentRom?.imageData, let uiImage = UIImage(data: data) {
                             CustomImageView(image: Image(uiImage: uiImage), width: 118, height: 105)
                                 .frame(width: 134, height: 120)
                         } else if let image = UIImage(named: "home-new-item") {
@@ -771,15 +851,14 @@ struct HomeView: View {
                                 .frame(width: 134, height: 120)
                         }
                     }
-                    
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(focusedButtonIndex == 2 ? Color.white : Color.clear, lineWidth: 3)
                             .padding(1)
                     )
                 }
-                
-                Text(currentRom?.name ?? "Add Game")
+
+                Text(overrideTitle ?? currentRom?.name ?? "Add Game")
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.white)
                     .font(.custom("DINCondensed-Regular", size: 28))
@@ -793,6 +872,7 @@ struct HomeView: View {
             .padding(.trailing, 16)
         }
     }
+
 }
 
 struct TitleSortingView: View {

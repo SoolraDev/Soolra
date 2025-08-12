@@ -18,6 +18,10 @@ struct GameWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView(frame: .zero, configuration: makeConfiguration())
         onWebViewReady(webView)
+        // inside GameWebView.makeUIView
+        webView.isOpaque = false
+        webView.backgroundColor = .black
+        webView.scrollView.backgroundColor = .black
         webView.load(URLRequest(url: url))
         return webView
     }

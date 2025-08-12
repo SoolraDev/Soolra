@@ -46,6 +46,7 @@
 		92E039862E49017C0002B6E6 /* WebGameCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039852E49017C0002B6E6 /* WebGameCatalog.swift */; };
 		92E0398A2E4901B20002B6E6 /* WebGameContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039892E4901B20002B6E6 /* WebGameContainerView.swift */; };
 		92E0398E2E49D1C20002B6E6 /* GameWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0398D2E49D1C20002B6E6 /* GameWebView.swift */; };
+		92E039922E4A238C0002B6E6 /* 2048.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E039912E4A238C0002B6E6 /* 2048.png */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */; };
 		92EF61DE2E31050F008D609E /* Hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616C2E31050F008D609E /* Hearts.png */; };
@@ -238,6 +239,7 @@
 		92E039852E49017C0002B6E6 /* WebGameCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGameCatalog.swift; sourceTree = "<group>"; };
 		92E039892E4901B20002B6E6 /* WebGameContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGameContainerView.swift; sourceTree = "<group>"; };
 		92E0398D2E49D1C20002B6E6 /* GameWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWebView.swift; sourceTree = "<group>"; };
+		92E039912E4A238C0002B6E6 /* 2048.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2048.png; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
 		92EF614E2E31050F008D609E /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
 		92EF614F2E31050F008D609E /* Astrohawk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Astrohawk.png; sourceTree = "<group>"; };
@@ -651,6 +653,7 @@
 				92EF61782E31050F008D609E /* Nonogram.png */,
 				92EF61792E31050F008D609E /* NovaTheSquirrel.png */,
 				92EF617A2E31050F008D609E /* openNesBreakout.png */,
+				92E039912E4A238C0002B6E6 /* 2048.png */,
 				92EF617B2E31050F008D609E /* openNesSnake.png */,
 				92EF617C2E31050F008D609E /* PipeSpin.png */,
 				92EF617D2E31050F008D609E /* Piranha Crisis.png */,
@@ -989,6 +992,7 @@
 				92EF62592E31050F008D609E /* Battleship.png in Resources */,
 				92EF625A2E31050F008D609E /* Smart Gamble.png in Resources */,
 				92EF625B2E31050F008D609E /* Attack on Voxelburg.gba in Resources */,
+				92E039922E4A238C0002B6E6 /* 2048.png in Resources */,
 				92EF625C2E31050F008D609E /* Symbol Merged.gba in Resources */,
 				92EF625D2E31050F008D609E /* CocoBattleRoyale.png in Resources */,
 				92EF625E2E31050F008D609E /* Space Game.png in Resources */,

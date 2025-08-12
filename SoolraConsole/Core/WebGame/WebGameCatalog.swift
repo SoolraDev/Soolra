@@ -17,7 +17,7 @@ enum WebGameCatalog {
             WebGame(
                 name: "2048",
                 url: u,
-                icon: UIImage(named: "icon-2048"),
+                icon: UIImage(named: "2048"),
                 makeViewModel: { Game2048ViewModel(startURL: u) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(Game2048Wrapper(viewModel: vm as! Game2048ViewModel, onClose: onClose))
