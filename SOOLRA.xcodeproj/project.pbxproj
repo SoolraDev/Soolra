@@ -41,7 +41,6 @@
 		92E02F632E3F70CF0002B6E6 /* FullScreenWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E02F622E3F70CF0002B6E6 /* FullScreenWebView.swift */; };
 		92E02F652E40CF2D0002B6E6 /* Game2048ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E02F642E40CF2D0002B6E6 /* Game2048ViewModel.swift */; };
 		92E02F672E40CF3E0002B6E6 /* Game2048Wrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */; };
-		92E02F692E40CF480002B6E6 /* SlitherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E02F682E40CF480002B6E6 /* SlitherView.swift */; };
 		92E039842E49014C0002B6E6 /* WebGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039832E49014C0002B6E6 /* WebGame.swift */; };
 		92E039862E49017C0002B6E6 /* WebGameCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039852E49017C0002B6E6 /* WebGameCatalog.swift */; };
 		92E0398A2E4901B20002B6E6 /* WebGameContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039892E4901B20002B6E6 /* WebGameContainerView.swift */; };
@@ -234,7 +233,6 @@
 		92E02F622E3F70CF0002B6E6 /* FullScreenWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenWebView.swift; sourceTree = "<group>"; };
 		92E02F642E40CF2D0002B6E6 /* Game2048ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game2048ViewModel.swift; sourceTree = "<group>"; };
 		92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game2048Wrapper.swift; sourceTree = "<group>"; };
-		92E02F682E40CF480002B6E6 /* SlitherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlitherView.swift; sourceTree = "<group>"; };
 		92E039832E49014C0002B6E6 /* WebGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGame.swift; sourceTree = "<group>"; };
 		92E039852E49017C0002B6E6 /* WebGameCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGameCatalog.swift; sourceTree = "<group>"; };
 		92E039892E4901B20002B6E6 /* WebGameContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGameContainerView.swift; sourceTree = "<group>"; };
@@ -533,7 +531,6 @@
 		183DF1D62862FBD10088FE1C /* View */ = {
 			isa = PBXGroup;
 			children = (
-				92E02F682E40CF480002B6E6 /* SlitherView.swift */,
 				92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */,
 				92E02F622E3F70CF0002B6E6 /* FullScreenWebView.swift */,
 				92EF51842E2693B0008D609E /* LicenseListView.swift */,
@@ -1104,7 +1101,6 @@
 				180A47A22866E4EA00A82F16 /* DocumentPicker.swift in Sources */,
 				70838FDC2C6BC96500B7AE46 /* SplashView.swift in Sources */,
 				92E02F672E40CF3E0002B6E6 /* Game2048Wrapper.swift in Sources */,
-				92E02F692E40CF480002B6E6 /* SlitherView.swift in Sources */,
 				92E02F632E3F70CF0002B6E6 /* FullScreenWebView.swift in Sources */,
 				92E02F652E40CF2D0002B6E6 /* Game2048ViewModel.swift in Sources */,
 				92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */,

@@ -213,6 +213,7 @@ struct HomeView: View {
                         SoolraControllerView(currentView: $currentView, onButtonPress: { action in
                             viewModel.controllerDidPress(action: action, pressed: true)
                         })
+                        
                         // padding to make the controller expand more
                         // TODO: change this per iPhone model.
                         // hard to keep consistent with gameview
@@ -348,6 +349,7 @@ struct HomeView: View {
 
         .onChange(of: controllerViewModel.lastAction) { evt in
             guard let evt = evt else { return }
+            print("controllerViewModel.lastAction onChange" + evt.action.rawValue)
             switch currentView {
             case .grid:
                 // keep your existing grid behavior
