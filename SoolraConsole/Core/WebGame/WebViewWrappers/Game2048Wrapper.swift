@@ -11,8 +11,8 @@ struct Game2048Wrapper: View {
     }
 
     var body: some View {
-        GeometryReader { geo in
-            VStack(spacing: 0) {
+        GeometryReader { _ in
+            ZStack(alignment: .topLeading) {   // ⬅ overlay label on top-left of webview
                 GameWebView(
                     url: viewModel.startURL,
                     makeConfiguration: {
@@ -52,11 +52,20 @@ struct Game2048Wrapper: View {
                         viewModel.webView = webView
                     }
                 )
-//                .frame(height: geo.size.height * 0.6)
                 .clipped()
                 .background(Color.black)
+                .ignoresSafeArea()
 
-                Spacer()
+                // ⬇︎ Top-left label over the webview
+                Text("Press B to close")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.black.opacity(0.6), in: Capsule())
+                    .padding(.top, 6)      // ↓ a bit lower
+                    .padding(.leading, 6)  // → a bit to the right
+                    .allowsHitTesting(false)
             }
             .onAppear {
                 BluetoothControllerService.shared.delegate = viewModel
@@ -64,10 +73,9 @@ struct Game2048Wrapper: View {
             }
             .onDisappear {
                 if BluetoothControllerService.shared.delegate === viewModel {
-                    HomeViewModel.shared.setAsDelegate()  // or whatever you used before
+                    HomeViewModel.shared.setAsDelegate()
                 }
             }
-
         }
     }
 }
