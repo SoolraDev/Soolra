@@ -285,8 +285,8 @@ struct HomeView: View {
                 isLoading = true
             } else {
                 roms = dataController.romManager.fetchRoms()
-                viewModel.updateRomCount(roms.count)
                 rebuildItems()
+                viewModel.updateItemsCount(items.count)
             }
         }
         .onOpenURL { url in
@@ -313,21 +313,23 @@ struct HomeView: View {
         .onChange(of: defaultRomsLoadingState.isLoading) { loading in
             if !loading {
                 roms = dataController.romManager.fetchRoms()
-                viewModel.updateRomCount(roms.count)
                 rebuildItems()
+                viewModel.updateItemsCount(items.count)
                 isLoading = false
             }
         }
         
         .onChange(of: roms.count) { newCount in
-            viewModel.updateRomCount(newCount)
             rebuildItems()
+            viewModel.updateItemsCount(newCount + webGames.count)
         }
+        
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
                 let idx = index - 4
-                if idx >= 0 && idx < items.count {
-                    let (kind, _) = items[idx]
+                let vis = visibleItems()
+                if idx >= 0 && idx < vis.count {
+                    let (kind, _) = vis[idx].element
                     switch kind {
                     case .rom(let rom):
                         navigateToRom(rom)
@@ -342,6 +344,7 @@ struct HomeView: View {
             }
             viewModel.selectedGameIndex = nil
         }
+
 
         .onChange(of: controllerViewModel.lastAction) { evt in
             guard let evt = evt else { return }
@@ -366,8 +369,8 @@ struct HomeView: View {
         .onChange(of: isSettingsPresented) { newValue in
             if !isSettingsPresented {
                 roms = dataController.romManager.fetchRoms()
-                viewModel.updateRomCount(roms.count)
                 rebuildItems()
+                viewModel.updateItemsCount(items.count)
                 viewModel.onAppear()
             }
         }
@@ -388,8 +391,9 @@ struct HomeView: View {
 
     private func focusedLibraryTuple() -> (LibraryKind, LibraryItem)? {
         let idx = viewModel.focusedButtonIndex - 4
-        guard idx >= 0, idx < items.count else { return nil }
-        return items[idx]
+        let vis = visibleItems()
+        guard idx >= 0, idx < vis.count else { return nil }
+        return vis[idx].element
     }
 
     private func loadDefaultRoms() {
@@ -399,8 +403,8 @@ struct HomeView: View {
             await dataController.romManager.initDefaultRoms()
             await MainActor.run {
                 roms = dataController.romManager.fetchRoms()
-                viewModel.updateRomCount(roms.count)
                 rebuildItems()
+                viewModel.updateItemsCount(items.count)
                 isLoading = false
             }
         }
@@ -418,8 +422,9 @@ struct HomeView: View {
             viewModel.isPresented.toggle()
         default:
             let idx = i - 4
-            guard idx >= 0, idx < items.count else { return }
-            let (kind, _) = items[idx]
+            let vis = visibleItems()
+            guard idx >= 0, idx < vis.count else { return }
+            let (kind, _) = vis[idx].element
             switch kind {
             case .rom(let rom):
                 navigateToRom(rom)
@@ -474,50 +479,38 @@ struct HomeView: View {
                         addRomIcon()
                     }
                     .id(3)
-
-                    // Precompute filtered enumerated items
-                    let enumeratedItems: [(offset: Int, element: (LibraryKind, LibraryItem))] =
-                        Array(items.enumerated())
-                            .filter { pair in
-                                let (_, item) = pair.element
-                                return viewModel.searchQuery.isEmpty ||
-                                       item.searchKey.localizedCaseInsensitiveContains(viewModel.searchQuery)
-                            }
-
-                    ForEach(enumeratedItems, id: \.element.1.id) { pair in
+                    
+                    
+                    ForEach(visibleItems(), id: \.element.1.id) { pair in
                         let index = pair.offset
                         let kind = pair.element.0
                         let item = pair.element.1
 
                         VStack(spacing: 4) {
                             Button {
-                                if case .rom(let rom) = kind {
-                                    navigateToRom(rom)
-                                } else if case .web(let webGame) = kind {
-                                    navigateToWeb(webGame)
-                                }
+                                if case .rom(let rom) = kind { navigateToRom(rom) }
+                                else if case .web(let webGame) = kind { navigateToWeb(webGame) }
                             } label: {
                                 libraryIcon(for: kind, item: item, index: index + 4)
                             }
                             .id(index + 4)
 
-                            if isEditMode == .active {
-                                if case .rom(let rom) = kind {
-                                    Button {
-                                        withAnimation {
-                                            dataController.romManager.deleteRom(rom: rom)
-                                            roms = dataController.romManager.fetchRoms()
-                                            rebuildItems()
-                                        }
-                                    } label: {
-                                        Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
-                                            .padding(.top, 4)
+                            if isEditMode == .active, case .rom(let rom) = kind {
+                                Button {
+                                    withAnimation {
+                                        dataController.romManager.deleteRom(rom: rom)
+                                        roms = dataController.romManager.fetchRoms()
+                                        rebuildItems()
                                     }
+                                } label: {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                        .padding(.top, 4)
                                 }
                             }
                         }
                     }
+
                 }
                 .padding(.horizontal)
                 .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
@@ -656,6 +649,15 @@ struct HomeView: View {
             .contentShape(Rectangle())
         }
     }
+    
+    private func visibleItems() -> [(offset: Int, element: (LibraryKind, LibraryItem))] {
+        Array(items.enumerated())
+            .filter { pair in
+                let (_, item) = pair.element
+                return viewModel.searchQuery.isEmpty ||
+                       item.searchKey.localizedCaseInsensitiveContains(viewModel.searchQuery)
+            }
+    }
 
     
     private func addRomIcon() -> some View {
@@ -716,8 +718,8 @@ struct HomeView: View {
                     
                     // Then navigate away
                     roms = dataController.romManager.fetchRoms()
-                    viewModel.updateRomCount(roms.count)
                     rebuildItems()
+                    viewModel.updateItemsCount(items.count)
                     currentView = .grid
                 } catch {
                     print("Error during shutdown: \(error)")

@@ -13,7 +13,8 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     @Published var isPresented = false
     @Published var selectedGameIndex: Int?
     @Published var focusedButtonIndex: Int = 0
-    @Published var romCount: Int = 0
+//    @Published var romCount: Int = 0
+    @Published var itemsCount: Int = 0
     @Published var searchQuery: String = ""
 
     let controllerService = BluetoothControllerService.shared
@@ -73,12 +74,16 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
             return
         }
 
-        let maximumIndex = 3 + romCount
+        let maximumIndex = 3  + itemsCount
         focusedButtonIndex = min(max(endIndex, 0), maximumIndex)
     }
 
-    func updateRomCount(_ count: Int) {
-        romCount = count
+//    func updateRomCount(_ count: Int) {
+//        romCount = count
+//    }
+    
+    func updateItemsCount(_ count: Int) {
+        itemsCount = count
     }
 }
 
