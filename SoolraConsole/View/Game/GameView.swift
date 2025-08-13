@@ -35,10 +35,32 @@ private struct ControllerContainer: View {
     
     var body: some View {
         // load the SoolraControllerView with pauseViewModel
-        SoolraControllerView(currentView: $currentView, pauseViewModel: pauseViewModel)
-            .frame(width: geometry.size.width, height: totalHeight * 0.48)
-            .edgesIgnoringSafeArea(.bottom)
-            .environmentObject(consoleManager)
+        SoolraControllerView(
+            currentView: $currentView,
+            pauseViewModel: pauseViewModel,
+            onButton: { action, pressed in
+                // 1) If pause menu is shown, only send pressed events to it
+                if pauseViewModel.showPauseMenu {
+                    if pressed {
+                        pauseViewModel.handleControllerAction(action, pressed: pressed)
+                    }
+                    return
+                }
+
+                // 2) Menu button toggles pause (on press)
+                if action == .menu && pressed {
+                    pauseViewModel.togglePause()
+                    return
+                }
+
+                // 3) Otherwise, forward to the emulator core
+                consoleManager.handleControllerAction(action, pressed: pressed)
+            }
+        )
+        .frame(width: geometry.size.width, height: totalHeight * 0.48)
+        .edgesIgnoringSafeArea(.bottom)
+        .environmentObject(consoleManager)
+
     }
 }
 

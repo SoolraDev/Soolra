@@ -9,6 +9,8 @@ import SwiftUI
 struct ShoulderButtonView: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
     var onButtonPress: ((SoolraControllerAction) -> Void)?
+    var onButton: ((SoolraControllerAction, Bool) -> Void)?
+    @State private var isPressed = false
 
     var body: some View {
         HStack {
@@ -23,13 +25,16 @@ struct ShoulderButtonView: View {
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
-                        onButtonPress?(.l)
-                        HapticManager.shared.buttonPress()
-                        consoleManager.handleControllerAction(.l, pressed: true)
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.l, true)
+                        }
                     }
                     .onEnded { _ in
+                        isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.l, pressed: false)
+                        onButton?(.l, false)
                     }
             )
 
@@ -46,13 +51,16 @@ struct ShoulderButtonView: View {
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
-                        onButtonPress?(.r)
-                        HapticManager.shared.buttonPress()
-                        consoleManager.handleControllerAction(.r, pressed: true)
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.r, true)
+                        }
                     }
                     .onEnded { _ in
+                        isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.r, pressed: false)
+                        onButton?(.r, false)
                     }
             )
         }

@@ -210,8 +210,8 @@ struct HomeView: View {
                         }
 
                         // load the SoolraControllerView without pauseViewModel
-                        SoolraControllerView(currentView: $currentView, onButtonPress: { action in
-                            viewModel.controllerDidPress(action: action, pressed: true)
+                        SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
+                            viewModel.controllerDidPress(action: action, pressed: pressed)
                         })
                         
                         // padding to make the controller expand more
@@ -241,9 +241,12 @@ struct HomeView: View {
 //                            Spacer()
 
                             // keep joystick visible & active just like on grid
-                            SoolraControllerView(currentView: $currentView, onButtonPress: { _ in
-                                // handled via .onChange below
+                            // HomeView.swift — inside .web case where you render the bottom controller
+                            SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
+                                // Forward to the web-game VM (Bluetooth delegate set in the wrapper)
+                                BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
                             })
+
                             .frame(width: geo.size.width, height: geo.size.height * 0.48)
                             .edgesIgnoringSafeArea(.bottom)
                         }

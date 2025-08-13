@@ -12,6 +12,7 @@ struct SoolraControllerView: View {
     @Binding var currentView: CurrentView
     var pauseViewModel: PauseGameViewModel?
     var onButtonPress: ((SoolraControllerAction) -> Void)?
+    var onButton: ((SoolraControllerAction, Bool) -> Void)? = nil
 
     var body: some View {
         ZStack {
@@ -20,7 +21,9 @@ struct SoolraControllerView: View {
             VStack(spacing: 0) {
                 Spacer()
                 HStack(alignment: .top) {
-                    ArrowsView(onButtonPress: onButtonPress)
+                    ArrowsView(onButton: { action, pressed in
+                        onButton?(action, pressed)
+                    })
                         .padding(.leading, 35)
                         .environmentObject(consoleManager)
                     if let pauseViewModel = pauseViewModel {
@@ -34,13 +37,17 @@ struct SoolraControllerView: View {
                             .offset(y: -15)
                             .environmentObject(consoleManager)
                     }
-                    RhombusButtonView( onButtonPress: onButtonPress)
+                    RhombusButtonView(onButton: { action, pressed in
+                        onButton?(action, pressed)
+                    })
                         .padding(.trailing, 35)
                         .environmentObject(consoleManager)
                 }
                 MergedFunctionalKeyView(onButtonPress: onButtonPress)
                     .environmentObject(consoleManager)
-                ShoulderButtonView(onButtonPress: onButtonPress)
+                ShoulderButtonView(onButton: { action, pressed in
+                    onButton?(action, pressed)
+                })
                     .environmentObject(consoleManager)
                 HStack {
                     JoystickView(onButtonPress: onButtonPress)
