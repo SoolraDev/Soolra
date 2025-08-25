@@ -28,12 +28,12 @@ struct SoolraControllerView: View {
                         .environmentObject(consoleManager)
                     if let pauseViewModel = pauseViewModel {
                         // if we are in game, load the MenuButton with pauseViewModel
-                        MenuButtonView(pauseViewModel: pauseViewModel)
+                        MenuButtonView(pauseViewModel: pauseViewModel, onButton: onButton)
                             .offset(y: -15)
                             .environmentObject(consoleManager)
                     } else {
                         // if we are not in game
-                        MenuButtonView(pauseViewModel: nil)
+                        MenuButtonView(pauseViewModel: nil, onButton: onButton)
                             .offset(y: -15)
                             .environmentObject(consoleManager)
                     }

@@ -209,14 +209,10 @@ struct HomeView: View {
                             romGridView
                         }
 
-                        // load the SoolraControllerView without pauseViewModel
                         SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
                             viewModel.controllerDidPress(action: action, pressed: pressed)
                         })
                         
-                        // padding to make the controller expand more
-                        // TODO: change this per iPhone model.
-                        // hard to keep consistent with gameview
                         .frame(width: geometry.size.width, height: totalHeight * 0.48)
                         .edgesIgnoringSafeArea(.bottom)
                     }
@@ -228,30 +224,34 @@ struct HomeView: View {
                 GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
                     .environmentObject(gameData.consoleManager)
             case .web(let webGame):
-                GeometryReader { geo in
-                    ZStack {
-                        Color.black.edgesIgnoringSafeArea(.all)
-                        VStack(spacing: 0) {
-                            // show the web game only on the top half
-                            WebGameContainerView(game: webGame) {
-                                currentView = .grid
-                            }
-                            .frame(height: geo.size.height * 0.5)
+                GeometryReader { geometry in
+                    let safeAreaBottom = geometry.safeAreaInsets.bottom
+                    let safeAreaTop    = geometry.safeAreaInsets.top
+                    let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
 
-//                            Spacer()
-
-                            // keep joystick visible & active just like on grid
-                            // HomeView.swift — inside .web case where you render the bottom controller
-                            SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
-                                // Forward to the web-game VM (Bluetooth delegate set in the wrapper)
-                                BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
-                            })
-
-                            .frame(width: geo.size.width, height: geo.size.height * 0.48)
-                            .edgesIgnoringSafeArea(.bottom)
+                    ZStack(alignment: .bottom) {
+                        // Web game fills the screen (no Spacer/VStack pushing the controller up)
+                        WebGameContainerView(game: webGame) {
+                            currentView = .grid
                         }
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .edgesIgnoringSafeArea(.all)
+
+                        // Controller pinned to bottom with the SAME sizing math as grid
+                        let safeAreaBottom = geometry.safeAreaInsets.bottom
+                        let safeAreaTop    = geometry.safeAreaInsets.top
+                        let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
+
+                        SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
+                            BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
+                        })
+                        .frame(width: geometry.size.width, height: totalHeight * 0.46)   // match home screen sizing
+                        .edgesIgnoringSafeArea(.bottom)
+                        .offset(y: safeAreaBottom * 0.20 + 8)                       // ↓ nudge lower; tweak numbers to taste
+
                     }
                 }
+
 
 
             }

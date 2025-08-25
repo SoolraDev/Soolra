@@ -63,7 +63,7 @@ struct Game2048Wrapper: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(.black.opacity(0.6), in: Capsule())
-                    .padding(.top, 6)      // ↓ a bit lower
+                    .padding(.top, 51)      // ↓ a bit lower
                     .padding(.leading, 6)  // → a bit to the right
                     .allowsHitTesting(false)
             }

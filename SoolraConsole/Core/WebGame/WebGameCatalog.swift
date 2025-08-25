@@ -13,6 +13,7 @@ import SwiftUICore
 enum WebGameCatalog {
     static func all() -> [WebGame] {
         let u = URL(string: "https://axilleasiv.github.io/vue2048/")!
+//        let u = URL(string: "https://krunker.io/")!
         return [
             WebGame(
                 name: "2048",

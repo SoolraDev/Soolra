@@ -34,29 +34,33 @@ private struct ControllerContainer: View {
     let totalHeight: CGFloat
     
     var body: some View {
-        // load the SoolraControllerView with pauseViewModel
         SoolraControllerView(
             currentView: $currentView,
             pauseViewModel: pauseViewModel,
             onButton: { action, pressed in
-                // 1) If pause menu is shown, only send pressed events to it
+                // 1) Pause menu gets first dibs.
                 if pauseViewModel.showPauseMenu {
+                    // If your pause UI also needs releases, remove the 'if pressed' guard.
                     if pressed {
                         pauseViewModel.handleControllerAction(action, pressed: pressed)
                     }
                     return
                 }
 
-                // 2) Menu button toggles pause (on press)
+                // 2) Menu button toggles pause on PRESS only (avoids double toggle).
                 if action == .menu && pressed {
                     pauseViewModel.togglePause()
                     return
                 }
 
-                // 3) Otherwise, forward to the emulator core
+                // 3) Otherwise, forward to the core (normal gameplay).
                 consoleManager.handleControllerAction(action, pressed: pressed)
             }
         )
+        .frame(/* keep your existing frame */)
+        .edgesIgnoringSafeArea(.bottom)
+        .environmentObject(consoleManager)
+
         .frame(width: geometry.size.width, height: totalHeight * 0.48)
         .edgesIgnoringSafeArea(.bottom)
         .environmentObject(consoleManager)
