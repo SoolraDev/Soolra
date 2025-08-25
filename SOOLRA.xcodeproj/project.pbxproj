@@ -46,6 +46,8 @@
 		92E0398A2E4901B20002B6E6 /* WebGameContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039892E4901B20002B6E6 /* WebGameContainerView.swift */; };
 		92E0398E2E49D1C20002B6E6 /* GameWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0398D2E49D1C20002B6E6 /* GameWebView.swift */; };
 		92E03EA52E4CC33D0002B6E6 /* 2048.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E03EA42E4CC33D0002B6E6 /* 2048.png */; };
+		92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper.swift */; };
+		92E04DD42E5C6CA40002B6E6 /* KrunkerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */; };
 		92EF61DE2E31050F008D609E /* Hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616C2E31050F008D609E /* Hearts.png */; };
@@ -238,6 +240,8 @@
 		92E039892E4901B20002B6E6 /* WebGameContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGameContainerView.swift; sourceTree = "<group>"; };
 		92E0398D2E49D1C20002B6E6 /* GameWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWebView.swift; sourceTree = "<group>"; };
 		92E03EA42E4CC33D0002B6E6 /* 2048.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2048.png; sourceTree = "<group>"; };
+		92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerWrapper.swift; sourceTree = "<group>"; };
+		92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerViewModel.swift; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
 		92EF614E2E31050F008D609E /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
 		92EF614F2E31050F008D609E /* Astrohawk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Astrohawk.png; sourceTree = "<group>"; };
@@ -589,6 +593,7 @@
 		92E0398B2E4901FD0002B6E6 /* WebViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */,
 				92E02F642E40CF2D0002B6E6 /* Game2048ViewModel.swift */,
 			);
 			path = WebViewModels;
@@ -597,6 +602,7 @@
 		92E0398C2E49020F0002B6E6 /* WebViewWrappers */ = {
 			isa = PBXGroup;
 			children = (
+				92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper.swift */,
 				92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */,
 			);
 			path = WebViewWrappers;
@@ -1104,6 +1110,8 @@
 				92E02F632E3F70CF0002B6E6 /* FullScreenWebView.swift in Sources */,
 				92E02F652E40CF2D0002B6E6 /* Game2048ViewModel.swift in Sources */,
 				92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */,
+				92E04DD42E5C6CA40002B6E6 /* KrunkerViewModel.swift in Sources */,
+				92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper.swift in Sources */,
 				18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */,
 				92E039862E49017C0002B6E6 /* WebGameCatalog.swift in Sources */,
 				92E039842E49014C0002B6E6 /* WebGame.swift in Sources */,
