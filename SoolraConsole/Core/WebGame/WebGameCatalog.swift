@@ -35,15 +35,15 @@ enum WebGameCatalog {
                     AnyView(HextrisWrapper(viewModel: vm as! HextrisViewModel, onClose: onClose))
                 }
             ),
-            WebGame(
-                name: "Krunker",
-                url: uKrunker,
-                icon: UIImage(systemName: "cursorarrow.rays"), // replace with asset if you have one
-                makeViewModel: { KrunkerViewModel(startURL: uKrunker) as any WebGameViewModel },
-                makeWrapper: { vm, onClose in
-                    AnyView(KrunkerWrapper(viewModel: vm as! KrunkerViewModel, onClose: onClose))
-                }
-            )
+//            WebGame(
+//                name: "Krunker",
+//                url: uKrunker,
+//                icon: UIImage(systemName: "cursorarrow.rays"), // replace with asset if you have one
+//                makeViewModel: { KrunkerViewModel(startURL: uKrunker) as any WebGameViewModel },
+//                makeWrapper: { vm, onClose in
+//                    AnyView(KrunkerWrapper(viewModel: vm as! KrunkerViewModel, onClose: onClose))
+//                }
+//            )
         ]
     }
 }

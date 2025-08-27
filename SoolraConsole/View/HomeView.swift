@@ -621,26 +621,33 @@ struct HomeView: View {
 
         case .web:
             VStack(spacing: 3) {
-                if let uiImage = item.iconImage {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 88, height: 70)
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(viewModel.focusedButtonIndex == index ? .white : .clear, lineWidth: 4)
-                                .padding(1)
-                        )
-                } else {
-                    Image(systemName: "globe")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 88, height: 70)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(.white, lineWidth: 1)
-                        )
+                ZStack(alignment: .bottomTrailing) {
+                    if let uiImage = item.iconImage {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 88, height: 70)
+                            .cornerRadius(8)
+                            // keep focus ring
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(viewModel.focusedButtonIndex == index ? .white : .clear, lineWidth: 4)
+                                    .padding(1)
+                            )
+                    } else {
+                        Image(systemName: "globe")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 88, height: 70)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(.white, lineWidth: 1)
+                            )
+                            .cornerRadius(8)
+                    }
+
+                    // ⬅︎ Internet-required badge for all web games
+                    onlineBadge()
                 }
 
                 Text(item.displayName)
@@ -652,6 +659,7 @@ struct HomeView: View {
             .cornerRadius(8)
             .shadow(radius: 4)
             .contentShape(Rectangle())
+
         }
     }
     
@@ -662,6 +670,16 @@ struct HomeView: View {
                 return viewModel.searchQuery.isEmpty ||
                        item.searchKey.localizedCaseInsensitiveContains(viewModel.searchQuery)
             }
+    }
+
+    @ViewBuilder
+    private func onlineBadge() -> some View {
+        Image(systemName: "wifi")
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundColor(.white)
+            .padding(2)
+            .background(Color.black.opacity(0.70), in: Circle())
+            .padding([.trailing, .bottom], 2)
     }
 
     
