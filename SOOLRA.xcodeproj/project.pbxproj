@@ -46,8 +46,13 @@
 		92E0398A2E4901B20002B6E6 /* WebGameContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039892E4901B20002B6E6 /* WebGameContainerView.swift */; };
 		92E0398E2E49D1C20002B6E6 /* GameWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0398D2E49D1C20002B6E6 /* GameWebView.swift */; };
 		92E03EA52E4CC33D0002B6E6 /* 2048.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E03EA42E4CC33D0002B6E6 /* 2048.png */; };
-		92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper.swift */; };
+		92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */; };
 		92E04DD42E5C6CA40002B6E6 /* KrunkerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */; };
+		92E057F02E5C94290002B6E6 /* KrunkerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057EF2E5C94290002B6E6 /* KrunkerWrapper.swift */; };
+		92E057F22E5C96850002B6E6 /* RotatedLandscapeWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F12E5C96850002B6E6 /* RotatedLandscapeWebView.swift */; };
+		92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */; };
+		92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */; };
+		92E057F82E5E03560002B6E6 /* Hextris.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E057F72E5E03560002B6E6 /* Hextris.png */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */; };
 		92EF61DE2E31050F008D609E /* Hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616C2E31050F008D609E /* Hearts.png */; };
@@ -240,8 +245,13 @@
 		92E039892E4901B20002B6E6 /* WebGameContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGameContainerView.swift; sourceTree = "<group>"; };
 		92E0398D2E49D1C20002B6E6 /* GameWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWebView.swift; sourceTree = "<group>"; };
 		92E03EA42E4CC33D0002B6E6 /* 2048.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2048.png; sourceTree = "<group>"; };
-		92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerWrapper.swift; sourceTree = "<group>"; };
+		92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerWrapper2.swift; sourceTree = "<group>"; };
 		92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerViewModel.swift; sourceTree = "<group>"; };
+		92E057EF2E5C94290002B6E6 /* KrunkerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerWrapper.swift; sourceTree = "<group>"; };
+		92E057F12E5C96850002B6E6 /* RotatedLandscapeWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotatedLandscapeWebView.swift; sourceTree = "<group>"; };
+		92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisWrapper.swift; sourceTree = "<group>"; };
+		92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisViewModel.swift; sourceTree = "<group>"; };
+		92E057F72E5E03560002B6E6 /* Hextris.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Hextris.png; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
 		92EF614E2E31050F008D609E /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
 		92EF614F2E31050F008D609E /* Astrohawk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Astrohawk.png; sourceTree = "<group>"; };
@@ -580,6 +590,7 @@
 		92E039822E49013F0002B6E6 /* WebGame */ = {
 			isa = PBXGroup;
 			children = (
+				92E057F12E5C96850002B6E6 /* RotatedLandscapeWebView.swift */,
 				92E0398D2E49D1C20002B6E6 /* GameWebView.swift */,
 				92E039892E4901B20002B6E6 /* WebGameContainerView.swift */,
 				92E039852E49017C0002B6E6 /* WebGameCatalog.swift */,
@@ -593,6 +604,7 @@
 		92E0398B2E4901FD0002B6E6 /* WebViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */,
 				92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */,
 				92E02F642E40CF2D0002B6E6 /* Game2048ViewModel.swift */,
 			);
@@ -602,8 +614,10 @@
 		92E0398C2E49020F0002B6E6 /* WebViewWrappers */ = {
 			isa = PBXGroup;
 			children = (
-				92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper.swift */,
+				92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */,
+				92E057EF2E5C94290002B6E6 /* KrunkerWrapper.swift */,
 				92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */,
+				92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */,
 			);
 			path = WebViewWrappers;
 			sourceTree = "<group>";
@@ -682,6 +696,7 @@
 				92EF61912E31050F008D609E /* WaimanuGBA.png */,
 				92EF61922E31050F008D609E /* WhereIsTheBall.png */,
 				92EF61932E31050F008D609E /* XNIQ.png */,
+				92E057F72E5E03560002B6E6 /* Hextris.png */,
 			);
 			path = Artwork;
 			sourceTree = "<group>";
@@ -998,6 +1013,7 @@
 				92EF625B2E31050F008D609E /* Attack on Voxelburg.gba in Resources */,
 				92EF625C2E31050F008D609E /* Symbol Merged.gba in Resources */,
 				92EF625D2E31050F008D609E /* CocoBattleRoyale.png in Resources */,
+				92E057F82E5E03560002B6E6 /* Hextris.png in Resources */,
 				92EF625E2E31050F008D609E /* Space Game.png in Resources */,
 				92EF625F2E31050F008D609E /* Quantum Survival.png in Resources */,
 				92EF62602E31050F008D609E /* Christmas Advance.png in Resources */,
@@ -1100,6 +1116,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */,
+				92E057F22E5C96850002B6E6 /* RotatedLandscapeWebView.swift in Sources */,
 				92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */,
 				7032EDC32C761C5800828A41 /* ThemeManager.swift in Sources */,
 				70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */,
@@ -1111,7 +1128,7 @@
 				92E02F652E40CF2D0002B6E6 /* Game2048ViewModel.swift in Sources */,
 				92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */,
 				92E04DD42E5C6CA40002B6E6 /* KrunkerViewModel.swift in Sources */,
-				92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper.swift in Sources */,
+				92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper2.swift in Sources */,
 				18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */,
 				92E039862E49017C0002B6E6 /* WebGameCatalog.swift in Sources */,
 				92E039842E49014C0002B6E6 /* WebGame.swift in Sources */,
@@ -1128,6 +1145,9 @@
 				4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */,
 				7032EDC12C76059400828A41 /* SettingsView.swift in Sources */,
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
+				92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */,
+				92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */,
+				92E057F02E5C94290002B6E6 /* KrunkerWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -245,9 +245,9 @@ struct HomeView: View {
                         SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
                             BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
                         })
-                        .frame(width: geometry.size.width, height: totalHeight * 0.46)   // match home screen sizing
+                        .frame(width: geometry.size.width, height: totalHeight * 0.46)
                         .edgesIgnoringSafeArea(.bottom)
-                        .offset(y: safeAreaBottom * 0.20 + 8)                       // ↓ nudge lower; tweak numbers to taste
+                        .offset(y: safeAreaBottom * 0.20 + 8)
 
                     }
                 }

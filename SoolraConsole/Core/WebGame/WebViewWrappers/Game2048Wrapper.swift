@@ -57,7 +57,7 @@ struct Game2048Wrapper: View {
                 .ignoresSafeArea()
 
                 // ⬇︎ Top-left label over the webview
-                Text("Press B to close")
+                Text("Press X to close")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 8)

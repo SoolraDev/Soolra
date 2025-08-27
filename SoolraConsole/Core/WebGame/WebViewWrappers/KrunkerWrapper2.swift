@@ -1,7 +1,15 @@
+//
+//  KrunkerWrapper.swift
+//  SOOLRA
+//
+//  Created by Kai Yoshida on 25/08/2025.
+//
+
+
 import SwiftUI
 import WebKit
 
-struct KrunkerWrapper: View {
+struct KrunkerWrapper2: View {
     @StateObject var viewModel: KrunkerViewModel
     let onClose: () -> Void
 
@@ -13,16 +21,20 @@ struct KrunkerWrapper: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .topLeading) {
-                RotatedLandscapeWebView(
+                GameWebView(
                     url: viewModel.startURL,
                     makeConfiguration: {
                         let cfg = WKWebViewConfiguration()
                         cfg.allowsInlineMediaPlayback = true
                         return cfg
                     },
-                    onWebViewReady: { web in viewModel.webView = web }
+                    onWebViewReady: { webView in
+                        viewModel.webView = webView
+                    }
                 )
-                .frame(width: geo.size.width, height: geo.size.height * 0.5, alignment: .top) // ⬅ top half
+                .frame(width: geo.size.width,
+                       height: geo.size.height * 0.5, // ⬅ top half
+                       alignment: .top)
                 .clipped()
                 .background(Color.black)
 
@@ -37,7 +49,7 @@ struct KrunkerWrapper: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onAppear {
-            // keep app portrait; just rotating the webview itself
+            forceLandscape(true)
             BluetoothControllerService.shared.delegate = viewModel
             viewModel.dismiss = { onClose() }
         }
@@ -45,6 +57,13 @@ struct KrunkerWrapper: View {
             if BluetoothControllerService.shared.delegate === viewModel {
                 HomeViewModel.shared.setAsDelegate()
             }
+            forceLandscape(false)
         }
     }
+}
+
+private func forceLandscape(_ enabled: Bool) {
+    let o: UIInterfaceOrientation = enabled ? .landscapeRight : .portrait
+    UIDevice.current.setValue(o.rawValue, forKey: "orientation")
+    UIViewController.attemptRotationToDeviceOrientation()
 }

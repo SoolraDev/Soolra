@@ -14,6 +14,7 @@ enum WebGameCatalog {
     static func all() -> [WebGame] {
         let u2048 = URL(string: "https://axilleasiv.github.io/vue2048/")!
         let uKrunker = URL(string: "https://krunker.io/")!
+        let uHextris = URL(string: "https://hextris.io/")!
 
         return [
             WebGame(
@@ -23,6 +24,15 @@ enum WebGameCatalog {
                 makeViewModel: { Game2048ViewModel(startURL: u2048) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(Game2048Wrapper(viewModel: vm as! Game2048ViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Hextris",
+                url: uHextris,
+                icon: UIImage(named: "Hextris"),
+                makeViewModel: { HextrisViewModel(startURL: uHextris) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(HextrisWrapper(viewModel: vm as! HextrisViewModel, onClose: onClose))
                 }
             ),
             WebGame(
