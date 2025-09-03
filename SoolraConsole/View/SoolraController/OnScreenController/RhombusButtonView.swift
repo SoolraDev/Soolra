@@ -9,6 +9,8 @@ import SwiftUI
 struct RhombusButtonView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel
+
     var onButtonPress: ((SoolraControllerAction) -> Void)?
     var onButton: ((SoolraControllerAction, Bool) -> Void)?
     @State private var isPressed = false
@@ -28,12 +30,14 @@ struct RhombusButtonView: View {
                             isPressed = true
                             HapticManager.shared.buttonPress()
                             onButton?(.x, true)
+                            controllerViewModel.controllerDidPress(action: .x, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
                         onButton?(.x, false)
+                        controllerViewModel.controllerDidPress(action: .x, pressed: false)
                     }
             )
             
@@ -51,12 +55,14 @@ struct RhombusButtonView: View {
                             isPressed = true
                             HapticManager.shared.buttonPress()
                             onButton?(.b, true)
+                            controllerViewModel.controllerDidPress(action: .b, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
                         onButton?(.b, false)
+                        controllerViewModel.controllerDidPress(action: .b, pressed: false)
                     }
             )
 
@@ -74,12 +80,14 @@ struct RhombusButtonView: View {
                             isPressed = true
                             HapticManager.shared.buttonPress()
                             onButton?(.y, true)
+                            controllerViewModel.controllerDidPress(action: .y, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
                         onButton?(.y, false)
+                        controllerViewModel.controllerDidPress(action: .y, pressed: false)
                     }
             )
 
@@ -96,13 +104,15 @@ struct RhombusButtonView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.a, true)
+//                            onButton?(.a, true)
+                            controllerViewModel.controllerDidPress(action: .a, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.a, false)
+//                        onButton?(.a, false)
+                        controllerViewModel.controllerDidPress(action: .a, pressed: false)
                     }
             )
             

@@ -7,6 +7,7 @@
 import SwiftUI
 import CoreData
 import Foundation
+import WebKit
 
 // Data to pass to GameView
 struct GameViewData: Equatable {
@@ -63,6 +64,9 @@ struct HomeView: View {
     @State private var isLoadingGame: Bool = false
     @State private var items: [(LibraryKind, LibraryItem)] = []
     @State private var webGames: [WebGame] = WebGameCatalog.all()
+    
+    @State private var isShopDialogVisible: Bool = false
+    @State private var isShopWebviewVisible: Bool = false
 
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
@@ -118,6 +122,10 @@ struct HomeView: View {
                                 .clipped()
                                 .edgesIgnoringSafeArea(.all)
                         }
+                        
+
+
+
                     }
                     VStack {
                         HomeNavigationView(
@@ -170,7 +178,35 @@ struct HomeView: View {
                                 }
                             }
                         }
+//                        
+//                        .sheet(isPresented: $showWeb) {
+//                            WebView(url: someURL)
+//                        }
                         
+//                        .sheet(isPresented: $isShopWebviewVisible) {
+//                            ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
+//                        }
+                        .sheet(isPresented: $isShopWebviewVisible) {
+                            NavigationView {
+                                ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
+                                    .navigationTitle("Shop")
+                                    .navigationBarTitleDisplayMode(.inline)
+                                    .navigationBarItems(leading:
+                                        Button(action: {
+                                            isShopWebviewVisible = false
+                                        }) {
+                                            HStack {
+                                                Image(systemName: "chevron.left")
+                                                Text("Back")
+                                            }
+                                        }
+                                    )
+                            }
+                            .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+
+                        }
+
+
                         
                         if let (kind, item) = focusedLibraryTuple() {
                             switch kind {
@@ -209,7 +245,7 @@ struct HomeView: View {
                             romGridView
                         }
 
-                        SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
+                        SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
                             viewModel.controllerDidPress(action: action, pressed: pressed)
                         })
                         
@@ -242,7 +278,7 @@ struct HomeView: View {
                         let safeAreaTop    = geometry.safeAreaInsets.top
                         let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
 
-                        SoolraControllerView(currentView: $currentView, onButton: { action, pressed in
+                        SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
                             BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
                         })
                         .frame(width: geometry.size.width, height: totalHeight * 0.46)
@@ -255,6 +291,25 @@ struct HomeView: View {
 
 
             }
+            
+            if isShopDialogVisible {
+                VStack {
+                    Image("shopDlg")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 400)
+                        .padding(.top, 40) // distance from top, tweak as needed
+                        .background(Color.black.opacity(0.85))
+                        .cornerRadius(16)
+                        .shadow(radius: 12)
+
+                    Spacer() // pushes everything else down
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(1500)
+            }
+
             
             // Loading overlay
             if isLoading {
@@ -292,7 +347,15 @@ struct HomeView: View {
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
             }
+
+            isShopDialogVisible = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                if isShopDialogVisible {
+                    isShopDialogVisible = false
+                }
+            }
         }
+
         .onOpenURL { url in
             guard ["nes", "gba", "zip" ].contains(url.pathExtension.lowercased()) else { return }
             Task {
@@ -347,28 +410,39 @@ struct HomeView: View {
                 }
             }
             viewModel.selectedGameIndex = nil
+            viewModel.selectedGameIndex = nil
         }
 
 
         .onChange(of: controllerViewModel.lastAction) { evt in
-            guard let evt = evt else { return }
-            print("controllerViewModel.lastAction onChange" + evt.action.rawValue)
+            guard let evt = evt, evt.pressed else { return }
+            
+            if isShopDialogVisible {
+                switch evt.action {
+                case .x: // close dialog
+                    isShopDialogVisible = false
+                case .a: // open webview in window
+                    isShopDialogVisible = false
+                    isShopWebviewVisible = true
+                default:
+                    break
+                }
+                return
+            }
+            
             switch currentView {
             case .grid:
-                // keep your existing grid behavior
                 viewModel.controllerDidPress(action: evt.action, pressed: evt.pressed)
-
             case .web:
-                // forward to the web-game VM (set as Bluetooth delegate in the wrapper)
                 BluetoothControllerService.shared.delegate?.controllerDidPress(
                     action: evt.action,
                     pressed: evt.pressed
                 )
-
             default:
                 break
             }
         }
+
 
 
         .onChange(of: isSettingsPresented) { newValue in
@@ -835,11 +909,16 @@ struct HomeView: View {
                     }) {
                         SettingsView().environmentObject(dataController)
                     }
+
+
+
+
                 }
                 .frame(height: 27)
                 .padding(.leading, 8)
                 .padding(.trailing, 8)
                 .background(Color.clear)
+                
             }
         }
     }
@@ -952,4 +1031,19 @@ extension Collection {
 
 extension Notification.Name {
     static let launchRomFromExternalSource = Notification.Name("launchRomFromExternalSource")
+}
+
+
+
+
+struct ShopWebView: UIViewRepresentable {
+    let url: URL
+
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.load(URLRequest(url: url))
+        return webView
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
 }

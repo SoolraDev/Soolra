@@ -9,6 +9,7 @@ import SwiftUI
 struct SoolraControllerView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel 
     @Binding var currentView: CurrentView
     var pauseViewModel: PauseGameViewModel?
     var onButtonPress: ((SoolraControllerAction) -> Void)?
@@ -37,11 +38,15 @@ struct SoolraControllerView: View {
                             .offset(y: -15)
                             .environmentObject(consoleManager)
                     }
-                    RhombusButtonView(onButton: { action, pressed in
-                        onButton?(action, pressed)
-                    })
-                        .padding(.trailing, 35)
-                        .environmentObject(consoleManager)
+                    RhombusButtonView(
+                        controllerViewModel: controllerViewModel,
+                        onButton: { action, pressed in
+                            onButton?(action, pressed)
+                        }
+                    )
+                    .padding(.trailing, 35)
+                    .environmentObject(consoleManager)
+
                 }
                 MergedFunctionalKeyView(onButtonPress: onButtonPress)
                     .environmentObject(consoleManager)

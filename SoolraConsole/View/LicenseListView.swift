@@ -481,6 +481,14 @@ License: http://opensource.org/licenses/mit-license.html
 """)
             }
             
+            Section(header: Text("Hextris").font(.headline)) {
+                Text("""
+Developed by wendelscardua and published under the GPL-3 License.
+Source: https://github.com/Hextris/hextris
+License: https://github.com/Hextris/hextris/blob/gh-pages/LICENSE.md
+""")
+            }
+            
         }
     }
 }

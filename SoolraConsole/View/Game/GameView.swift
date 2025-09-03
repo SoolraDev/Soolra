@@ -13,6 +13,7 @@ import CoreData
 private struct GameScreenContainer: View {
     let geometry: GeometryProxy
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+
     
     var body: some View {
         GameScreenView()
@@ -28,6 +29,7 @@ private struct GameScreenContainer: View {
 // MARK: - Controller Container
 private struct ControllerContainer: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel
     @Binding var currentView: CurrentView
     let geometry: GeometryProxy
     let pauseViewModel: PauseGameViewModel
@@ -35,6 +37,7 @@ private struct ControllerContainer: View {
     
     var body: some View {
         SoolraControllerView(
+            controllerViewModel: controllerViewModel,
             currentView: $currentView,
             pauseViewModel: pauseViewModel,
             onButton: { action, pressed in
@@ -149,6 +152,7 @@ struct GameView: View {
                         .animation(.easeInOut, value: pauseViewModel.isExiting)
                     
                     ControllerContainer(
+                        controllerViewModel: controllerViewModel,
                         currentView: $currentView,
                         geometry: geometry,
                         pauseViewModel: pauseViewModel,
