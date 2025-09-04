@@ -67,7 +67,7 @@ struct HomeView: View {
     
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
-
+    private let dialogSpring = Animation.spring(response: 0.32, dampingFraction: 0.86, blendDuration: 0.15)
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
     var backgroundImage: UIImage? {
@@ -86,113 +86,105 @@ struct HomeView: View {
         ZStack(alignment: .top) {
             Color(red: 41 / 255, green: 3 / 255, blue: 135 / 255)
                 .edgesIgnoringSafeArea(.all)
-            
-            switch currentView {
-            case .grid, .gameDetail:  // Handle both grid and gameDetail the same way
-                GeometryReader { geometry in
-                    let safeAreaBottom = geometry.safeAreaInsets.bottom
-                    let safeAreaTop = geometry.safeAreaInsets.top
-                    let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
-                    
-                    ZStack {
-                        if let bgImage = backgroundImage {
-                            Image(uiImage: bgImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: geometry.size.width, height: totalHeight)
-                                .clipped()
-                                .edgesIgnoringSafeArea(.all)
-                                .overlay(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: Color.black.opacity(0.7), location: 0),
-                                            .init(color: Color.black.opacity(0.7), location: 0.3),
-                                            .init(color: Color.black.opacity(0.8), location: 0.7),
-                                            .init(color: Color.black.opacity(0.95), location: 1.0)
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                )
-                        } else {
-                            Image("home-background")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: geometry.size.width, height: totalHeight)
-                                .clipped()
-                                .edgesIgnoringSafeArea(.all)
-                        }
+            Group {
+                switch currentView {
+                case .grid, .gameDetail:  // Handle both grid and gameDetail the same way
+                    GeometryReader { geometry in
+                        let safeAreaBottom = geometry.safeAreaInsets.bottom
+                        let safeAreaTop = geometry.safeAreaInsets.top
+                        let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
                         
-
-
-
-                    }
-                    VStack {
-                        HomeNavigationView(
-                            isSettingsPresented: $isSettingsPresented,
-                            onSettingsButtonTap: {
-                                isSettingsPresented = true
-                            },
-                            focusedButtonIndex: $viewModel.focusedButtonIndex,
-                            dataController: dataController, viewModel: viewModel,
-                            searchQuery: $viewModel.searchQuery
-                        )
-                        .fullScreenCover(isPresented: $viewModel.isPresented) {
-                            ZStack(alignment: .top) {
-                                Color.black.opacity(0.6)
-                                
-                                VStack(spacing: 0) {
-                                    if BluetoothControllerService.shared.isControllerConnected {
-                                        // Half-height version
-                                        HalfScreenDocumentPicker { url in
-                                            Task {
-                                                isLoading = true
-                                                await dataController.romManager.addRom(url: url)
-                                                withAnimation {
-                                                    roms = dataController.romManager.fetchRoms()
-                                                    isLoading = false
+                        ZStack {
+                            if let bgImage = backgroundImage {
+                                Image(uiImage: bgImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: geometry.size.width, height: totalHeight)
+                                    .clipped()
+                                    .edgesIgnoringSafeArea(.all)
+                                    .overlay(
+                                        LinearGradient(
+                                            gradient: Gradient(stops: [
+                                                .init(color: Color.black.opacity(0.7), location: 0),
+                                                .init(color: Color.black.opacity(0.7), location: 0.3),
+                                                .init(color: Color.black.opacity(0.8), location: 0.7),
+                                                .init(color: Color.black.opacity(0.95), location: 1.0)
+                                            ]),
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                            } else {
+                                Image("home-background")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: geometry.size.width, height: totalHeight)
+                                    .clipped()
+                                    .edgesIgnoringSafeArea(.all)
+                            }
+                            
+                            
+                            
+                            
+                        }
+                        VStack {
+                            HomeNavigationView(
+                                isSettingsPresented: $isSettingsPresented,
+                                onSettingsButtonTap: {
+                                    isSettingsPresented = true
+                                },
+                                focusedButtonIndex: $viewModel.focusedButtonIndex,
+                                dataController: dataController, viewModel: viewModel,
+                                searchQuery: $viewModel.searchQuery
+                            )
+                            .fullScreenCover(isPresented: $viewModel.isPresented) {
+                                ZStack(alignment: .top) {
+                                    Color.black.opacity(0.6)
+                                    
+                                    VStack(spacing: 0) {
+                                        if BluetoothControllerService.shared.isControllerConnected {
+                                            // Half-height version
+                                            HalfScreenDocumentPicker { url in
+                                                Task {
+                                                    isLoading = true
+                                                    await dataController.romManager.addRom(url: url)
+                                                    withAnimation {
+                                                        roms = dataController.romManager.fetchRoms()
+                                                        isLoading = false
+                                                    }
+                                                    viewModel.isPresented = false
                                                 }
-                                                viewModel.isPresented = false
                                             }
-                                        }
-                                        .background(Color(.systemBackground))
-                                        .cornerRadius(16)
-                                        .shadow(radius: 10)
-                                        
-                                        Spacer()
-                                    } else {
-                                        // Full-height version
-                                        DocumentPicker { url in
-                                            Task {
-                                                isLoading = true
-                                                await dataController.romManager.addRom(url: url)
-                                                withAnimation {
-                                                    roms = dataController.romManager.fetchRoms()
-                                                    isLoading = false
+                                            .background(Color(.systemBackground))
+                                            .cornerRadius(16)
+                                            .shadow(radius: 10)
+                                            
+                                            Spacer()
+                                        } else {
+                                            // Full-height version
+                                            DocumentPicker { url in
+                                                Task {
+                                                    isLoading = true
+                                                    await dataController.romManager.addRom(url: url)
+                                                    withAnimation {
+                                                        roms = dataController.romManager.fetchRoms()
+                                                        isLoading = false
+                                                    }
+                                                    viewModel.isPresented = false
                                                 }
-                                                viewModel.isPresented = false
                                             }
+                                            .ignoresSafeArea() // Let it take over the screen
                                         }
-                                        .ignoresSafeArea() // Let it take over the screen
                                     }
                                 }
                             }
-                        }
-//                        
-//                        .sheet(isPresented: $showWeb) {
-//                            WebView(url: someURL)
-//                        }
-                        
-//                        .sheet(isPresented: $isShopWebviewVisible) {
-//                            ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
-//                        }
-                        .sheet(isPresented: $isShopWebviewVisible) {
-                            NavigationView {
-                                ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
-                                    .navigationTitle("Shop")
-                                    .navigationBarTitleDisplayMode(.inline)
-                                    .navigationBarItems(leading:
-                                        Button(action: {
+                            .sheet(isPresented: $isShopWebviewVisible) {
+                                NavigationView {
+                                    ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
+                                        .navigationTitle("Shop")
+                                        .navigationBarTitleDisplayMode(.inline)
+                                        .navigationBarItems(leading:
+                                                                Button(action: {
                                             isShopWebviewVisible = false
                                         }) {
                                             HStack {
@@ -200,117 +192,157 @@ struct HomeView: View {
                                                 Text("Back")
                                             }
                                         }
-                                    )
+                                        )
+                                }
+                                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+                                
                             }
-                            .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-
-                        }
-
-
-                        
-                        if let (kind, item) = focusedLibraryTuple() {
-                            switch kind {
-                            case .rom(let rom):
-                                CurrentItemView(
-                                    currentRom: rom,
-                                    currentView: $currentView,
-                                    focusedButtonIndex: $viewModel.focusedButtonIndex
-                                )
-                            case .web:
+                            
+                            
+                            
+                            if let (kind, item) = focusedLibraryTuple() {
+                                switch kind {
+                                case .rom(let rom):
+                                    CurrentItemView(
+                                        currentRom: rom,
+                                        currentView: $currentView,
+                                        focusedButtonIndex: $viewModel.focusedButtonIndex
+                                    )
+                                case .web:
+                                    CurrentItemView(
+                                        currentRom: nil,
+                                        currentView: $currentView,
+                                        focusedButtonIndex: $viewModel.focusedButtonIndex,
+                                        addRomAction: nil,
+                                        overrideImage: item.iconImage,        // <— web-game icon
+                                        overrideTitle: item.displayName       // <— web-game name
+                                    )
+                                }
+                            } else {
                                 CurrentItemView(
                                     currentRom: nil,
                                     currentView: $currentView,
                                     focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                    addRomAction: nil,
-                                    overrideImage: item.iconImage,        // <— web-game icon
-                                    overrideTitle: item.displayName       // <— web-game name
+                                    addRomAction: { viewModel.isPresented = true }
                                 )
                             }
-                        } else {
-                            CurrentItemView(
-                                currentRom: nil,
-                                currentView: $currentView,
-                                focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                addRomAction: { viewModel.isPresented = true }
-                            )
+                            
+                            
+                            TitleSortingView(titleText: "All Games", sortingText: "A-Z")
+                                .padding(.top, 10)
+                            
+                            if items.isEmpty && !isLoading {
+                                emptyView
+                            } else {
+                                romGridView
+                            }
+                            
+                            SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
+                                viewModel.controllerDidPress(action: action, pressed: pressed)
+                            })
+                            
+                            .frame(width: geometry.size.width, height: totalHeight * 0.48)
+                            .edgesIgnoringSafeArea(.bottom)
                         }
-
-
-                        TitleSortingView(titleText: "All Games", sortingText: "A-Z")
-                            .padding(.top, 10)
-                        
-                        if items.isEmpty && !isLoading {
-                            emptyView
-                        } else {
-                            romGridView
-                        }
-
-                        SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
-                            viewModel.controllerDidPress(action: action, pressed: pressed)
-                        })
-                        
-                        .frame(width: geometry.size.width, height: totalHeight * 0.48)
-                        .edgesIgnoringSafeArea(.bottom)
-                    }
-                    .edgesIgnoringSafeArea(.all)
-                    .preferredColorScheme(.dark)
-                    .padding(.top, 5)
-                }
-            case .game(let gameData):
-                GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
-                    .environmentObject(gameData.consoleManager)
-            case .web(let webGame):
-                GeometryReader { geometry in
-                    let safeAreaBottom = geometry.safeAreaInsets.bottom
-                    let safeAreaTop    = geometry.safeAreaInsets.top
-                    let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
-
-                    ZStack(alignment: .bottom) {
-                        // Web game fills the screen (no Spacer/VStack pushing the controller up)
-                        WebGameContainerView(game: webGame) {
-                            currentView = .grid
-                        }
-                        .frame(width: geometry.size.width, height: geometry.size.height)
                         .edgesIgnoringSafeArea(.all)
-
-                        // Controller pinned to bottom with the SAME sizing math as grid
+                        .preferredColorScheme(.dark)
+                        .padding(.top, 5)
+                    }
+                case .game(let gameData):
+                    GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
+                        .environmentObject(gameData.consoleManager)
+                case .web(let webGame):
+                    GeometryReader { geometry in
                         let safeAreaBottom = geometry.safeAreaInsets.bottom
                         let safeAreaTop    = geometry.safeAreaInsets.top
                         let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
-
-                        SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
-                            BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
-                        })
-                        .frame(width: geometry.size.width, height: totalHeight * 0.46)
-                        .edgesIgnoringSafeArea(.bottom)
-                        .offset(y: safeAreaBottom * 0.20 + 8)
-
+                        
+                        ZStack(alignment: .bottom) {
+                            // Web game fills the screen (no Spacer/VStack pushing the controller up)
+                            WebGameContainerView(game: webGame) {
+                                currentView = .grid
+                            }
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .edgesIgnoringSafeArea(.all)
+                            
+                            // Controller pinned to bottom with the SAME sizing math as grid
+                            let safeAreaBottom = geometry.safeAreaInsets.bottom
+                            let safeAreaTop    = geometry.safeAreaInsets.top
+                            let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
+                            
+                            SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
+                                BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
+                            })
+                            .frame(width: geometry.size.width, height: totalHeight * 0.46)
+                            .edgesIgnoringSafeArea(.bottom)
+                            .offset(y: safeAreaBottom * 0.20 + 8)
+                            
+                        }
                     }
+                    
+                    
+                    
                 }
-
-
-
             }
-            
+                .allowsHitTesting(!isShopDialogVisible)
             if isShopDialogVisible {
-                VStack {
-                    Image("shopDlg")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: 400)
-                        .padding(.top, 40) // distance from top, tweak as needed
-                        .background(Color.black.opacity(0.85))
-                        .cornerRadius(16)
-                        .shadow(radius: 12)
+              ZStack {
+                Color.black.opacity(0.60).ignoresSafeArea()
+                      .allowsHitTesting(false)
+                      .onTapGesture { /* swallow taps outside hotspots */ } // do nothing
+                      .transition(.opacity)
+                GeometryReader { g in
+                  let w = g.size.width
+                  // Replace with your real asset aspect (height/width). Example uses 2392x1340.
+                    let aspect: CGFloat = 1688.0 / 780.0
+                  let topPad: CGFloat = -25
+                  let imgW = w
+                  let imgH = imgW * aspect
 
-                    Spacer() // pushes everything else down
+                  // 1) The dialog image
+                  Image("shopDlg")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: imgW)
+                    .position(x: w/2, y: topPad + imgH/2)  // top aligned by +topPad
+                    .allowsHitTesting(false)               // don't steal taps from hotspots
+
+                  // 2) Close (X) hotspot
+                  Button {
+                      withAnimation(dialogSpring) {
+                          isShopDialogVisible = false
+                      }
+                  } label: {
+                      Rectangle().fill(Color.white.opacity(0.0015))  // reliably hit-testable
+                  }
+                  .frame(width: imgW * 0.30, height: imgH * 0.15)
+                  .position(x: w * 0.84, y: topPad + imgH * 0.26)
+
+                  // 3) Order Now hotspot
+                  Button {
+                      withAnimation(dialogSpring) {
+                          isShopDialogVisible = false
+                      }
+                    isShopWebviewVisible = true
+                  } label: {
+                      Rectangle().fill(Color.white.opacity(0.0015))
+                  }
+                  .frame(width: imgW * 0.64, height: imgH * 0.12)
+                  .position(x: w * 0.50, y: topPad + imgH * 0.86)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .zIndex(1500)
+              }
+              .zIndex(1500)
+              .transition(
+                  .asymmetric(
+                      insertion: .opacity
+                          .combined(with: .scale(scale: 0.96, anchor: .top)),
+                      removal: .opacity
+                          .combined(with: .scale(scale: 0.2, anchor: .top))
+                  )
+              )
+              .animation(dialogSpring, value: isShopDialogVisible)
             }
 
-            
             // Loading overlay
             if isLoading {
                 ZStack {
