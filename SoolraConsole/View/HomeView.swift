@@ -64,7 +64,7 @@ struct HomeView: View {
     @State private var isLoadingGame: Bool = false
     @State private var items: [(LibraryKind, LibraryItem)] = []
     @State private var webGames: [WebGame] = WebGameCatalog.all()
-    
+    @Environment(\.horizontalSizeClass) private var hSize
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
     private let dialogSpring = Animation.spring(response: 0.32, dampingFraction: 0.86, blendDuration: 0.15)
@@ -287,61 +287,88 @@ struct HomeView: View {
                 .allowsHitTesting(!isShopDialogVisible)
             if isShopDialogVisible {
               ZStack {
-                Color.black.opacity(0.60).ignoresSafeArea()
-                      .allowsHitTesting(false)
-                      .onTapGesture { /* swallow taps outside hotspots */ } // do nothing
-                      .transition(.opacity)
+                  // Dimmer (back layer) — tappable to close
+                  Color.black.opacity(0.60)
+                    .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                      withAnimation(dialogSpring) { isShopDialogVisible = false }
+                    }
+                    .transition(.opacity)
+
+
                 GeometryReader { g in
                   let w = g.size.width
-                  // Replace with your real asset aspect (height/width). Example uses 2392x1340.
-                    let aspect: CGFloat = 1688.0 / 780.0
+                  let h = g.size.height
+                  let safeTop = g.safeAreaInsets.top
+                  let safeBottom = g.safeAreaInsets.bottom
+
+                  // Keep your aspect + topPad
+                  let aspect: CGFloat = 1688.0 / 780.0   // H/W
                   let topPad: CGFloat = -25
-                  let imgW = w
+
+                  // Fit image to BOTH axes so it never overflows on short screens; lightly cap on iPad
+                  let maxH = h - safeTop - safeBottom
+                  let isiPad = UIDevice.current.userInterfaceIdiom == .pad
+                  let capW: CGFloat = isiPad ? min(w, 600) : w
+                  let imgW = min(capW, maxH / aspect)   // CHANGED
                   let imgH = imgW * aspect
 
-                  // 1) The dialog image
-                  Image("shopDlg")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: imgW)
-                    .position(x: w/2, y: topPad + imgH/2)  // top aligned by +topPad
-                    .allowsHitTesting(false)               // don't steal taps from hotspots
+                  let xCenter = w / 2
+                  let yTop = safeTop + topPad           // keeps your topPad behavior, but honors safe area
+
+                    Image("shopDlg")
+                      .resizable()
+                      .scaledToFit()
+                      .frame(width: imgW)
+                      .position(x: xCenter, y: yTop + imgH/2)
+                      .contentShape(Rectangle())          // define tappable area
+                      .onTapGesture { /* absorb taps on image */ }
+
+
 
                   // 2) Close (X) hotspot
                   Button {
-                      withAnimation(dialogSpring) {
-                          isShopDialogVisible = false
-                      }
+                    withAnimation(dialogSpring) {
+                      isShopDialogVisible = false
+                    }
                   } label: {
-                      Rectangle().fill(Color.white.opacity(0.0015))  // reliably hit-testable
+                    Rectangle().fill(Color.white.opacity(0.0015))  // reliably hit-testable
                   }
                   .frame(width: imgW * 0.30, height: imgH * 0.15)
-                  .position(x: w * 0.84, y: topPad + imgH * 0.26)
+                  .position(
+                    x: (xCenter - imgW/2) + imgW * 0.84,
+                    y: yTop + imgH * 0.26
+                  )
 
                   // 3) Order Now hotspot
                   Button {
-                      withAnimation(dialogSpring) {
-                          isShopDialogVisible = false
-                      }
+                    withAnimation(dialogSpring) {
+                      isShopDialogVisible = false
+                    }
                     isShopWebviewVisible = true
                   } label: {
-                      Rectangle().fill(Color.white.opacity(0.0015))
+                    Rectangle().fill(Color.white.opacity(0.0015))
                   }
                   .frame(width: imgW * 0.64, height: imgH * 0.12)
-                  .position(x: w * 0.50, y: topPad + imgH * 0.86)
+                  .position(
+                    x: (xCenter - imgW/2) + imgW * 0.50,
+                    y: yTop + imgH * 0.86
+                  )
                 }
               }
               .zIndex(1500)
               .transition(
-                  .asymmetric(
-                      insertion: .opacity
-                          .combined(with: .scale(scale: 0.96, anchor: .top)),
-                      removal: .opacity
-                          .combined(with: .scale(scale: 0.2, anchor: .top))
-                  )
+                .asymmetric(
+                  insertion: .opacity
+                    .combined(with: .scale(scale: 0.96, anchor: .top)),
+                  removal: .opacity
+                    .combined(with: .scale(scale: 0.2, anchor: .top))
+                )
               )
               .animation(dialogSpring, value: isShopDialogVisible)
             }
+
 
             // Loading overlay
             if isLoading {
@@ -381,7 +408,7 @@ struct HomeView: View {
             }
 
             isShopDialogVisible = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                 if isShopDialogVisible {
                     isShopDialogVisible = false
                 }
