@@ -46,8 +46,8 @@
 		92E0398A2E4901B20002B6E6 /* WebGameContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E039892E4901B20002B6E6 /* WebGameContainerView.swift */; };
 		92E0398E2E49D1C20002B6E6 /* GameWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0398D2E49D1C20002B6E6 /* GameWebView.swift */; };
 		92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */; };
-		92E04DD42E5C6CA40002B6E6 /* KrunkerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */; };
-		92E057F02E5C94290002B6E6 /* KrunkerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057EF2E5C94290002B6E6 /* KrunkerWrapper.swift */; };
+		92E04DD42E5C6CA40002B6E6 /* YabalaliViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E04DD32E5C6CA40002B6E6 /* YabalaliViewModel.swift */; };
+		92E057F02E5C94290002B6E6 /* YabalaliWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057EF2E5C94290002B6E6 /* YabalaliWrapper.swift */; };
 		92E057F22E5C96850002B6E6 /* RotatedLandscapeWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F12E5C96850002B6E6 /* RotatedLandscapeWebView.swift */; };
 		92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */; };
 		92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */; };
@@ -245,8 +245,8 @@
 		92E039892E4901B20002B6E6 /* WebGameContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGameContainerView.swift; sourceTree = "<group>"; };
 		92E0398D2E49D1C20002B6E6 /* GameWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWebView.swift; sourceTree = "<group>"; };
 		92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerWrapper2.swift; sourceTree = "<group>"; };
-		92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerViewModel.swift; sourceTree = "<group>"; };
-		92E057EF2E5C94290002B6E6 /* KrunkerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KrunkerWrapper.swift; sourceTree = "<group>"; };
+		92E04DD32E5C6CA40002B6E6 /* YabalaliViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YabalaliViewModel.swift; sourceTree = "<group>"; };
+		92E057EF2E5C94290002B6E6 /* YabalaliWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YabalaliWrapper.swift; sourceTree = "<group>"; };
 		92E057F12E5C96850002B6E6 /* RotatedLandscapeWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotatedLandscapeWebView.swift; sourceTree = "<group>"; };
 		92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisWrapper.swift; sourceTree = "<group>"; };
 		92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisViewModel.swift; sourceTree = "<group>"; };
@@ -605,7 +605,7 @@
 			isa = PBXGroup;
 			children = (
 				92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */,
-				92E04DD32E5C6CA40002B6E6 /* KrunkerViewModel.swift */,
+				92E04DD32E5C6CA40002B6E6 /* YabalaliViewModel.swift */,
 				92E02F642E40CF2D0002B6E6 /* Game2048ViewModel.swift */,
 			);
 			path = WebViewModels;
@@ -615,7 +615,7 @@
 			isa = PBXGroup;
 			children = (
 				92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */,
-				92E057EF2E5C94290002B6E6 /* KrunkerWrapper.swift */,
+				92E057EF2E5C94290002B6E6 /* YabalaliWrapper.swift */,
 				92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */,
 				92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */,
 			);
@@ -1127,7 +1127,7 @@
 				92E02F632E3F70CF0002B6E6 /* FullScreenWebView.swift in Sources */,
 				92E02F652E40CF2D0002B6E6 /* Game2048ViewModel.swift in Sources */,
 				92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */,
-				92E04DD42E5C6CA40002B6E6 /* KrunkerViewModel.swift in Sources */,
+				92E04DD42E5C6CA40002B6E6 /* YabalaliViewModel.swift in Sources */,
 				92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper2.swift in Sources */,
 				18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */,
 				92E039862E49017C0002B6E6 /* WebGameCatalog.swift in Sources */,
@@ -1147,7 +1147,7 @@
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
 				92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */,
 				92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */,
-				92E057F02E5C94290002B6E6 /* KrunkerWrapper.swift in Sources */,
+				92E057F02E5C94290002B6E6 /* YabalaliWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1278,7 +1278,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
@@ -1301,7 +1301,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.8.6;
+				MARKETING_VERSION = 5.8.7;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1331,7 +1331,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
 				ENABLE_PREVIEWS = YES;
@@ -1353,7 +1353,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.8.6;
+				MARKETING_VERSION = 5.8.7;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",

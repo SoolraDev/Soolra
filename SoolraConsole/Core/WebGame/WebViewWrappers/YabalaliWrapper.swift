@@ -1,11 +1,11 @@
 import SwiftUI
 import WebKit
 
-struct KrunkerWrapper: View {
-    @StateObject var viewModel: KrunkerViewModel
+struct YabalaliWrapper: View {
+    @StateObject var viewModel: YabalaliViewModel
     let onClose: () -> Void
 
-    init(viewModel: KrunkerViewModel, onClose: @escaping () -> Void) {
+    init(viewModel: YabalaliViewModel, onClose: @escaping () -> Void) {
         _viewModel = StateObject(wrappedValue: viewModel)
         self.onClose = onClose
     }
@@ -13,7 +13,7 @@ struct KrunkerWrapper: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .topLeading) {
-                RotatedLandscapeWebView(
+                GameWebView(
                     url: viewModel.startURL,
                     makeConfiguration: {
                         let cfg = WKWebViewConfiguration()
@@ -22,7 +22,7 @@ struct KrunkerWrapper: View {
                     },
                     onWebViewReady: { web in viewModel.webView = web }
                 )
-                .frame(width: geo.size.width, height: geo.size.height * 0.5, alignment: .top) // ⬅ top half
+                .frame(width: geo.size.width, height: geo.size.height * 0.6, alignment: .top) // ⬅ top half
                 .clipped()
                 .background(Color.black)
 
@@ -37,7 +37,6 @@ struct KrunkerWrapper: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onAppear {
-            // keep app portrait; just rotating the webview itself
             BluetoothControllerService.shared.delegate = viewModel
             viewModel.dismiss = { onClose() }
         }

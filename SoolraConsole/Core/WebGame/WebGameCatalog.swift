@@ -13,7 +13,7 @@ import SwiftUICore
 enum WebGameCatalog {
     static func all() -> [WebGame] {
         let u2048 = URL(string: "https://axilleasiv.github.io/vue2048/")!
-        let uKrunker = URL(string: "https://krunker.io/")!
+        let yabalali_trivia = URL(string: "https://stg-yabaleli.b-cdn.net/trivia_game.html")!
         let uHextris = URL(string: "https://hextris.io/")!
 
         return [
@@ -35,15 +35,15 @@ enum WebGameCatalog {
                     AnyView(HextrisWrapper(viewModel: vm as! HextrisViewModel, onClose: onClose))
                 }
             ),
-//            WebGame(
-//                name: "Krunker",
-//                url: uKrunker,
-//                icon: UIImage(systemName: "cursorarrow.rays"), // replace with asset if you have one
-//                makeViewModel: { KrunkerViewModel(startURL: uKrunker) as any WebGameViewModel },
-//                makeWrapper: { vm, onClose in
-//                    AnyView(KrunkerWrapper(viewModel: vm as! KrunkerViewModel, onClose: onClose))
-//                }
-//            )
+            WebGame(
+                name: "Yabalali Trivia",
+                url: yabalali_trivia,
+                icon: UIImage(systemName: "cursorarrow.rays"), // replace with asset if you have one
+                makeViewModel: { YabalaliViewModel(startURL: yabalali_trivia) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(YabalaliWrapper(viewModel: vm as! YabalaliViewModel, onClose: onClose))
+                }
+            )
         ]
     }
 }
