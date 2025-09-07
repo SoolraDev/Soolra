@@ -407,7 +407,12 @@ struct HomeView: View {
                 viewModel.updateItemsCount(items.count)
             }
 
-            isShopDialogVisible = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                withAnimation(dialogSpring) {
+                    isShopDialogVisible = !BluetoothControllerService.shared.isControllerConnected
+//                }
+            }
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                 if isShopDialogVisible {
                     isShopDialogVisible = false
