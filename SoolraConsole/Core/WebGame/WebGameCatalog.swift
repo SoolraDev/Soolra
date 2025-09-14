@@ -35,15 +35,15 @@ enum WebGameCatalog {
                     AnyView(HextrisWrapper(viewModel: vm as! HextrisViewModel, onClose: onClose))
                 }
             ),
-            WebGame(
-                name: "Yabalali Trivia",
-                url: yabalali_trivia,
-                icon: UIImage(systemName: "cursorarrow.rays"), // replace with asset if you have one
-                makeViewModel: { YabalaliViewModel(startURL: yabalali_trivia) as any WebGameViewModel },
-                makeWrapper: { vm, onClose in
-                    AnyView(YabalaliWrapper(viewModel: vm as! YabalaliViewModel, onClose: onClose))
-                }
-            )
+//            WebGame(
+//                name: "Yabalali Trivia",
+//                url: yabalali_trivia,
+//                icon: UIImage(systemName: "cursorarrow.rays"), // replace with asset if you have one
+//                makeViewModel: { YabalaliViewModel(startURL: yabalali_trivia) as any WebGameViewModel },
+//                makeWrapper: { vm, onClose in
+//                    AnyView(YabalaliWrapper(viewModel: vm as! YabalaliViewModel, onClose: onClose))
+//                }
+//            )
         ]
     }
 }

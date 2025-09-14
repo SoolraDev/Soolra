@@ -8,6 +8,7 @@ import SwiftUI
 import CoreData
 import Foundation
 import WebKit
+import Network
 
 // Data to pass to GameView
 struct GameViewData: Equatable {
@@ -54,6 +55,11 @@ struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel.shared
     @StateObject private var engagementTracker = EngagementTracker()
     @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState.shared
+    
+    @StateObject private var network = NetworkMonitor()
+    @State private var isOfflineDialogVisible = false
+    @State private var pendingWebGame: WebGame? = nil
+
     
     @State private var isEditMode: EditMode = .inactive
     @State private var isSettingsPresented: Bool = false
@@ -284,7 +290,7 @@ struct HomeView: View {
                     
                 }
             }
-                .allowsHitTesting(!isShopDialogVisible)
+            .allowsHitTesting(!isShopDialogVisible && !isOfflineDialogVisible)
             if isShopDialogVisible {
               ZStack {
                   // Dimmer (back layer) — tappable to close
@@ -368,6 +374,75 @@ struct HomeView: View {
               )
               .animation(dialogSpring, value: isShopDialogVisible)
             }
+            if isOfflineDialogVisible {
+                ZStack {
+                    // Dim the background and allow tap to dismiss
+                    Color.black.opacity(0.40)
+                        .ignoresSafeArea()
+                        .contentShape(Rectangle())
+                        .onTapGesture { withAnimation(dialogSpring) { isOfflineDialogVisible = false } }
+                        .transition(.opacity)
+
+                    // The dialog card
+                    VStack(spacing: 14) {
+                        Image(systemName: "wifi.exclamationmark")
+                            .font(.system(size: 28, weight: .semibold))
+                            .padding(.top, 4)
+
+                        Text("No Internet Connection")
+                            .font(.custom("DINCondensed-Regular", size: 26))
+                            .foregroundColor(.white)
+
+                        Text("This web game needs internet. Connect to Wi-Fi or cellular, then try again.")
+                            .font(.system(size: 15))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white.opacity(0.9))
+
+                        HStack(spacing: 10) {
+                            Button {
+                                withAnimation(dialogSpring) { isOfflineDialogVisible = false }
+                            } label: {
+                                Text("Close")
+                                    .fontWeight(.semibold)
+                                    .padding(.vertical, 10).frame(maxWidth: .infinity)
+                                    .background(Color.white.opacity(0.18))
+                                    .cornerRadius(12)
+                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.22), lineWidth: 1))
+                            }
+
+                            Button {
+                                // Try again immediately; if online now, open the game.
+                                if network.isConnected, let game = pendingWebGame {
+                                    isOfflineDialogVisible = false
+                                    pendingWebGame = nil
+                                    navigateToWeb(game)
+                                }
+                            } label: {
+                                Text("Try Again")
+                                    .fontWeight(.semibold)
+                                    .padding(.vertical, 10).frame(maxWidth: .infinity)
+                                    .background(Color.white.opacity(0.28))
+                                    .cornerRadius(12)
+                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.30), lineWidth: 1))
+                            }
+                        }
+                        .padding(.top, 4)
+                    }
+                    .padding(20)
+                    .frame(maxWidth: 360)
+                    .background(Color.black.opacity(0.8))   // ← 60% transparent dark
+                    .cornerRadius(18)                        // ← rounded corners
+                    .shadow(radius: 20, y: 8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18)
+                            .stroke(Color.white.opacity(0.10), lineWidth: 1)
+                    )
+                    .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .center)))
+                    .animation(dialogSpring, value: isOfflineDialogVisible)
+                }
+                .zIndex(1600) // above shop dialog (which uses 1500)
+            }
+
 
 
             // Loading overlay
@@ -669,13 +744,16 @@ struct HomeView: View {
 
     
     
-    // MARK: - Helper Functions
-    
     private func navigateToWeb(_ game: WebGame) {
+        if !network.isConnected {
+            pendingWebGame = game
+            withAnimation(dialogSpring) { isOfflineDialogVisible = true }
+            return
+        }
         Task { @MainActor in
             self.currentView = .web(game)
             viewModel.focusedButtonIndex = 4
-            engagementTracker.setCurrentRom(game.name) // optional reuse
+            engagementTracker.setCurrentRom(game.name)
         }
     }
 
@@ -1110,4 +1188,23 @@ struct ShopWebView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
+}
+
+
+
+final class NetworkMonitor: ObservableObject {
+    private let monitor = NWPathMonitor()
+    private let queue = DispatchQueue(label: "NetworkMonitor")
+    @Published var isConnected: Bool = true
+
+    init() {
+        monitor.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                self?.isConnected = (path.status == .satisfied)
+            }
+        }
+        monitor.start(queue: queue)
+    }
+
+    deinit { monitor.cancel() }
 }
