@@ -12,9 +12,11 @@ import SwiftUICore
 
 enum WebGameCatalog {
     static func all() -> [WebGame] {
-        let u2048 = URL(string: "https://axilleasiv.github.io/vue2048/")!
-        let yabalali_trivia = URL(string: "https://stg-yabaleli.b-cdn.net/trivia_game.html")!
-        let uHextris = URL(string: "https://hextris.io/")!
+//        let u2048 = URL(string: "https://axilleasiv.github.io/vue2048/")!
+        let u2048 = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/vue2048/")!
+//        let yabalali_trivia = URL(string: "https://stg-yabaleli.b-cdn.net/trivia_game.html")!
+//        let uHextris = URL(string: "https://hextris.io/")!
+        let uHextris = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/hextris/")!
 
         return [
             WebGame(
