@@ -53,6 +53,9 @@
 		92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */; };
 		92E057F82E5E03560002B6E6 /* Hextris.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E057F72E5E03560002B6E6 /* Hextris.png */; };
 		92E057FA2E5F0AC00002B6E6 /* 2048.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E057F92E5F0AC00002B6E6 /* 2048.png */; };
+		92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */; };
+		92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */; };
+		92E07B5D2EA108320002B6E6 /* Tower.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E07B5C2EA108320002B6E6 /* Tower.png */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */; };
 		92EF61DE2E31050F008D609E /* Hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616C2E31050F008D609E /* Hearts.png */; };
@@ -252,6 +255,9 @@
 		92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisViewModel.swift; sourceTree = "<group>"; };
 		92E057F72E5E03560002B6E6 /* Hextris.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Hextris.png; sourceTree = "<group>"; };
 		92E057F92E5F0AC00002B6E6 /* 2048.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2048.png; sourceTree = "<group>"; };
+		92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerWrapper.swift; sourceTree = "<group>"; };
+		92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerViewModel.swift; sourceTree = "<group>"; };
+		92E07B5C2EA108320002B6E6 /* Tower.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tower.png; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
 		92EF614E2E31050F008D609E /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
 		92EF614F2E31050F008D609E /* Astrohawk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Astrohawk.png; sourceTree = "<group>"; };
@@ -604,6 +610,7 @@
 		92E0398B2E4901FD0002B6E6 /* WebViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */,
 				92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */,
 				92E04DD32E5C6CA40002B6E6 /* YabalaliViewModel.swift */,
 				92E02F642E40CF2D0002B6E6 /* Game2048ViewModel.swift */,
@@ -614,6 +621,7 @@
 		92E0398C2E49020F0002B6E6 /* WebViewWrappers */ = {
 			isa = PBXGroup;
 			children = (
+				92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */,
 				92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */,
 				92E057EF2E5C94290002B6E6 /* YabalaliWrapper.swift */,
 				92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */,
@@ -663,6 +671,7 @@
 				92EF61712E31050F008D609E /* luminesweeper.png */,
 				92EF61722E31050F008D609E /* MatchIt.png */,
 				92EF61732E31050F008D609E /* Math and Logic.png */,
+				92E07B5C2EA108320002B6E6 /* Tower.png */,
 				92EF61742E31050F008D609E /* MeteoRain.png */,
 				92EF61752E31050F008D609E /* MineBoyAdvance.png */,
 				92EF61762E31050F008D609E /* Minicraft.png */,
@@ -969,6 +978,7 @@
 				92EF622F2E31050F008D609E /* CocoBattleRoyale.nes in Resources */,
 				92EF62302E31050F008D609E /* The Axe.gba in Resources */,
 				92EF62312E31050F008D609E /* SeSnake.png in Resources */,
+				92E07B5D2EA108320002B6E6 /* Tower.png in Resources */,
 				92EF62322E31050F008D609E /* MeteoRain.gba in Resources */,
 				92EF62332E31050F008D609E /* Math and Logic.png in Resources */,
 				92EF62342E31050F008D609E /* DCPR.png in Resources */,
@@ -1136,6 +1146,8 @@
 				92E0398A2E4901B20002B6E6 /* WebGameContainerView.swift in Sources */,
 				186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */,
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
+				92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */,
+				92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */,
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
 				928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */,
@@ -1278,7 +1290,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
@@ -1301,7 +1313,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.8.8;
+				MARKETING_VERSION = 5.8.9;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1331,7 +1343,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
 				ENABLE_PREVIEWS = YES;
@@ -1353,7 +1365,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.8.8;
+				MARKETING_VERSION = 5.8.9;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
