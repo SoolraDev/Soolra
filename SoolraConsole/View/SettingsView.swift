@@ -38,8 +38,11 @@ struct SettingsView: View {
     @State private var selectedColor: Color = .purple
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var dataController: CoreDataController
+    @EnvironmentObject var saveStateManager: SaveStateManager
     @StateObject private var viewModel = SettingsViewModel()
-    
+    @State private var showWebView = false
+    @State private var showSlither = false
+
     var body: some View {
         NavigationView {
             List {
@@ -49,7 +52,7 @@ struct SettingsView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(viewModel.selectedIndex == 0 ? Color.white : Color.clear, lineWidth: 2)
                         )
-                    
+
                     Picker("Keyboard Color", selection: $themeManager.keyboardColor) {
                         ForEach(ThemeManager.KeyboardColor.allCases, id: \.self) { color in
                             Text(color.rawValue.capitalized)
@@ -59,20 +62,53 @@ struct SettingsView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(viewModel.selectedIndex == 1 ? Color.white : Color.clear, lineWidth: 2)
                     )
-                    
-                    NavigationLink("Manage ROMs") {
+
+                    NavigationLink("Manage Games") {
                         ManageRomsView().environmentObject(dataController)
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(viewModel.selectedIndex == 2 ? Color.white : Color.clear, lineWidth: 2)
                     )
+                    
+                    NavigationLink("Game Licenses") {
+                        LicenseListView()
+                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(viewModel.selectedIndex == 2 ? Color.white : Color.clear, lineWidth: 2)
+                    )
+
+
                 }
-                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-                .navigationTitle("Settings")
-                .listStyle(GroupedListStyle())
+
+                Section(header: Text("Currently Supported Emulator Cores")) {
+                    Text("Nintendo Entertainment System (NES)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Text("Game Boy Advance (GBA)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+
             }
-        }
+            .navigationBarTitle("Settings", displayMode: .inline)
+            .navigationBarItems(leading:
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                }
+            )
+            .listStyle(GroupedListStyle())
+        }.preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+
+
         .onAppear {
             // Set the controller delegate to SettingsViewModel when view appears
             BluetoothControllerService.shared.delegate = viewModel
@@ -155,7 +191,7 @@ struct SettingsView: View {
                     
                     
                 }
-                .navigationTitle("Manage ROMs")
+                .navigationTitle("Manage Games")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {

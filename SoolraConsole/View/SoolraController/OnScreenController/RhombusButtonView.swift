@@ -9,8 +9,11 @@ import SwiftUI
 struct RhombusButtonView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var consoleManager: ConsoleCoreManager
-    var onButtonPress: ((SoolraControllerAction) -> Void)?
+    @ObservedObject var controllerViewModel: ControllerViewModel
 
+    var onButtonPress: ((SoolraControllerAction) -> Void)?
+    var onButton: ((SoolraControllerAction, Bool) -> Void)?
+    @State private var isPressed = false
     var body: some View {
         ZStack {
             // X Button (Top)
@@ -22,15 +25,20 @@ struct RhombusButtonView: View {
             .position(x: 60, y: 18)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        onButtonPress?(.x)
-                        HapticManager.shared.buttonPress()
-                        consoleManager.handleControllerAction(.x, pressed: true)
-                    })
-                    .onEnded({ _ in
+                    .onChanged { _ in
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.x, true)
+                            controllerViewModel.controllerDidPress(action: .x, pressed: true)
+                        }
+                    }
+                    .onEnded { _ in
+                        isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.x, pressed: false)
-                    })
+                        onButton?(.x, false)
+                        controllerViewModel.controllerDidPress(action: .x, pressed: false)
+                    }
             )
             
             // B Button (Bottom)
@@ -42,15 +50,20 @@ struct RhombusButtonView: View {
             .position(x: 60, y: 102)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        onButtonPress?(.b)
-                        HapticManager.shared.buttonPress()
-                        consoleManager.handleControllerAction(.b, pressed: true)
-                    })
-                    .onEnded({ _ in
+                    .onChanged { _ in
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.b, true)
+                            controllerViewModel.controllerDidPress(action: .b, pressed: true)
+                        }
+                    }
+                    .onEnded { _ in
+                        isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.b, pressed: false)
-                    })
+                        onButton?(.b, false)
+                        controllerViewModel.controllerDidPress(action: .b, pressed: false)
+                    }
             )
 
             // Y Button (Left)
@@ -62,15 +75,20 @@ struct RhombusButtonView: View {
             .position(x: 18, y: 60)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        onButtonPress?(.y)
-                        HapticManager.shared.buttonPress()
-                        consoleManager.handleControllerAction(.y, pressed: true)
-                    })
-                    .onEnded({ _ in
+                    .onChanged { _ in
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.y, true)
+                            controllerViewModel.controllerDidPress(action: .y, pressed: true)
+                        }
+                    }
+                    .onEnded { _ in
+                        isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.y, pressed: false)
-                    })
+                        onButton?(.y, false)
+                        controllerViewModel.controllerDidPress(action: .y, pressed: false)
+                    }
             )
 
             // A Button (Right)
@@ -82,16 +100,22 @@ struct RhombusButtonView: View {
             .position(x: 102, y: 60)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        onButtonPress?(.a)
-                        HapticManager.shared.buttonPress()
-                        consoleManager.handleControllerAction(.a, pressed: true)
-                    })
-                    .onEnded({ _ in
+                    .onChanged { _ in
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+//                            onButton?(.a, true)
+                            controllerViewModel.controllerDidPress(action: .a, pressed: true)
+                        }
+                    }
+                    .onEnded { _ in
+                        isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.a, pressed: false)
-                    })
+//                        onButton?(.a, false)
+                        controllerViewModel.controllerDidPress(action: .a, pressed: false)
+                    }
             )
+            
         }
         .frame(width: 135, height: 135)
     }

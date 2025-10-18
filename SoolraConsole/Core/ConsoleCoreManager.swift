@@ -38,7 +38,7 @@ public class ConsoleCoreManager: ObservableObject {
     }
     
     // Add state management
-    private struct ManagerState {
+     struct ManagerState {
         var isRendererInitialized = false
         var currentCoreType: ConsoleType?
         var isEmulationStarted = false
@@ -50,6 +50,12 @@ public class ConsoleCoreManager: ObservableObject {
     @Published private(set) var isRendererReady: Bool = false
     @Published var shouldShowPauseMenu = false
     @Published public private(set) var isGameRunning: Bool = false
+    @Published var cheatCodesManager: CheatCodesManager?
+
+    var maxFastForwardSpeed: Float = 1
+    var currentFastForwardSpeed: Float = 1
+    var gameName: String
+    
     private var currentCore: (any ConsoleCore)?
     public var currentRenderer: (any ConsoleRenderer)?
     private var frameTimer: AnyCancellable?
@@ -74,7 +80,7 @@ public class ConsoleCoreManager: ObservableObject {
     private let keyRepeatThreshold: TimeInterval = 0.05  // 50ms threshold to prevent key repeat issues
     
     // Add state management properties
-    private var managerState = ManagerState()
+    private(set) var managerState = ManagerState()
     private var stateLock = os_unfair_lock()
     
     @Published private(set) var isLoading = false
@@ -98,9 +104,9 @@ public class ConsoleCoreManager: ObservableObject {
         }
     }
     
-    public init(metalManager: MetalManager) throws {
+    public init(metalManager: MetalManager, gameName: String = "none") throws {
         self.metalManager = metalManager
-        
+        self.gameName = gameName
         self.currentFrame = nil
         self.currentCore = nil
         self.currentRenderer = nil
@@ -165,11 +171,12 @@ public class ConsoleCoreManager: ObservableObject {
                 self.loadingMessage = ""
             }
         }
+        let autosavePath = self.configureAutosave(for:romPath)
         
         // Create appropriate core
         switch type {
         case .nes:
-            let core = try NESCore(romPath: romPath)
+            let core = try NESCore(romPath: romPath, autosavePath: autosavePath)
             await MainActor.run {
                 core.initializeAudio(audioMaker: sharedNESAudioMaker)
             }
@@ -178,7 +185,7 @@ public class ConsoleCoreManager: ObservableObject {
                 self.isGameRunning = true
             }
         case .gba:
-            let core = try GBACore(romPath: romPath)
+            let core = try GBACore(romPath: romPath, autosavePath: autosavePath)
             await MainActor.run {
                 core.initializeAudio(audioMaker: sharedGBAAudioMaker)
             }
@@ -188,6 +195,7 @@ public class ConsoleCoreManager: ObservableObject {
             }
         }
         
+    
         // Initialize on main thread
         await MainActor.run {
             updateState { state in
@@ -199,9 +207,25 @@ public class ConsoleCoreManager: ObservableObject {
         
         // Power up the core before starting emulation
         currentCore?.powerUp()
-        
+        setMaxFastForwardSpeed(type: type)
+
         print("✅ Console loaded successfully")
     }
+    
+    private func configureAutosave(for romPath: URL) -> URL {
+        let fileManager = FileManager.default
+
+        // Try to get a real caches directory
+        let cachesDir = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first
+            ?? fileManager.temporaryDirectory  // Fallback to temp dir if needed
+
+        let safeName = romPath.deletingPathExtension().lastPathComponent
+        let autosaveFile = "autosave_\(safeName).svs"
+        let autosavePath = cachesDir.appendingPathComponent(autosaveFile)
+
+        return autosavePath
+    }
+
     
     public func shutdown() async {
         print("🛑 Starting shutdown sequence...")
@@ -509,25 +533,14 @@ public class ConsoleCoreManager: ObservableObject {
     }
     
     private func startFrameTimer() {
-        print("⏱️ Starting frame timer...")
-        
-        // Cancel any existing timer first
+        // Cancel any existing timer
         frameTimer?.cancel()
-        frameTimer = nil
-        
-        // Ensure we're ready to start
-        guard let core = currentCore,
-              let renderer = currentRenderer else {
-            print("⚠️ Cannot start frame timer - core or renderer not ready")
-            return
-        }
-        
-        // Get frame duration from core's bridge
-        let frameDuration: TimeInterval = 1.0/60.0
-        
-        print("⏱️ Starting frame timer with duration: \(frameDuration)")
-        
-        frameTimer = Timer.publish(every: frameDuration, on: .main, in: .default)
+
+        // Tick at the screen’s native 60 Hz rate
+        let tickInterval = 1.0 / 60.0
+
+        frameTimer = Timer
+            .publish(every: tickInterval, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self,
@@ -535,32 +548,34 @@ public class ConsoleCoreManager: ObservableObject {
                       let renderer = self.currentRenderer else {
                     return
                 }
-                
-                // Check if we're paused
-                var isPaused = false
-                self.updateState { state in
-                    isPaused = state.isPaused
+
+                // Don’t do anything when paused
+                var paused = false
+                self.updateState { paused = $0.isPaused }
+                if paused { return }
+
+                // How many sub-frames to run this tick
+                let factor = Int(self.currentFastForwardSpeed)
+                var lastFrame: ConsoleFrame?
+
+                // 1️⃣ Run N emulation frames (and queue N audio chunks)…
+                for _ in 0..<max(1, factor) {
+                    lastFrame = core.performFrame()
                 }
-                
-                if isPaused {
-                    return
-                }
-                
-                // Process frame and update renderer on main thread
-                let frame = core.performFrame()
-                
-                // Create array from frame data without copying
-                if let gbaFrame = frame as? GBAFrame {
-                    let pixelArray = Array(UnsafeBufferPointer(start: gbaFrame.data, count: 240 * 160))
-                    renderer.updateTexture(with: pixelArray)
-                } else if let nesFrame = frame as? NESFrame {
-                    let pixelArray = Array(UnsafeBufferPointer(start: nesFrame.data, count: 256 * 240))
-                    renderer.updateTexture(with: pixelArray)
+
+                // 2️⃣ …then render exactly one video frame
+                if let gba = lastFrame as? GBAFrame {
+                    let pixels = Array(UnsafeBufferPointer(start: gba.data, count: 240 * 160))
+                    renderer.updateTexture(with: pixels)
+                } else if let nes = lastFrame as? NESFrame {
+                    let pixels = Array(UnsafeBufferPointer(start: nes.data, count: 256 * 240))
+                    renderer.updateTexture(with: pixels)
                 }
             }
-        
-        print("✅ Frame timer started")
     }
+
+    
+    
     
     public func startEmulation() {
         print("🎮 Starting emulation...")
@@ -589,5 +604,40 @@ public class ConsoleCoreManager: ObservableObject {
         
         print("✅ Emulation started")
     }
+    
+    func activateCheat(_ cheat: Cheat) {
+        currentCore?.activateCheat(cheat)
+    }
+
+    func resetCheats(){
+        currentCore?.resetCheats()
+    }
+    
+    private func setMaxFastForwardSpeed(type: ConsoleType) {
+        switch type {
+        case .gba:
+            self.maxFastForwardSpeed = 3
+        default:
+            self.maxFastForwardSpeed = 4
+        }
+    }
+    
+    public func toggleFastForward() {
+        currentFastForwardSpeed = (currentFastForwardSpeed == 1) ? maxFastForwardSpeed : 1
+        currentCore?.setPlaybackRate(currentFastForwardSpeed)
+    }
+    
+    public func saveState(to: URL) {
+        currentCore?.saveGameState(to: to)
+    }
+    
+    public func loadState(from: URL) {
+        currentCore?.loadGameState(from: from)
+    }
+    
+    public func captureScreenshot(to: URL) {
+        currentCore?.captureScreenshot(to: to)
+    }
+
 }
 

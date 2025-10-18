@@ -9,9 +9,11 @@ import SwiftUI
 struct SoolraControllerView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel 
     @Binding var currentView: CurrentView
     var pauseViewModel: PauseGameViewModel?
     var onButtonPress: ((SoolraControllerAction) -> Void)?
+    var onButton: ((SoolraControllerAction, Bool) -> Void)? = nil
 
     var body: some View {
         ZStack {
@@ -20,25 +22,37 @@ struct SoolraControllerView: View {
             VStack(spacing: 0) {
                 Spacer()
                 HStack(alignment: .top) {
-                    ArrowsView(onButtonPress: onButtonPress)
+                    ArrowsView(onButton: { action, pressed in
+                        onButton?(action, pressed)
+                    })
                         .padding(.leading, 35)
                         .environmentObject(consoleManager)
                     if let pauseViewModel = pauseViewModel {
                         // if we are in game, load the MenuButton with pauseViewModel
-                        MenuButtonView(pauseViewModel: pauseViewModel)
+                        MenuButtonView(pauseViewModel: pauseViewModel, onButton: onButton)
                             .offset(y: -15)
                             .environmentObject(consoleManager)
                     } else {
                         // if we are not in game
-                        MenuButtonView(pauseViewModel: nil)
+                        MenuButtonView(pauseViewModel: nil, onButton: onButton)
                             .offset(y: -15)
                             .environmentObject(consoleManager)
                     }
-                    RhombusButtonView( onButtonPress: onButtonPress)
-                        .padding(.trailing, 35)
-                        .environmentObject(consoleManager)
+                    RhombusButtonView(
+                        controllerViewModel: controllerViewModel,
+                        onButton: { action, pressed in
+                            onButton?(action, pressed)
+                        }
+                    )
+                    .padding(.trailing, 35)
+                    .environmentObject(consoleManager)
+
                 }
                 MergedFunctionalKeyView(onButtonPress: onButtonPress)
+                    .environmentObject(consoleManager)
+                ShoulderButtonView(onButton: { action, pressed in
+                    onButton?(action, pressed)
+                })
                     .environmentObject(consoleManager)
                 HStack {
                     JoystickView(onButtonPress: onButtonPress)

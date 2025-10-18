@@ -13,6 +13,7 @@ import CoreData
 private struct GameScreenContainer: View {
     let geometry: GeometryProxy
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+
     
     var body: some View {
         GameScreenView()
@@ -28,17 +29,45 @@ private struct GameScreenContainer: View {
 // MARK: - Controller Container
 private struct ControllerContainer: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel
     @Binding var currentView: CurrentView
     let geometry: GeometryProxy
     let pauseViewModel: PauseGameViewModel
     let totalHeight: CGFloat
     
     var body: some View {
-        // load the SoolraControllerView with pauseViewModel
-        SoolraControllerView(currentView: $currentView, pauseViewModel: pauseViewModel)
-            .frame(width: geometry.size.width, height: totalHeight * 0.48)
-            .edgesIgnoringSafeArea(.bottom)
-            .environmentObject(consoleManager)
+        SoolraControllerView(
+            controllerViewModel: controllerViewModel,
+            currentView: $currentView,
+            pauseViewModel: pauseViewModel,
+            onButton: { action, pressed in
+                // 1) Pause menu gets first dibs.
+                if pauseViewModel.showPauseMenu {
+                    // If your pause UI also needs releases, remove the 'if pressed' guard.
+                    if pressed {
+                        pauseViewModel.handleControllerAction(action, pressed: pressed)
+                    }
+                    return
+                }
+
+                // 2) Menu button toggles pause on PRESS only (avoids double toggle).
+                if action == .menu && pressed {
+                    pauseViewModel.togglePause()
+                    return
+                }
+
+                // 3) Otherwise, forward to the core (normal gameplay).
+                consoleManager.handleControllerAction(action, pressed: pressed)
+            }
+        )
+        .frame(/* keep your existing frame */)
+        .edgesIgnoringSafeArea(.bottom)
+        .environmentObject(consoleManager)
+
+        .frame(width: geometry.size.width, height: totalHeight * 0.48)
+        .edgesIgnoringSafeArea(.bottom)
+        .environmentObject(consoleManager)
+
     }
 }
 
@@ -53,6 +82,7 @@ struct GameView: View {
     @ObservedObject var pauseViewModel: PauseGameViewModel
     @EnvironmentObject var controllerViewModel: ControllerViewModel
     @Environment(\.managedObjectContext) private var context
+    @State private var appLaunchedFromExternalRom = false
     
     init(data: GameViewData, currentView: Binding<CurrentView>, pauseViewModel: PauseGameViewModel) {
         self.name = data.name
@@ -81,11 +111,16 @@ struct GameView: View {
                     }
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .launchRomFromExternalSource)) { _ in
+                appLaunchedFromExternalRom = true
+            }
+
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 print("🎮 App will resign active - ensuring game is paused")
                 pauseViewModel.ensurePaused()
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                guard !appLaunchedFromExternalRom else { return }
                 print("🎮 App did become active - showing pause menu")
                 // Force show the pause menu regardless of current state
                 pauseViewModel.showPauseMenuOnForeground()
@@ -117,6 +152,7 @@ struct GameView: View {
                         .animation(.easeInOut, value: pauseViewModel.isExiting)
                     
                     ControllerContainer(
+                        controllerViewModel: controllerViewModel,
                         currentView: $currentView,
                         geometry: geometry,
                         pauseViewModel: pauseViewModel,

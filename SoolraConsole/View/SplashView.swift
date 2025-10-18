@@ -9,6 +9,8 @@ import AVKit
 
 struct SplashView: View {
     @Binding var isShowingSplash: Bool
+    @EnvironmentObject var dataController: CoreDataController
+    @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState.shared
 
     var body: some View {
         ZStack {
@@ -21,7 +23,16 @@ struct SplashView: View {
                 isShowingSplash = false // Skip video when tapped
             }
         }
+        .task {
+            Task.detached(priority: .userInitiated) {
+                await defaultRomsLoadingState.loadIfNeeded {
+                    await dataController.romManager.initDefaultRoms()
+                }
+            }
+        }
     }
+    
+    
 }
 
 struct VideoPlayerView: UIViewControllerRepresentable {
@@ -58,4 +69,18 @@ struct VideoPlayerView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+
+@MainActor
+final class DefaultRomsLoadingState: ObservableObject {
+    static let shared = DefaultRomsLoadingState()
+
+    @Published private(set) var isLoading: Bool = true
+
+    func loadIfNeeded(_ loadBlock: @escaping () async -> Void) async {
+        guard isLoading else { return }
+        await loadBlock()
+        isLoading = false
+    }
 }

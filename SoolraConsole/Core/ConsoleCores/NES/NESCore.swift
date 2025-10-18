@@ -16,6 +16,8 @@ import MetalKit
 
 // NES specific implementation
 class NESCore: ConsoleCore {
+
+    
     // MARK: - Constants
     enum Constants {
         static let frameWidth: Int = 256
@@ -41,11 +43,11 @@ class NESCore: ConsoleCore {
     private var bridge: NESBridge?
     private var isPaused: Bool = false
     private var _audioMaker: NESAudioMaker?
-    
     public var audioMaker: NESAudioMaker? { return _audioMaker }
+    public var autosavePath: URL
     
     // MARK: - Required Protocol Methods
-    required init(romPath: URL) throws {
+    required init(romPath: URL, autosavePath: URL) throws {
         print("📝 Loading initial ROM from path: \(romPath.path)")
         
         // Verify ROM file
@@ -60,17 +62,20 @@ class NESCore: ConsoleCore {
         
         // Initialize bridge with our buffers
         bridge = NESBridge(videoBuffer: videoBuffer, audioBuffer: audioBuffer)
-        
+        self.autosavePath = autosavePath
         // Start emulation
         try initialize(withROM: romPath)
     }
     
     func initialize(withROM romPath: URL) throws {
-        print("🔄 initializing NESCore with new ROM...")
+        print("🔄 Initializing NESCore with new ROM...")
+        bridge?.setAutosavePath(to: autosavePath)
         bridge?.start(withGameURL: romPath)
         _audioMaker?.play()
+
         print("✅ NESCore initialization complete")
     }
+
     
     func performFrame() -> NESFrame {
         guard !isPaused else {
@@ -187,4 +192,35 @@ class NESCore: ConsoleCore {
         print("✅ Renderer initialization complete")
         return newRenderer
     }
+    
+    func activateCheat(_ cheat: Cheat) {
+        bridge?.activateCheat(cheat)
+    }
+    
+    func resetCheats() {
+        bridge?.resetCheats()
+    }
+    
+    func setPlaybackRate(_ rate: Float) {
+        audioMaker?.setPlaybackRate(rate)
+    }
+    
+    func captureScreenshot(to url: URL) {
+        guard let buffer = bridge?.videoBufferPublic else {
+            print("❌ No video buffer available for screenshot")
+            return
+        }
+        ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 256, height: 240, to: url)
+    }
+    
+    func loadGameState(from: URL) {
+        bridge?.loadSaveState(from: from)
+    }
+    
+    func saveGameState(to: URL)
+    {
+        bridge?.saveGameSave(to: to)
+    }
+
+
 }

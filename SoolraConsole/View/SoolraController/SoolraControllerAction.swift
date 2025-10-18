@@ -20,4 +20,6 @@ public enum SoolraControllerAction: String {
     case select
     case start
     case menu
+    case l
+    case r
 }

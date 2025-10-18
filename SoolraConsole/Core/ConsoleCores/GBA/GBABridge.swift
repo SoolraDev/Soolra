@@ -202,6 +202,46 @@ class GBABridge: NSObject {
     public func resetInputs() {
         GBAResetInputs()
     }
+    
+    public func activateCheat(_ cheat: Cheat){
+        GBAddCheatCode(cheat.code, cheat.type.rawValue);
+    }
+    
+    public func resetCheats(){
+        GBAResetCheats();
+    }
+    
+    func loadGameState(from url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBALoadState(path)
+        }
+    }
+    
+    func saveGameState(to url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBASaveState(path)
+        }
+
+    }
+    
+    func loadAutosave(from url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBALoadGameSave(path)
+        }
+
+    }
+    
+    func saveAutosave(to url: URL)
+    {
+        if let path = url.path.cString(using: .utf8) {
+            GBASaveGameSave(path)
+        }
+
+    }
+    
 }
 
 

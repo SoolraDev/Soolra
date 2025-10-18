@@ -2,6 +2,43 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Game Boy Advance ROM</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.gba-rom</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Nintendo Entertainment System ROM</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.nes-rom</string>
+			</array>
+		</dict>
+		<dict>
+        	<key>CFBundleTypeName</key>
+        	<string>ZIP Archive</string>
+        	<key>LSHandlerRank</key>
+        	<string>Alternate</string>
+        	<key>LSItemContentTypes</key>
+        	<array>
+            	<string>com.pkware.zip-archive</string>
+        	</array>
+    	</dict>
+	</array>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>GCSupportedGameControllers</key>
@@ -32,5 +69,50 @@
 		<key>UIColorName</key>
 		<string></string>
 	</dict>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>GBA ROM</string>
+			<key>UTTypeIdentifier</key>
+			<string>public.gba-rom</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>gba</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>NES ROM</string>
+			<key>UTTypeIdentifier</key>
+			<string>public.nes-rom</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>nes</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+</dict>
+
 </dict>
 </plist>

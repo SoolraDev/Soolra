@@ -113,7 +113,7 @@ class NESBridge: NSObject {
             guard let path = path else { return }
             _ = NES_LoadROM(path)
         }
-
+        
         print("✅ Game loaded successfully")
     }
     
@@ -150,5 +150,34 @@ class NESBridge: NSObject {
     
     public func isPAL() -> Bool {
         return NES_IsPAL()
+    }
+    
+    func activateCheat(_ cheat: Cheat)
+    {
+        cheat.code.withCString { codeStr in
+            NES_AddCheatCode(codeStr)
+        }
+    }
+    
+    func resetCheats()
+    {
+        NES_ResetCheats()
+    }
+    
+    func loadSaveState(from url: URL)
+    {
+        url.withUnsafeFileSystemRepresentation { NESLoadGameSave($0!) }
+    }
+    
+    func saveGameSave(to url: URL)
+    {
+        url.withUnsafeFileSystemRepresentation { NESSaveGameSave($0!) }
+
+    }
+    
+    func setAutosavePath(to url: URL)
+    {
+        url.withUnsafeFileSystemRepresentation { NES_SetBatterySavePath($0!) }
+
     }
 }

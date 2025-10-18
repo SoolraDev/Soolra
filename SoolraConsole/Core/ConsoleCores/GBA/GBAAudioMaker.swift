@@ -17,6 +17,8 @@ class GBAAudioMaker: NSObject, AudioMakerProtocol {
     private var isEngineRunning = false
     private var pendingBuffers: [AVAudioPCMBuffer] = []
     private let pendingBufferLock = NSLock()
+    private var timePitchNode: AVAudioUnitTimePitch?
+     var currentRate: Float = 1.0
     
     override init() {
         audioEngine = AVAudioEngine()
@@ -37,20 +39,32 @@ class GBAAudioMaker: NSObject, AudioMakerProtocol {
     
     private func setupAudio() {
         print("🎵 Setting up GBA audio...")
-        // Setup audio processing chain
+
+        // Create and configure time pitch node
+        let timePitch = AVAudioUnitTimePitch()
+        timePitch.rate = currentRate
+        self.timePitchNode = timePitch
+
+        // Attach nodes (custom nodes ONLY)
         audioEngine.attach(audioPlayerNode)
-        audioEngine.connect(audioPlayerNode, to: audioEngine.mainMixerNode, format: audioFormat)
-        
+        audioEngine.attach(timePitch)
+
+        // Connect player ➝ timePitch ➝ mainMixer (mainMixer is already attached)
+        audioEngine.connect(audioPlayerNode, to: timePitch, format: audioFormat)
+        audioEngine.connect(timePitch, to: audioEngine.mainMixerNode, format: audioFormat)
+
         // Setup audio converter
         if let inputFormat = bridge?.audioFormat {
             audioConverter = AVAudioConverter(from: inputFormat, to: audioFormat)
         } else {
             print("❌ Error: GBABridge audioFormat is nil, cannot create audio converter.")
         }
-        
-        // Start audio engine
+
+        // Start the engine
         startEngine()
     }
+
+
     
     private func startEngine() {
         guard !isEngineRunning else { return }
@@ -170,4 +184,9 @@ class GBAAudioMaker: NSObject, AudioMakerProtocol {
         NotificationCenter.default.removeObserver(self)
         stop()
     }
+    
+    public func setPlaybackRate(_ rate: Float) {
+        currentRate = rate;
+    }
+    
 }

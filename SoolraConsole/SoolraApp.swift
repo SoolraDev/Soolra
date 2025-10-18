@@ -6,6 +6,8 @@
 
 import AVFoundation
 import SwiftUI
+import FirebaseCore
+import FirebaseAnalytics
 
 public class AudioSessionManager: ObservableObject {
     private var audioSessionObserver: Any?
@@ -14,12 +16,12 @@ public class AudioSessionManager: ObservableObject {
     @Published public private(set) var isAudioSessionActive = true
     public var onAudioSessionStateChange: ((Bool) -> Void)?
     @StateObject private var themeManager = ThemeManager()
-
+    
     public init() {
         setUpAudioSession()
         addObservers()
     }
-
+    
     private func setUpAudioSession() {
         do {
             let audioSession = AVAudioSession.sharedInstance()
@@ -35,7 +37,7 @@ public class AudioSessionManager: ObservableObject {
             onAudioSessionStateChange?(false)
         }
     }
-
+    
     private func addObservers() {
         audioSessionObserver = NotificationCenter.default.addObserver(
             forName: AVAudioSession.mediaServicesWereResetNotification,
@@ -44,7 +46,7 @@ public class AudioSessionManager: ObservableObject {
         ) { [weak self] _ in
             self?.setUpAudioSession()
         }
-
+        
         routeChangeObserver = NotificationCenter.default.addObserver(
             forName: AVAudioSession.routeChangeNotification,
             object: nil,
@@ -183,7 +185,7 @@ public class AudioSessionManager: ObservableObject {
             }
         }
     }
-
+    
     deinit {
         if let observer = audioSessionObserver {
             NotificationCenter.default.removeObserver(observer)
@@ -197,20 +199,34 @@ public class AudioSessionManager: ObservableObject {
     }
 }
 
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        return true
+    }
+
+}
+
+
 @main
 struct SoolraApp: App {
     @StateObject private var themeManager = ThemeManager()
-    @StateObject private var dataController = CoreDataController()
+    @StateObject private var dataController = CoreDataController(saveStateManager: SaveStateManager.shared)
     @StateObject private var audioSessionManager = AudioSessionManager()
     @StateObject private var metalManager: MetalManager
     @StateObject private var consoleManager: ConsoleCoreManager
+    
     @State private var isShowingSplash = true
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
     @State private var initializationError: Error?
-
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     init() {
         // Initialize Metal device first and handle potential errors
         do {
+            
             let metal = try MetalManager()
             _metalManager = StateObject(wrappedValue: metal)
             
@@ -227,7 +243,7 @@ struct SoolraApp: App {
             _consoleManager = StateObject(wrappedValue: console)
             initializationError = error
         }
-
+        
         // Configure UI appearance
         let appearance = UINavigationBarAppearance()
         appearance.titleTextAttributes = [.font: UIFont(name: "Orbitron-Black", size: 24)!]
@@ -239,7 +255,7 @@ struct SoolraApp: App {
         appearance.backgroundColor = .none
         appearance.configureWithOpaqueBackground()
     }
-
+    
     var body: some Scene {
         WindowGroup {
             if let error = initializationError {
@@ -253,6 +269,7 @@ struct SoolraApp: App {
                     .environmentObject(consoleManager)
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
+                        print("🚀 SplashView loading bundled ROMs")
                     }
             } else {
                 HomeView()
@@ -260,8 +277,12 @@ struct SoolraApp: App {
                     .environmentObject(dataController)
                     .environmentObject(consoleManager)
                     .environmentObject(metalManager)
+                    .environmentObject(SaveStateManager.shared)
                     .onAppear {
                         consoleManager.connectAudioSessionManager(audioSessionManager)
+                        Analytics.logEvent("app_loaded", parameters: [
+                            "timestamp": Date().timeIntervalSince1970
+                        ])
                     }
             }
         }

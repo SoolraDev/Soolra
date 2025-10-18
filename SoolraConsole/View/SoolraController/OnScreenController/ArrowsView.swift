@@ -10,7 +10,7 @@ struct ArrowsView: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
     @State private var isPressed = false
     var onButtonPress: ((SoolraControllerAction) -> Void)?
-    
+    var onButton: ((SoolraControllerAction, Bool) -> Void)?
     var body: some View {
         ZStack {
             Image("controller-arrows")
@@ -22,25 +22,24 @@ struct ArrowsView: View {
                 .animation(.easeInOut, value: isPressed)
             
             // Up Button
-            Button(action: {}) {
-                Color.clear
-            }
-            .frame(width: 42, height: 42)
-            .position(x: 63, y: 31)
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        isPressed = true
-                        HapticManager.shared.buttonPress()
-                        onButtonPress?(.up)
-                        consoleManager.handleControllerAction(.up, pressed: true)
-                    })
-                    .onEnded({ _ in
-                        isPressed = false
-                        HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.up, pressed: false)
-                    })
-            )
+            Button(action: {}) { Color.clear }
+                        .frame(width: 42, height: 42)
+                        .position(x: 63, y: 31)
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    if !isPressed {
+                                        isPressed = true
+                                        HapticManager.shared.buttonPress()
+                                        onButton?(.up, true)
+                                    }
+                                }
+                                .onEnded { _ in
+                                    isPressed = false
+                                    HapticManager.shared.buttonRelease()
+                                    onButton?(.up, false)
+                                }
+                        )
             
             // Down Button
             Button(action: {}) {
@@ -50,17 +49,18 @@ struct ArrowsView: View {
             .position(x: 63, y: 95)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        isPressed = true
-                        HapticManager.shared.buttonPress()
-                        onButtonPress?(.down)
-                        consoleManager.handleControllerAction(.down, pressed: true)
-                    })
-                    .onEnded({ _ in
+                    .onChanged { _ in
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.down, true)
+                        }
+                    }
+                    .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.down, pressed: false)
-                    })
+                        onButton?(.down, false)
+                    }
             )
             
             // Left Button
@@ -71,18 +71,19 @@ struct ArrowsView: View {
             .position(x: 31, y: 63)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        isPressed = true
-                        HapticManager.shared.buttonPress()
-                        onButtonPress?(.left)
-                        consoleManager.handleControllerAction(.left, pressed: true)
-                    })
-                    .onEnded({ _ in
+                    .onChanged { _ in
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.left, true)
+                        }
+                    }
+                    .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.left, pressed: false)
+                        onButton?(.left, false)
                     })
-            )
+        
             
             // Right Button
             Button(action: {}) {
@@ -92,18 +93,19 @@ struct ArrowsView: View {
             .position(x: 95, y: 63)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged({ _ in
-                        isPressed = true
-                        HapticManager.shared.buttonPress()
-                        onButtonPress?(.right)
-                        consoleManager.handleControllerAction(.right, pressed: true)
-                    })
-                    .onEnded({ _ in
+                    .onChanged { _ in
+                        if !isPressed {
+                            isPressed = true
+                            HapticManager.shared.buttonPress()
+                            onButton?(.right, true)
+                        }
+                    }
+                    .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        consoleManager.handleControllerAction(.right, pressed: false)
+                        onButton?(.right, false)
                     })
-            )
+        
         }
         .frame(width: 126, height: 126)
     }

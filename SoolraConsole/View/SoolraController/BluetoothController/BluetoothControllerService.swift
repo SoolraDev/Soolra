@@ -11,8 +11,9 @@ protocol ControllerServiceDelegate: AnyObject {
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool)
 }
 
-class BluetoothControllerService {
+class BluetoothControllerService: ObservableObject {
     static let shared = BluetoothControllerService()
+    @Published private(set) var isControllerConnected: Bool = false
     weak var delegate: ControllerServiceDelegate?
     
     // Separate state tracking for each stick
@@ -24,6 +25,7 @@ class BluetoothControllerService {
 
     private init() {
         setupControllerObservers()
+        refreshConnectedState()
     }
 
     // MARK: - Setup
@@ -46,14 +48,21 @@ class BluetoothControllerService {
 
     @objc private func controllerDidConnect(notification: Notification) {
         if let controller = notification.object as? GCController {
+            logControllerButtons(controller)
+            setupControllerInput(controller: controller)
+        }
+
+        if let controller = notification.object as? GCController {
             setupControllerInput(controller: controller)
             print("🎮 Controller connected")
         }
+        refreshConnectedState()
     }
 
     @objc private func controllerDidDisconnect(notification: Notification) {
         print("🎮 Controller disconnected")
         clearAllInputs()
+        refreshConnectedState()
     }
     
     private func clearAllInputs() {
@@ -70,9 +79,62 @@ class BluetoothControllerService {
         }
     }
 
+    private func logControllerButtons(_ controller: GCController) {
+        guard let gamepad = controller.extendedGamepad else {
+            print("❌ No extended gamepad profile for \(controller.vendorName ?? "unknown")")
+            return
+        }
+
+        print("🎮 Controller connected: \(controller.vendorName ?? "Unknown")")
+        print("Product category: \(controller.productCategory)")
+        print("--------------------------------------------")
+
+        // Standard buttons
+        let standardButtons: [(String, GCControllerButtonInput?)] = [
+            ("A", gamepad.buttonA),
+            ("B", gamepad.buttonB),
+            ("X", gamepad.buttonX),
+            ("Y", gamepad.buttonY),
+            ("L1", gamepad.leftShoulder),
+            ("R1", gamepad.rightShoulder),
+            ("L2", gamepad.leftTrigger),
+            ("R2", gamepad.rightTrigger),
+            ("Menu / Start", gamepad.buttonMenu),
+            ("Options / Select", gamepad.buttonOptions),
+            ("Home / Guide", gamepad.buttonHome),
+        ]
+
+        for (name, button) in standardButtons where button != nil {
+            print("✅ \(name)")
+        }
+
+        // Try to find *any* extra buttons (works iOS 15+)
+        if #available(iOS 15.0, *) {
+            let knownSet = Set(standardButtons.compactMap { $0.1 })
+            let all = gamepad.allButtons
+            let extras = all.filter { !knownSet.contains($0) }
+            print("Extra buttons found: \(extras.count)")
+            for (i, b) in extras.enumerated() {
+                print("🔹 Extra button \(i): \(b)")
+            }
+        } else {
+            print("⚠️ allButtons API unavailable (requires iOS 15+).")
+        }
+
+        print("--------------------------------------------")
+    }
+
+
+    
+    
     private func setupControllerInput(controller: GCController) {
         guard let gamepad = controller.extendedGamepad else { return }
+        DispatchQueue.main.async {
+            gamepad.buttonHome?.preferredSystemGestureState = .disabled
+            gamepad.buttonMenu.preferredSystemGestureState = .disabled
+            gamepad.buttonOptions?.preferredSystemGestureState = .disabled
 
+        }
         // Button handlers
         gamepad.buttonA.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .a, pressed: pressed)
@@ -85,6 +147,12 @@ class BluetoothControllerService {
         }
         gamepad.buttonY.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .y, pressed: pressed)
+        }
+        gamepad.leftShoulder.pressedChangedHandler = { [weak self] _, _, pressed in
+            self?.delegate?.controllerDidPress(action: .l, pressed: pressed)
+        }
+        gamepad.rightShoulder.pressedChangedHandler = { [weak self] _, _, pressed in
+            self?.delegate?.controllerDidPress(action: .r, pressed: pressed)
         }
 
         // D-pad handlers
@@ -105,7 +173,7 @@ class BluetoothControllerService {
         gamepad.buttonOptions?.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .select, pressed: pressed)
         }
-        
+            
         gamepad.buttonHome?.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .menu, pressed: pressed)
         }
@@ -170,4 +238,11 @@ class BluetoothControllerService {
             return y > 0 ? .up : .down
         }
     }
+    
+    private func refreshConnectedState() {
+        DispatchQueue.main.async {
+            self.isControllerConnected = !GCController.controllers().isEmpty
+        }
+    }
+    
 }

@@ -15,17 +15,32 @@ class PauseGameViewModel: ObservableObject {
     @Published var selectedMenuIndex: Int = 0
     @Published var showPauseMenu: Bool = false
     @Published private(set) var isExiting: Bool = false
-    
-    let menuItems = ["Resume", "Exit Game"]
-    private var exitAction: (() -> Task<Void, Never>)?
-    private weak var consoleManager: ConsoleCoreManager?
-    
-    init(consoleManager: ConsoleCoreManager) {
+    @Published var showCheatCodesView: Bool = false
+    @Published var showSaveStateView: Bool = false
+    @Published var showLoadStateView: Bool = false
+
+    @Published var menuItems: [PauseMenuItem] = [
+        .resume,
+        .saveState,
+        .loadState,
+        .cheatCodes,
+        .fastForward(false),
+        .exit
+    ]
+
+    @Published var isFastForwardEnabled: Bool = false
+
+    static var exitAction: (() -> Task<Void, Never>)?
+    weak var consoleManager: ConsoleCoreManager?
+    let currentRom: Rom
+
+    init(consoleManager: ConsoleCoreManager, currentRom: Rom) {
         self.consoleManager = consoleManager
+        self.currentRom = currentRom
     }
     
     func setExitAction(_ action: @escaping () -> Task<Void, Never>) {
-        self.exitAction = action
+        Self.exitAction = action
     }
     
     func showPauseMenuOnForeground() {
@@ -41,6 +56,7 @@ class PauseGameViewModel: ObservableObject {
         consoleManager.pauseEmulation()
         selectedMenuIndex = 0
     }
+    
     
     func ensurePaused() {
         print("⏸️ Ensuring game is paused")
@@ -104,38 +120,67 @@ class PauseGameViewModel: ObservableObject {
     }
     
     func handleControllerAction(_ action: SoolraControllerAction, pressed: Bool) {
-        // Don't handle inputs during exit
-        guard !isExiting else {
-            print("⏸️ Cannot handle controller action - game is exiting")
-            return
-        }
-        
+        guard !isExiting, pressed else { return }
+
         print("⏸️ Handling controller action: \(action), pressed: \(pressed)")
-        
+
         Task { @MainActor in
+            let maxIndex = menuItems.count - 1
+            let columns = 2
+
             switch action {
             case .up:
-                selectedMenuIndex = max(0, selectedMenuIndex - 1)
-                print("⏸️ Menu selection moved up to index: \(selectedMenuIndex)")
-            case .down:
-                selectedMenuIndex = min(menuItems.count - 1, selectedMenuIndex + 1)
-                print("⏸️ Menu selection moved down to index: \(selectedMenuIndex)")
-            case .menu, .a:
-                switch selectedMenuIndex {
-                case 0:
-                    print("⏸️ Resume selected")
-                    togglePause()
-                case 1:
-                    print("⏸️ Exit selected")
-                    initiateExit()
-                default:
-                    break
+                if selectedMenuIndex - columns >= 0 {
+                    selectedMenuIndex -= columns
+                    print("⏸️ Menu moved up to \(selectedMenuIndex)")
                 }
+
+            case .down:
+                if selectedMenuIndex + columns <= maxIndex {
+                    selectedMenuIndex += columns
+                    print("⏸️ Menu moved down to \(selectedMenuIndex)")
+                }
+
+            case .left:
+                if selectedMenuIndex % columns > 0 {
+                    selectedMenuIndex -= 1
+                    print("⏸️ Menu moved left to \(selectedMenuIndex)")
+                }
+
+            case .right:
+                if selectedMenuIndex % columns < columns - 1 && selectedMenuIndex + 1 <= maxIndex {
+                    selectedMenuIndex += 1
+                    print("⏸️ Menu moved right to \(selectedMenuIndex)")
+                }
+
+            case .menu, .a:
+                handleSelection()
+
             default:
                 break
             }
         }
     }
+    
+    private func handleSelection() {
+        switch menuItems[selectedMenuIndex] {
+        case .resume:
+            togglePause()
+        case .exit:
+            initiateExit()
+        case .cheatCodes:
+            showCheatCodesView = true
+        case .fastForward(_):
+            isFastForwardEnabled.toggle()
+            consoleManager?.toggleFastForward()
+            menuItems[selectedMenuIndex] = .fastForward(isFastForwardEnabled)
+        case .saveState:
+            showSaveStateView = true
+        case .loadState:
+            showLoadStateView = true
+        }
+    }
+
     
     func initiateExit() {
         guard !isExiting else { return }
@@ -146,10 +191,44 @@ class PauseGameViewModel: ObservableObject {
         showPauseMenu = true
         
         // Start exit process and await its completion
-        if let action = exitAction {
+        if let action = PauseGameViewModel.exitAction {
             Task {
                 await action().value
             }
         }
     }
+}
+enum PauseMenuItem: Identifiable {
+    case resume
+    case exit
+    case cheatCodes
+    case fastForward(Bool)
+    case saveState
+    case loadState
+
+    var id: String {
+        switch self {
+        case .resume: return "resume"
+        case .exit: return "exit"
+        case .cheatCodes: return "cheatCodes"
+        case .fastForward: return "fastForward"
+        case .saveState: return "saveState"
+        case .loadState: return "loadState"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .resume: return "Resume"
+        case .exit: return "Exit Game"
+        case .cheatCodes: return "Cheat Codes"
+        case .fastForward(let isOn): return "Fast Forward: \(isOn ? "On" : "Off")"
+        case .saveState: return "Save Game"
+        case .loadState: return "Load Game"
+        }
+    }
+    var isExit: Bool {
+            if case .exit = self { return true }
+            else               { return false }
+        }
 }

@@ -36,5 +36,11 @@ public protocol ConsoleCore {
     func performFrame() -> FrameType
     func pressButton(_ action: SoolraControllerAction)
     func releaseButton(_ action: SoolraControllerAction)
+    func activateCheat(_ cheat: Cheat)
+    func resetCheats()
+    func setPlaybackRate(_ rate: Float)
+    func captureScreenshot(to: URL)
+    func saveGameState(to: URL)
+    func loadGameState(from: URL)
 }
 

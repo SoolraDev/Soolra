@@ -19,7 +19,9 @@ public class NESAudioMaker : AudioMakerProtocol {
         private let audioConverter: AVAudioConverter?
         private let inputFormat: AVAudioFormat
         private let format: AVAudioFormat
-        
+        private var timePitchNode: AVAudioUnitTimePitch?
+        private var currentRate: Float = 1.0
+    
         // Audio engine components
         private var ae: AVAudioEngine
         private var player: AVAudioPlayerNode
@@ -75,13 +77,21 @@ public class NESAudioMaker : AudioMakerProtocol {
         private func setupAudio() {
             print("🎵 Setting up NES audio...")
             
-            // Setup audio processing chain
+            // Create time pitch unit
+            let timePitch = AVAudioUnitTimePitch()
+            timePitch.rate = currentRate
+            self.timePitchNode = timePitch
+
+            // Attach to engine
             ae.attach(player)
+            ae.attach(timePitch)
             ae.attach(mainMixer)
-            
-            // Connect nodes: player -> mixer -> output
-            ae.connect(player, to: mainMixer, format: format)
+
+            // Connect: player -> timePitch -> mixer -> output
+            ae.connect(player, to: timePitch, format: format)
+            ae.connect(timePitch, to: mainMixer, format: format)
             ae.connect(mainMixer, to: ae.outputNode, format: format)
+
             
             // Set conservative volume
             mainMixer.volume = 0.8
@@ -219,5 +229,10 @@ public class NESAudioMaker : AudioMakerProtocol {
             NotificationCenter.default.removeObserver(self)
             stop()
         }
+    
+    public func setPlaybackRate(_ rate: Float) {
+        currentRate = rate;
+    }
+
     }
 

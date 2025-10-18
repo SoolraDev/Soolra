@@ -14,6 +14,10 @@ import MetalKit
 
 // MARK: - GBA Core Implementation
 class GBACore: ConsoleCore {
+
+    
+
+    
     typealias FrameType = GBAFrame
     typealias ConsoleRendererType = GBARenderer
     typealias AudioMakerType = GBAAudioMaker
@@ -32,6 +36,7 @@ class GBACore: ConsoleCore {
     private var startTime: TimeInterval = Date().timeIntervalSinceReferenceDate
     private var frameTimer: AnyCancellable?
     public var bridge: GBABridge?
+    public var autosavePath: URL
     
     // Add state tracking
     private var isCleaningUp = false
@@ -68,7 +73,7 @@ class GBACore: ConsoleCore {
     private var firstFrame = false;
     
     // Required initializer
-    required init(romPath: URL) throws {
+    required init(romPath: URL, autosavePath: URL) throws {
         print("📝 Loading initial ROM from path: \(romPath.path)")
         
         // Verify the file exists and is readable
@@ -85,7 +90,7 @@ class GBACore: ConsoleCore {
         startTime = Date().timeIntervalSinceReferenceDate
         lastFrameTime = startTime
         frameCount = 0
-        
+        self.autosavePath = autosavePath
         // Initialize with first ROM
         try initialize(withROM: romPath)
     }
@@ -122,6 +127,7 @@ class GBACore: ConsoleCore {
     }
     
     func pause() {
+        self.autoSave()
         isPaused = true
         audioMaker?.pause()
         renderer?.pause()
@@ -135,6 +141,7 @@ class GBACore: ConsoleCore {
     
     func shutdown() {
         print("🛑 Shutting down GBA Core")
+        self.autoSave()
         frameTimer?.cancel()
         audioMaker?.stop()
         bridge?.stop()
@@ -159,6 +166,7 @@ class GBACore: ConsoleCore {
         
         // Start the bridge with new ROM
         bridge?.start(withGameURL: romPath)
+        self.loadAutoSave()
         
         // Start audio playback if available
         _audioMaker?.play()
@@ -178,7 +186,8 @@ class GBACore: ConsoleCore {
             }
             return GBAFrame(data: UnsafeMutablePointer<UInt16>(OpaquePointer(videoBuffer)))
         }
-        
+    
+
         // Run one frame of emulation
         bridge?.runFrame(processVideo: true)
         
@@ -204,6 +213,8 @@ class GBACore: ConsoleCore {
         // Return frame directly from bridge's buffer
         return GBAFrame(data: UnsafeMutablePointer<UInt16>(OpaquePointer(videoBuffer)))
     }
+
+    
     
     func pressButton(_ action: SoolraControllerAction) {
         // Prevent input during cleanup
@@ -243,9 +254,9 @@ class GBACore: ConsoleCore {
             bridge.activateInput(Int(GBAButton.start.rawValue))
         case .select:
             bridge.activateInput(Int(GBAButton.select.rawValue))
-        case .x:
+        case .x, .r:
             bridge.activateInput(Int(GBAButton.r.rawValue))  // Map X to R trigger
-        case .y:
+        case .y, .l:
             bridge.activateInput(Int(GBAButton.l.rawValue))  // Map Y to L trigger
         case .menu, .upRight, .upLeft, .downRight, .downLeft:
             // Explicitly ignore unsupported buttons
@@ -277,9 +288,9 @@ class GBACore: ConsoleCore {
             bridge.deactivateInput(Int(GBAButton.start.rawValue))
         case .select:
             bridge.deactivateInput(Int(GBAButton.select.rawValue))
-        case .x:
+        case .x, .r:
             bridge.deactivateInput(Int(GBAButton.r.rawValue))  // Map X to R trigger
-        case .y:
+        case .y, .l:
             bridge.deactivateInput(Int(GBAButton.l.rawValue))  // Map Y to L trigger
         case .menu, .upRight, .upLeft, .downRight, .downLeft:
             // Explicitly ignore unsupported buttons
@@ -298,4 +309,46 @@ class GBACore: ConsoleCore {
         
         print("✅ GBA emulation started")
     }
+    func activateCheat(_ cheat: Cheat) {
+        bridge?.activateCheat(cheat)
+    }
+    
+    
+    func resetCheats() {
+        bridge?.resetCheats()
+    }
+    
+    func setPlaybackRate(_ rate: Float) {
+        audioMaker?.setPlaybackRate(rate)
+    }
+    
+    func captureScreenshot(to url: URL) {
+        guard let buffer = bridge?.videoBufferPublic else {
+            print("❌ No video buffer available for screenshot")
+            return
+        }
+        ScreenshotSaver.saveRGB565BufferAsPNG(buffer: buffer, width: 240, height: 160, to: url)
+    }
+    
+    func loadGameState(from: URL) {
+        bridge?.loadGameState(from: from)
+    }
+    
+    func saveGameState(to: URL)
+    {
+        bridge?.saveGameState(to: to)
+    }
+    
+    func autoSave()
+    {
+        bridge?.saveAutosave(to: self.autosavePath)
+    }
+    
+    func loadAutoSave()
+    {
+        bridge?.loadAutosave(from: self.autosavePath)
+    }
+    
+    
+    
 }
