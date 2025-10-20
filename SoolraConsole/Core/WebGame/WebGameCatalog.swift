@@ -14,6 +14,7 @@ enum WebGameCatalog {
     static func all() -> [WebGame] {
 //        let u2048 = URL(string: "https://axilleasiv.github.io/vue2048/")!
         let u2048 = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/vue2048/")!
+        let uStacker = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/stacker/")!
 //        let yabalali_trivia = URL(string: "https://stg-yabaleli.b-cdn.net/trivia_game.html")!
 //        let uHextris = URL(string: "https://hextris.io/")!
         let uHextris = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/hextris/")!
@@ -32,7 +33,7 @@ enum WebGameCatalog {
             WebGame(
                 name: "Hextris",
                 url: uHextris,
-                icon: UIImage(named: "c"),
+                icon: UIImage(named: "Hextris"),
                 makeViewModel: { HextrisViewModel(startURL: uHextris) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(HextrisWrapper(viewModel: vm as! HextrisViewModel, onClose: onClose))
@@ -45,6 +46,15 @@ enum WebGameCatalog {
                 makeViewModel: { TowerViewModel(startURL: uTower) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(TowerWrapper(viewModel: vm as! TowerViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Stacker",
+                url: uStacker,
+                icon: UIImage(named: "Stacker"),
+                makeViewModel: { StackerViewModel(startURL: uStacker) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(StackerWrapper(viewModel: vm as! StackerViewModel, onClose: onClose))
                 }
             ),
 //            WebGame(
