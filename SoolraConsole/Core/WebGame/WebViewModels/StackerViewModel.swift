@@ -9,7 +9,9 @@ final class StackerViewModel: ObservableObject, WebGameViewModel, ControllerServ
 
     init(startURL: URL) { self.startURL = startURL }
 
+    
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {
+        print("Action: \(action), pressed: \(pressed)")
         func handle(_ which: Int, _ key: String, _ code: String) {
             pressed ? keyDown(which: which, key: key, codeName: code)
                     : keyUp(which: which, key: key, codeName: code)
@@ -27,6 +29,7 @@ final class StackerViewModel: ObservableObject, WebGameViewModel, ControllerServ
             handle(40, "ArrowDown", "ArrowDown")
 
         case .a, .b, .y, .start:
+            
             confirmOrTap()
 
         case .x, .select, .menu:
@@ -67,60 +70,6 @@ final class StackerViewModel: ObservableObject, WebGameViewModel, ControllerServ
         """)
     }
 
-//    // MARK: - Prefer reload, then start; else tap screen (pointer+touch+mouse)
-//    private func pressSpecialButtonsOrTap() {
-//        injectJS(#"""
-//        (function(){
-//          function visible(el){
-//            if(!el) return false;
-//            const s=getComputedStyle(el);
-//            if(s.display==='none'||s.visibility==='hidden'||+s.opacity===0) return false;
-//            const r=el.getBoundingClientRect(); return r.width>0 && r.height>0;
-//          }
-//          function centerRect(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2}; }
-//          function clickSequence(target, x, y){
-//            try{ target.focus(); }catch(_){}
-//
-//            // Pointer events
-//            try{ target.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,clientX:x,clientY:y,pointerType:'touch',buttons:1})); }catch(_){}
-//            try{ target.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,clientX:x,clientY:y,pointerType:'touch'})); }catch(_){}
-//
-//            // Touch events (for engines that only listen to touch)
-//            try{
-//              const touchInit={identifier:Date.now(), target:target, clientX:x, clientY:y, radiusX:1, radiusY:1, force:1};
-//              const t = new Touch(touchInit);
-//              const touches = new TouchList(t);
-//              const none = new TouchList();
-//              target.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,cancelable:true,touches,changedTouches:touches,targetTouches:touches}));
-//              target.dispatchEvent(new TouchEvent('touchend',{bubbles:true,cancelable:true,touches:none,changedTouches:touches,targetTouches:none}));
-//            }catch(_){}
-//
-//            // Mouse events (as fallback)
-//            target.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true,clientX:x,clientY:y,buttons:1}));
-//            target.dispatchEvent(new MouseEvent('mouseup',{bubbles:true,cancelable:true,clientX:x,clientY:y}));
-//            try{ target.click(); }catch(_){}
-//          }
-//          function clickCenter(el){ const p=centerRect(el); clickSequence(el, p.x, p.y); }
-//
-//          // Prefer the Game Over reload button first, then the start button
-//          const selectors = ['.over-button-b.js-reload', '.start'];
-//          for (const sel of selectors){
-//            const el = Array.from(document.querySelectorAll(sel)).find(visible);
-//            if (visible(el)) { clickCenter(el); return true; }
-//          }
-//
-//          // Fallback: tap the game surface or center of viewport
-//          const canvas = Array.from(document.querySelectorAll('canvas')).find(visible);
-//          if (canvas) { clickCenter(canvas); return true; }
-//
-//          // Last resort: element under viewport center
-//          const cx = Math.floor(window.innerWidth/2), cy = Math.floor(window.innerHeight/2);
-//          const target = document.elementFromPoint(cx, cy) || document.body || document.documentElement;
-//          clickSequence(target, cx, cy);
-//          return true;
-//        })();
-//        """#)
-//    }
     private func pressSpecialButtonsOrTap() {
         injectJS(#"""
         (function () {

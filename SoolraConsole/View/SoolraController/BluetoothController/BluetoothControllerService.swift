@@ -137,6 +137,7 @@ class BluetoothControllerService: ObservableObject {
         }
         // Button handlers
         gamepad.buttonA.pressedChangedHandler = { [weak self] _, _, pressed in
+            print("🟢 [RAW] A button pressed=\(pressed) at \(Date())")
             self?.delegate?.controllerDidPress(action: .a, pressed: pressed)
         }
         gamepad.buttonB.pressedChangedHandler = { [weak self] _, _, pressed in

@@ -37,6 +37,7 @@
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
 		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
+		92965FEB2EA7C72300D877C3 /* Stacker.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FEA2EA7C72300D877C3 /* Stacker.png */; };
 		92A582922EA652C50044FE05 /* StackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A582912EA652C50044FE05 /* StackerViewModel.swift */; };
 		92A582942EA652E30044FE05 /* StackerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A582932EA652E30044FE05 /* StackerWrapper.swift */; };
 		92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */; };
@@ -241,6 +242,7 @@
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
+		92965FEA2EA7C72300D877C3 /* Stacker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stacker.png; sourceTree = "<group>"; };
 		92A582912EA652C50044FE05 /* StackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackerViewModel.swift; sourceTree = "<group>"; };
 		92A582932EA652E30044FE05 /* StackerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackerWrapper.swift; sourceTree = "<group>"; };
 		92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewContainer.swift; sourceTree = "<group>"; };
@@ -706,6 +708,7 @@
 				92EF618C2E31050F008D609E /* The Axe.png */,
 				92EF618D2E31050F008D609E /* The Purple Night.png */,
 				92EF618E2E31050F008D609E /* Tigermoth.png */,
+				92965FEA2EA7C72300D877C3 /* Stacker.png */,
 				92EF618F2E31050F008D609E /* Titei Senki.png */,
 				92EF61902E31050F008D609E /* Tremblay Island.png */,
 				92EF61912E31050F008D609E /* WaimanuGBA.png */,
@@ -963,6 +966,7 @@
 				92EF621A2E31050F008D609E /* openNesBreakout.png in Resources */,
 				92EF621B2E31050F008D609E /* WhereIsTheBall.gba in Resources */,
 				92EF621C2E31050F008D609E /* Dungeon Puzzlers Lament.png in Resources */,
+				92965FEB2EA7C72300D877C3 /* Stacker.png in Resources */,
 				92EF621D2E31050F008D609E /* GBA Puzzle Bobble.gba in Resources */,
 				92EF621E2E31050F008D609E /* Nomad 2.gba in Resources */,
 				92EF621F2E31050F008D609E /* Feline.gba in Resources */,

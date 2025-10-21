@@ -22,6 +22,24 @@ enum WebGameCatalog {
 
         return [
             WebGame(
+                name: "Stacker",
+                url: uStacker,
+                icon: UIImage(named: "Stacker"),
+                makeViewModel: { StackerViewModel(startURL: uStacker) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(StackerWrapper(viewModel: vm as! StackerViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Tower",
+                url: uTower,
+                icon: UIImage(named: "Tower"),
+                makeViewModel: { TowerViewModel(startURL: uTower) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(TowerWrapper(viewModel: vm as! TowerViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
                 name: "2048",
                 url: u2048,
                 icon: UIImage(named: "2048"),
@@ -39,24 +57,7 @@ enum WebGameCatalog {
                     AnyView(HextrisWrapper(viewModel: vm as! HextrisViewModel, onClose: onClose))
                 }
             ),
-            WebGame(
-                name: "Tower",
-                url: uTower,
-                icon: UIImage(named: "Tower"),
-                makeViewModel: { TowerViewModel(startURL: uTower) as any WebGameViewModel },
-                makeWrapper: { vm, onClose in
-                    AnyView(TowerWrapper(viewModel: vm as! TowerViewModel, onClose: onClose))
-                }
-            ),
-            WebGame(
-                name: "Stacker",
-                url: uStacker,
-                icon: UIImage(named: "Stacker"),
-                makeViewModel: { StackerViewModel(startURL: uStacker) as any WebGameViewModel },
-                makeWrapper: { vm, onClose in
-                    AnyView(StackerWrapper(viewModel: vm as! StackerViewModel, onClose: onClose))
-                }
-            ),
+
 //            WebGame(
 //                name: "Yabalali Trivia",
 //                url: yabalali_trivia,
