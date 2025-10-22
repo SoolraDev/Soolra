@@ -33,7 +33,7 @@ final class TowerViewModel: ObservableObject, WebGameViewModel, ControllerServic
                     self?.sendKey(type: "keyup", which: 32, key: " ", codeName: "Space")
                 }
             }
-//            handle(32, " ", "Space")
+
 
 
         case .right: // A normally Right

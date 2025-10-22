@@ -21,15 +21,7 @@ enum WebGameCatalog {
         let uTower = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/tower/")!
 
         return [
-            WebGame(
-                name: "Stacker",
-                url: uStacker,
-                icon: UIImage(named: "Stacker"),
-                makeViewModel: { StackerViewModel(startURL: uStacker) as any WebGameViewModel },
-                makeWrapper: { vm, onClose in
-                    AnyView(StackerWrapper(viewModel: vm as! StackerViewModel, onClose: onClose))
-                }
-            ),
+
             WebGame(
                 name: "Tower",
                 url: uTower,
@@ -57,7 +49,15 @@ enum WebGameCatalog {
                     AnyView(HextrisWrapper(viewModel: vm as! HextrisViewModel, onClose: onClose))
                 }
             ),
-
+            WebGame(
+                name: "Stacker",
+                url: uStacker,
+                icon: UIImage(named: "Stacker"),
+                makeViewModel: { StackerViewModel(startURL: uStacker) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(StackerWrapper(viewModel: vm as! StackerViewModel, onClose: onClose))
+                }
+            ),
 //            WebGame(
 //                name: "Yabalali Trivia",
 //                url: yabalali_trivia,
