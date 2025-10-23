@@ -73,18 +73,20 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var hSize
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
+    @State private var selectedCarouselID: UUID? = nil
+
     private let dialogSpring = Animation.spring(response: 0.32, dampingFraction: 0.86, blendDuration: 0.15)
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
-    var backgroundImage: UIImage? {
-        guard let (kind, item) = focusedLibraryTuple() else { return nil }
-        switch kind {
-        case .rom(let rom):
-            return rom.imageData.flatMap(UIImage.init(data:))
-        case .web:
-            return item.iconImage
-        }
-    }
+//    var backgroundImage: UIImage? {
+//        guard let (kind, item) = focusedLibraryTuple() else { return nil }
+//        switch kind {
+//        case .rom(let rom):
+//            return rom.imageData.flatMap(UIImage.init(data:))
+//        case .web:
+//            return item.iconImage
+//        }
+//    }
 
 
     
@@ -101,34 +103,40 @@ struct HomeView: View {
                         let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
                         
                         ZStack {
-                            if let bgImage = backgroundImage {
-                                Image(uiImage: bgImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width, height: totalHeight)
-                                    .clipped()
-                                    .edgesIgnoringSafeArea(.all)
-                                    .overlay(
-                                        LinearGradient(
-                                            gradient: Gradient(stops: [
-                                                .init(color: Color.black.opacity(0.7), location: 0),
-                                                .init(color: Color.black.opacity(0.7), location: 0.3),
-                                                .init(color: Color.black.opacity(0.8), location: 0.7),
-                                                .init(color: Color.black.opacity(0.95), location: 1.0)
-                                            ]),
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                            } else {
-                                Image("home-background")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width, height: totalHeight)
-                                    .clipped()
-                                    .edgesIgnoringSafeArea(.all)
-                            }
-                            
+//                            if let bgImage = backgroundImage {
+//                                Image(uiImage: bgImage)
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .frame(width: geometry.size.width, height: totalHeight)
+//                                    .clipped()
+//                                    .edgesIgnoringSafeArea(.all)
+//                                    .overlay(
+//                                        LinearGradient(
+//                                            gradient: Gradient(stops: [
+//                                                .init(color: Color.black.opacity(0.7), location: 0),
+//                                                .init(color: Color.black.opacity(0.7), location: 0.3),
+//                                                .init(color: Color.black.opacity(0.8), location: 0.7),
+//                                                .init(color: Color.black.opacity(0.95), location: 1.0)
+//                                            ]),
+//                                            startPoint: .top,
+//                                            endPoint: .bottom
+//                                        )
+//                                    )
+//                            } else {
+////                                Image("home-background")
+//                                Image("new-bg")
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .frame(width: geometry.size.width, height: totalHeight)
+//                                    .clipped()
+//                                    .edgesIgnoringSafeArea(.all)
+//                            }
+                             Image("home-background")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: geometry.size.width, height: totalHeight)
+                                .clipped()
+                                .edgesIgnoringSafeArea(.all)
                             
                             
                             
@@ -206,42 +214,51 @@ struct HomeView: View {
                             
                             
                             
-                            if let (kind, item) = focusedLibraryTuple() {
-                                switch kind {
-                                case .rom(let rom):
-                                    CurrentItemView(
-                                        currentRom: rom,
-                                        currentView: $currentView,
-                                        focusedButtonIndex: $viewModel.focusedButtonIndex
-                                    )
-                                case .web:
-                                    CurrentItemView(
-                                        currentRom: nil,
-                                        currentView: $currentView,
-                                        focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                        addRomAction: nil,
-                                        overrideImage: item.iconImage,        // <— web-game icon
-                                        overrideTitle: item.displayName       // <— web-game name
-                                    )
-                                }
-                            } else {
-                                CurrentItemView(
-                                    currentRom: nil,
-                                    currentView: $currentView,
-                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                    addRomAction: { viewModel.isPresented = true }
-                                )
+//                            if let (kind, item) = focusedLibraryTuple() {
+//                                switch kind {
+//                                case .rom(let rom):
+//                                    CurrentItemView(
+//                                        currentRom: rom,
+//                                        currentView: $currentView,
+//                                        focusedButtonIndex: $viewModel.focusedButtonIndex
+//                                    )
+//                                case .web:
+//                                    CurrentItemView(
+//                                        currentRom: nil,
+//                                        currentView: $currentView,
+//                                        focusedButtonIndex: $viewModel.focusedButtonIndex,
+//                                        addRomAction: nil,
+//                                        overrideImage: item.iconImage,        // <— web-game icon
+//                                        overrideTitle: item.displayName       // <— web-game name
+//                                    )
+//                                }
+//                            } else {
+//                                CurrentItemView(
+//                                    currentRom: nil,
+//                                    currentView: $currentView,
+//                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
+//                                    addRomAction: { viewModel.isPresented = true }
+//                                )
+//                            }
+//                            
+//                            
+//                            TitleSortingView(titleText: "All Games", sortingText: "A-Z")
+//                                .padding(.top, 10)
+                            
+                            VerticalGameCarousel(
+                                focusedIndex: $viewModel.focusedButtonIndex,
+                                roms: roms
+                            ) { rom in
+                                navigateToRom(rom)
                             }
-                            
-                            
-                            TitleSortingView(titleText: "All Games", sortingText: "A-Z")
-                                .padding(.top, 10)
-                            
-                            if items.isEmpty && !isLoading {
-                                emptyView
-                            } else {
-                                romGridView
-                            }
+                            .padding(.top, 8)
+
+//                            
+//                            if items.isEmpty && !isLoading {
+//                                emptyView
+//                            } else {
+//                                romGridView
+//                            }
                             
                             SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
                                 viewModel.controllerDidPress(action: action, pressed: pressed)

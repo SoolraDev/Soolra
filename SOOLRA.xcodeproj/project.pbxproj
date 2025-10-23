@@ -38,6 +38,10 @@
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
 		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
 		92965FEB2EA7C72300D877C3 /* Stacker.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FEA2EA7C72300D877C3 /* Stacker.png */; };
+		92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */; };
+		92965FF12EAA6DD000D877C3 /* Famidash.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF02EAA6DD000D877C3 /* Famidash.png */; };
+		92965FF32EAA6DE200D877C3 /* Codemaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF22EAA6DE200D877C3 /* Codemaster.png */; };
+		92965FF52EAA70A800D877C3 /* Codemaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF42EAA70A800D877C3 /* Codemaster.png */; };
 		92A582922EA652C50044FE05 /* StackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A582912EA652C50044FE05 /* StackerViewModel.swift */; };
 		92A582942EA652E30044FE05 /* StackerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A582932EA652E30044FE05 /* StackerWrapper.swift */; };
 		92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */; };
@@ -154,7 +158,6 @@
 		92EF62382E31050F008D609E /* WaimanuGBA.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61D82E31050F008D609E /* WaimanuGBA.gba */; };
 		92EF62392E31050F008D609E /* Chase.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61562E31050F008D609E /* Chase.png */; };
 		92EF623A2E31050F008D609E /* Blowhole.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF619B2E31050F008D609E /* Blowhole.gba */; };
-		92EF623B2E31050F008D609E /* CodeMaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF615A2E31050F008D609E /* CodeMaster.png */; };
 		92EF623C2E31050F008D609E /* Smart Gamble.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61CD2E31050F008D609E /* Smart Gamble.gba */; };
 		92EF623D2E31050F008D609E /* Inheritors of the Oubliette.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616F2E31050F008D609E /* Inheritors of the Oubliette.png */; };
 		92EF623E2E31050F008D609E /* Attack on Voxelburg.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61502E31050F008D609E /* Attack on Voxelburg.png */; };
@@ -182,7 +185,6 @@
 		92EF62542E31050F008D609E /* THCTW.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF618B2E31050F008D609E /* THCTW.png */; };
 		92EF62552E31050F008D609E /* Famidash.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61AA2E31050F008D609E /* Famidash.nes */; };
 		92EF62562E31050F008D609E /* PipeSpin.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF617C2E31050F008D609E /* PipeSpin.png */; };
-		92EF62572E31050F008D609E /* Famidash.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61632E31050F008D609E /* Famidash.png */; };
 		92EF62582E31050F008D609E /* RavenX.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61822E31050F008D609E /* RavenX.png */; };
 		92EF62592E31050F008D609E /* Battleship.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61512E31050F008D609E /* Battleship.png */; };
 		92EF625A2E31050F008D609E /* Smart Gamble.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61862E31050F008D609E /* Smart Gamble.png */; };
@@ -243,6 +245,10 @@
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
 		92965FEA2EA7C72300D877C3 /* Stacker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stacker.png; sourceTree = "<group>"; };
+		92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalGameCarousel.swift; sourceTree = "<group>"; };
+		92965FF02EAA6DD000D877C3 /* Famidash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Famidash.png; sourceTree = "<group>"; };
+		92965FF22EAA6DE200D877C3 /* Codemaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Codemaster.png; sourceTree = "<group>"; };
+		92965FF42EAA70A800D877C3 /* Codemaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Codemaster.png; sourceTree = "<group>"; };
 		92A582912EA652C50044FE05 /* StackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackerViewModel.swift; sourceTree = "<group>"; };
 		92A582932EA652E30044FE05 /* StackerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackerWrapper.swift; sourceTree = "<group>"; };
 		92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewContainer.swift; sourceTree = "<group>"; };
@@ -277,7 +283,6 @@
 		92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Chocolate Hunter Runa.png"; sourceTree = "<group>"; };
 		92EF61582E31050F008D609E /* Christmas Advance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Christmas Advance.png"; sourceTree = "<group>"; };
 		92EF61592E31050F008D609E /* CocoBattleRoyale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CocoBattleRoyale.png; sourceTree = "<group>"; };
-		92EF615A2E31050F008D609E /* CodeMaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CodeMaster.png; sourceTree = "<group>"; };
 		92EF615B2E31050F008D609E /* Codename Monkey Bots.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Codename Monkey Bots.png"; sourceTree = "<group>"; };
 		92EF615C2E31050F008D609E /* Covid Adventure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Covid Adventure.png"; sourceTree = "<group>"; };
 		92EF615D2E31050F008D609E /* dabg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dabg.png; sourceTree = "<group>"; };
@@ -286,7 +291,6 @@
 		92EF61602E31050F008D609E /* Dungeon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Dungeon.png; sourceTree = "<group>"; };
 		92EF61612E31050F008D609E /* Dungeon Puzzlers Lament.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dungeon Puzzlers Lament.png"; sourceTree = "<group>"; };
 		92EF61622E31050F008D609E /* Falling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Falling.png; sourceTree = "<group>"; };
-		92EF61632E31050F008D609E /* Famidash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Famidash.png; sourceTree = "<group>"; };
 		92EF61642E31050F008D609E /* Feline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Feline.png; sourceTree = "<group>"; };
 		92EF61652E31050F008D609E /* Gabdeo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Gabdeo.png; sourceTree = "<group>"; };
 		92EF61662E31050F008D609E /* Gba Microjam 23.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gba Microjam 23.png"; sourceTree = "<group>"; };
@@ -557,6 +561,7 @@
 		183DF1D62862FBD10088FE1C /* View */ = {
 			isa = PBXGroup;
 			children = (
+				92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */,
 				92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */,
 				92E02F622E3F70CF0002B6E6 /* FullScreenWebView.swift */,
 				92EF51842E2693B0008D609E /* LicenseListView.swift */,
@@ -646,6 +651,7 @@
 				92EF61502E31050F008D609E /* Attack on Voxelburg.png */,
 				92EF61512E31050F008D609E /* Battleship.png */,
 				92EF61522E31050F008D609E /* Blast Arena.png */,
+				92965FF42EAA70A800D877C3 /* Codemaster.png */,
 				92EF61532E31050F008D609E /* Blind Jump.png */,
 				92EF61542E31050F008D609E /* Blowhole.png */,
 				92EF61552E31050F008D609E /* Cats Curse.png */,
@@ -653,16 +659,16 @@
 				92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */,
 				92EF61582E31050F008D609E /* Christmas Advance.png */,
 				92EF61592E31050F008D609E /* CocoBattleRoyale.png */,
-				92EF615A2E31050F008D609E /* CodeMaster.png */,
 				92EF615B2E31050F008D609E /* Codename Monkey Bots.png */,
 				92EF615C2E31050F008D609E /* Covid Adventure.png */,
 				92EF615D2E31050F008D609E /* dabg.png */,
 				92EF615E2E31050F008D609E /* DCPR.png */,
+				92965FF22EAA6DE200D877C3 /* Codemaster.png */,
 				92EF615F2E31050F008D609E /* Derelict.png */,
 				92EF61602E31050F008D609E /* Dungeon.png */,
 				92EF61612E31050F008D609E /* Dungeon Puzzlers Lament.png */,
 				92EF61622E31050F008D609E /* Falling.png */,
-				92EF61632E31050F008D609E /* Famidash.png */,
+				92965FF02EAA6DD000D877C3 /* Famidash.png */,
 				92EF61642E31050F008D609E /* Feline.png */,
 				92EF61652E31050F008D609E /* Gabdeo.png */,
 				92EF61662E31050F008D609E /* Gba Microjam 23.png */,
@@ -931,9 +937,11 @@
 				92EF61F72E31050F008D609E /* Gba Microjam 23.png in Resources */,
 				92EF61F82E31050F008D609E /* Quantum Survival.gba in Resources */,
 				92EF61F92E31050F008D609E /* Falling.nes in Resources */,
+				92965FF12EAA6DD000D877C3 /* Famidash.png in Resources */,
 				92EF61FA2E31050F008D609E /* Skyland.png in Resources */,
 				92EF61FB2E31050F008D609E /* openNesSnake.nes in Resources */,
 				92EF61FC2E31050F008D609E /* Blind Jump.gba in Resources */,
+				92965FF32EAA6DE200D877C3 /* Codemaster.png in Resources */,
 				92EF61FD2E31050F008D609E /* Gabdeo.gba in Resources */,
 				92EF61FE2E31050F008D609E /* MeteoRain.png in Resources */,
 				92EF61FF2E31050F008D609E /* XNIQ.png in Resources */,
@@ -974,6 +982,7 @@
 				92EF62212E31050F008D609E /* Solar Guard.gba in Resources */,
 				92EF62222E31050F008D609E /* Lane.gba in Resources */,
 				92EF62232E31050F008D609E /* GO.png in Resources */,
+				92965FF52EAA70A800D877C3 /* Codemaster.png in Resources */,
 				92EF62242E31050F008D609E /* Arcade Mania.gba in Resources */,
 				92EF62252E31050F008D609E /* RavenX.gba in Resources */,
 				92EF62262E31050F008D609E /* Ghosts_And_Graves.nes in Resources */,
@@ -998,7 +1007,6 @@
 				92EF62382E31050F008D609E /* WaimanuGBA.gba in Resources */,
 				92EF62392E31050F008D609E /* Chase.png in Resources */,
 				92EF623A2E31050F008D609E /* Blowhole.gba in Resources */,
-				92EF623B2E31050F008D609E /* CodeMaster.png in Resources */,
 				92EF623C2E31050F008D609E /* Smart Gamble.gba in Resources */,
 				92EF623D2E31050F008D609E /* Inheritors of the Oubliette.png in Resources */,
 				92EF623E2E31050F008D609E /* Attack on Voxelburg.png in Resources */,
@@ -1026,7 +1034,6 @@
 				92EF62542E31050F008D609E /* THCTW.png in Resources */,
 				92EF62552E31050F008D609E /* Famidash.nes in Resources */,
 				92EF62562E31050F008D609E /* PipeSpin.png in Resources */,
-				92EF62572E31050F008D609E /* Famidash.png in Resources */,
 				92EF62582E31050F008D609E /* RavenX.png in Resources */,
 				92EF62592E31050F008D609E /* Battleship.png in Resources */,
 				92EF625A2E31050F008D609E /* Smart Gamble.png in Resources */,
@@ -1158,6 +1165,7 @@
 				186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */,
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
 				92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */,
+				92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */,
 				92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */,
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
