@@ -103,40 +103,15 @@ struct HomeView: View {
                         let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
                         
                         ZStack {
-//                            if let bgImage = backgroundImage {
-//                                Image(uiImage: bgImage)
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .frame(width: geometry.size.width, height: totalHeight)
-//                                    .clipped()
-//                                    .edgesIgnoringSafeArea(.all)
-//                                    .overlay(
-//                                        LinearGradient(
-//                                            gradient: Gradient(stops: [
-//                                                .init(color: Color.black.opacity(0.7), location: 0),
-//                                                .init(color: Color.black.opacity(0.7), location: 0.3),
-//                                                .init(color: Color.black.opacity(0.8), location: 0.7),
-//                                                .init(color: Color.black.opacity(0.95), location: 1.0)
-//                                            ]),
-//                                            startPoint: .top,
-//                                            endPoint: .bottom
-//                                        )
-//                                    )
-//                            } else {
-////                                Image("home-background")
-//                                Image("new-bg")
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .frame(width: geometry.size.width, height: totalHeight)
-//                                    .clipped()
-//                                    .edgesIgnoringSafeArea(.all)
-//                            }
-                             Image("home-background")
+
+                            Image("new-bg")
                                 .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: geometry.size.width, height: totalHeight)
+                                .scaledToFit() // or .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .ignoresSafeArea()
                                 .clipped()
-                                .edgesIgnoringSafeArea(.all)
+                                .frame(maxHeight: .infinity, alignment: .top) // 👈 aligns to top
+
                             
                             
                             

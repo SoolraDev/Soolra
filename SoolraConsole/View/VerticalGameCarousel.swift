@@ -37,16 +37,14 @@ public struct VerticalGameCarousel: View {
                 cardSizeFocused: cardSizeFocused,
                 cardSizeUnfocused: cardSizeUnfocused
             )
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top) // ⬅️ pin to top
+            .ignoresSafeArea(edges: .top)                                       // ⬅️ start at screen y=0
         } else {
-            VerticalCarousel_Legacy(
-                focusedIndex: $focusedIndex,
-                roms: roms,
-                onOpen: onOpen,
-                cardSizeFocused: cardSizeFocused,
-                cardSizeUnfocused: cardSizeUnfocused,
-                spacing: spacing
-            )
+            // ...
+            EmptyView()
         }
+
+
     }
 }
 
@@ -60,12 +58,23 @@ fileprivate struct VerticalCarousel_iOS17: View {
 
     // Layout
     private let reveal: CGFloat = 48
-    private let extraGap: CGFloat = 10
+    private let extraGap: CGFloat = 70
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
 
+    // Paging & selection sync
     @State private var selectedID: Rom.ID?
     @State private var currentSelectedIndex: Int = 0
+
+    // Live depth ordering: distance of each card's midY from viewport center
+    @State private var distances: [Rom.ID: CGFloat] = [:]
+
+    private struct CardDistanceKey: PreferenceKey {
+        static var defaultValue: [Rom.ID: CGFloat] = [:]
+        static func reduce(value: inout [Rom.ID: CGFloat], nextValue: () -> [Rom.ID: CGFloat]) {
+            value.merge(nextValue(), uniquingKeysWith: { $1 })
+        }
+    }
 
     var body: some View {
         // Precompute scalars to keep closures simple (helps the type-checker)
@@ -75,32 +84,48 @@ fileprivate struct VerticalCarousel_iOS17: View {
         let focusedScale: CGFloat = 0.75
         let unfocusedScale: CGFloat = (cardSizeUnfocused.height / cardSizeFocused.height) * 0.75
 
-        ScrollView(.vertical) {
-            LazyVStack(spacing: overlapSpacing) {
-                ForEach(roms.indices, id: \.self) { index in
-                    let rom = roms[index]
-                    let isFocused = (index == currentSelectedIndex)
+        GeometryReader { outer in
+            ScrollView(.vertical) {
+                LazyVStack(spacing: overlapSpacing) {
+                    ForEach(roms.indices, id: \.self) { index in
+                        let rom = roms[index]
+                        let isFocused = (index == currentSelectedIndex)
 
-                    CarouselCard(
-                        rom: rom,
-                        isFocused: isFocused,
-                        cardSizeFocused: cardSizeFocused,
-                        cardSizeUnfocused: cardSizeUnfocused
-                    )
-                    .onTapGesture { onOpen(rom) }
-                    .id(rom.id)
-                    .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))
+                        CarouselCard(
+                            rom: rom,
+                            isFocused: isFocused,
+                            cardSizeFocused: cardSizeFocused,
+                            cardSizeUnfocused: cardSizeUnfocused
+                        )
+                        .onTapGesture { onOpen(rom) }
+                        .id(rom.id)
+                        .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))
+                        // Measure each card's center vs. the ScrollView viewport center
+                        .background(
+                            GeometryReader { cardGeo in
+                                let cardMidY = cardGeo.frame(in: .global).midY
+                                let viewportMid = outer.frame(in: .global).midY
+                                Color.clear
+                                    .preference(key: CardDistanceKey.self,
+                                                value: [rom.id: cardMidY - viewportMid])
+                            }
+                        )
+                        // Proximity-based z-index so the visually centered card stays on top
+                        .zIndex(zFor(rom))
+                        .compositingGroup()
+                    }
                 }
+                .scrollTargetLayout()
             }
-            .scrollTargetLayout()
+            .frame(height: viewportHeight)
+            .scrollTargetBehavior(.viewAligned)
+            .contentMargins(.vertical, verticalMargin)
+            .scrollIndicators(.hidden)
+            .clipped()
+            // Avoid implicit animations while the scroll view is moving
+            .transaction { $0.animation = nil }
         }
-        .frame(height: viewportHeight)
-        .scrollTargetBehavior(.viewAligned)
-        .contentMargins(.vertical, verticalMargin)
-        .scrollIndicators(.hidden)
-        .clipped()
-        // Avoid implicit animations while the scroll view is moving
-        .transaction { $0.animation = nil }
+        .onPreferenceChange(CardDistanceKey.self) { distances = $0 }
         .onAppear {
             currentSelectedIndex = focusedIndex
             selectedID = roms[safe: focusedIndex]?.id
@@ -116,6 +141,13 @@ fileprivate struct VerticalCarousel_iOS17: View {
                 focusedIndex = i
             }
         }
+    }
+
+    private func zFor(_ rom: Rom) -> Double {
+        // Smaller distance => higher z. Clamp to keep numbers sane.
+        let d = abs(distances[rom.id] ?? .greatestFiniteMagnitude)
+        // Invert and scale; add a tiny tie-breaker so equal distances don’t flicker.
+        return Double(10_000 - min(9_999, d)) + 0.0001
     }
 }
 
@@ -159,7 +191,8 @@ fileprivate struct CarouselCard: View {
             Text(rom.name ?? "Unknown")
                 .font(.system(size: isFocused ? 16 : 13, weight: .semibold))
                 .foregroundStyle(.white)
-                .padding(.horizontal, 10).padding(.vertical, 6)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
                 .background(.black.opacity(0.55), in: Capsule())
                 .padding(10)
         }
@@ -185,89 +218,7 @@ fileprivate struct CarouselCard: View {
 }
 
 // MARK: - Legacy (iOS 16) implementation
-
-fileprivate struct VerticalCarousel_Legacy: View {
-    @Binding var focusedIndex: Int
-    let roms: [Rom]
-    let onOpen: (Rom) -> Void
-
-    let cardSizeFocused: CGSize
-    let cardSizeUnfocused: CGSize
-    let spacing: CGFloat
-
-    @State private var offset: CGFloat = 0
-    @GestureState private var drag: CGFloat = 0
-
-    var step: CGFloat { cardSizeUnfocused.height + spacing }
-
-    var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: spacing) {
-                ForEach(roms.indices, id: \.self) { i in
-                    let rom = roms[i]
-                    let scale = focusScale(for: i)
-                    let isFocused = isIndexFocused(i)
-
-                    CarouselCard(
-                        rom: rom,
-                        isFocused: isFocused,
-                        cardSizeFocused: cardSizeFocused,
-                        cardSizeUnfocused: cardSizeUnfocused
-                    )
-                    .scaleEffect(scale) // transform applied outside the card
-                    // IMPORTANT: no per-item animation during drag; snap anim happens below
-                    .onTapGesture { onOpen(rom) }
-                    .frame(height: cardSizeUnfocused.height)
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 18)
-            .offset(y: offset + drag)
-            .gesture(
-                DragGesture()
-                    .updating($drag) { value, state, _ in
-                        state = value.translation.height
-                    }
-                    .onEnded { value in
-                        let proposed = offset + value.translation.height
-                        let next = snapOffset(from: proposed, count: roms.count)
-                        withAnimation(.spring(response: 0.28, dampingFraction: 0.86)) {
-                            offset = next
-                        }
-                        let idx = Int(round(-next / step))
-                        focusedIndex = 4 + max(0, min(idx, roms.count - 1))
-                    }
-            )
-            .onAppear {
-                let idx = max(0, focusedIndex - 4)
-                offset = -CGFloat(idx) * step
-            }
-            .onChange(of: focusedIndex) { newValue in
-                let idx = max(0, newValue - 4)
-                withAnimation(.spring(response: 0.28, dampingFraction: 0.86)) {
-                    offset = -CGFloat(idx) * step
-                }
-            }
-        }
-    }
-
-    private func snapOffset(from proposed: CGFloat, count: Int) -> CGFloat {
-        let idxFloat = -proposed / step
-        let idx = max(0, min(Int(idxFloat.rounded()), count - 1))
-        return -CGFloat(idx) * step
-    }
-
-    private func focusScale(for i: Int) -> CGFloat {
-        let idxFloat = -(offset + drag) / step
-        // 0.86..1.0 smooth bell around the centered row
-        return 0.86 + 0.14 * max(0, 1 - abs(CGFloat(i) - idxFloat))
-    }
-
-    private func isIndexFocused(_ i: Int) -> Bool {
-        let idx = max(0, min(Int(round(-(offset + drag) / step)), roms.count - 1))
-        return i == idx
-    }
-}
+// TODO: add if needed (e.g., manual offset/scale and the same proximity-based zIndex via GeometryReader).
 
 // MARK: - Utilities
 
