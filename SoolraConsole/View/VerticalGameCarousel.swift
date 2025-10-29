@@ -11,40 +11,45 @@ import SwiftUI
 /// Drop-in vertical game picker with iOS 17+ paging and an iOS 16 fallback.
 /// - Use `VerticalGameCarousel(focusedIndex:onOpen:)` anywhere in your UI.
 /// - Bind `focusedIndex` to your existing `viewModel.focusedButtonIndex`.
-/// - Supply your ROMs in display order via the `roms` parameter.
-public struct VerticalGameCarousel: View {
-    @Binding var focusedIndex: Int // absolute index aligned with your HomeView (0..N). Typically 4+ maps to first ROM.
-    let roms: [Rom]
-    let onOpen: (Rom) -> Void
+/// - Supply your items in display order via the `items` parameter.
+struct VerticalGameCarousel: View {
+    @Binding var focusedIndex: Int
+    let items: [(LibraryKind, LibraryItem)]
+    let onOpen: (LibraryKind, LibraryItem) -> Void
+    let indexOffset: Int // Offset to convert HomeView index to carousel index
 
     // Layout knobs
     private let cardSizeFocused = CGSize(width: 220, height: 220)
-    private let cardSizeUnfocused = CGSize(width: 170, height: 170)
+    private let cardSizeUnfocused = CGSize(width: 120, height: 120)
     private let spacing: CGFloat = 22
 
-    public init(focusedIndex: Binding<Int>, roms: [Rom], onOpen: @escaping (Rom) -> Void) {
+    init(
+        focusedIndex: Binding<Int>,
+        items: [(LibraryKind, LibraryItem)],
+        indexOffset: Int = 4, // Default offset for nav buttons
+        onOpen: @escaping (LibraryKind, LibraryItem) -> Void
+    ) {
         self._focusedIndex = focusedIndex
-        self.roms = roms
+        self.items = items
+        self.indexOffset = indexOffset
         self.onOpen = onOpen
     }
 
-    public var body: some View {
+    var body: some View {
         if #available(iOS 17, *) {
             VerticalCarousel_iOS17(
                 focusedIndex: $focusedIndex,
-                roms: roms,
+                items: items,
+                indexOffset: indexOffset,
                 onOpen: onOpen,
                 cardSizeFocused: cardSizeFocused,
                 cardSizeUnfocused: cardSizeUnfocused
             )
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top) // ⬅️ pin to top
-            .ignoresSafeArea(edges: .top)                                       // ⬅️ start at screen y=0
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .ignoresSafeArea(edges: .top)
         } else {
-            // ...
             EmptyView()
         }
-
-
     }
 }
 
@@ -53,31 +58,31 @@ public struct VerticalGameCarousel: View {
 @available(iOS 17, *)
 fileprivate struct VerticalCarousel_iOS17: View {
     @Binding var focusedIndex: Int
-    let roms: [Rom]
-    let onOpen: (Rom) -> Void
+    let items: [(LibraryKind, LibraryItem)]
+    let indexOffset: Int
+    let onOpen: (LibraryKind, LibraryItem) -> Void
 
     // Layout
-    private let reveal: CGFloat = 48
-    private let extraGap: CGFloat = 70
+    private let reveal: CGFloat = 100
+    private let extraGap: CGFloat = -100
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
 
     // Paging & selection sync
-    @State private var selectedID: Rom.ID?
+    @State private var selectedID: UUID?
     @State private var currentSelectedIndex: Int = 0
 
     // Live depth ordering: distance of each card's midY from viewport center
-    @State private var distances: [Rom.ID: CGFloat] = [:]
+    @State private var distances: [UUID: CGFloat] = [:]
 
     private struct CardDistanceKey: PreferenceKey {
-        static var defaultValue: [Rom.ID: CGFloat] = [:]
-        static func reduce(value: inout [Rom.ID: CGFloat], nextValue: () -> [Rom.ID: CGFloat]) {
+        static var defaultValue: [UUID: CGFloat] = [:]
+        static func reduce(value: inout [UUID: CGFloat], nextValue: () -> [UUID: CGFloat]) {
             value.merge(nextValue(), uniquingKeysWith: { $1 })
         }
     }
 
     var body: some View {
-        // Precompute scalars to keep closures simple (helps the type-checker)
         let overlapSpacing = -(cardSizeUnfocused.height - reveal) + extraGap
         let viewportHeight = cardSizeFocused.height + 2 * reveal
         let verticalMargin = viewportHeight / 2 - cardSizeFocused.height / 2
@@ -87,31 +92,47 @@ fileprivate struct VerticalCarousel_iOS17: View {
         GeometryReader { outer in
             ScrollView(.vertical) {
                 LazyVStack(spacing: overlapSpacing) {
-                    ForEach(roms.indices, id: \.self) { index in
-                        let rom = roms[index]
+                    ForEach(items.indices, id: \.self) { index in
+                        let (kind, item) = items[index]
                         let isFocused = (index == currentSelectedIndex)
-
+                        
                         CarouselCard(
-                            rom: rom,
+                            kind: kind,
+                            item: item,
                             isFocused: isFocused,
                             cardSizeFocused: cardSizeFocused,
                             cardSizeUnfocused: cardSizeUnfocused
                         )
-                        .onTapGesture { onOpen(rom) }
-                        .id(rom.id)
+                        .onTapGesture { onOpen(kind, item) }
+                        .id(item.id)
                         .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))
-                        // Measure each card's center vs. the ScrollView viewport center
                         .background(
                             GeometryReader { cardGeo in
                                 let cardMidY = cardGeo.frame(in: .global).midY
                                 let viewportMid = outer.frame(in: .global).midY
                                 Color.clear
                                     .preference(key: CardDistanceKey.self,
-                                                value: [rom.id: cardMidY - viewportMid])
+                                                value: [item.id: cardMidY - viewportMid])
                             }
                         )
-                        // Proximity-based z-index so the visually centered card stays on top
-                        .zIndex(zFor(rom))
+                        .zIndex(zFor(item.id))
+                        .overlay(
+                            VStack {
+                                Text("z: \(zFor(item.id)))")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.white)
+                                    .padding(4)
+                                    .background(Color.black.opacity(0.6))
+                                    .cornerRadius(6)
+                                if let d = distances[item.id] {
+                                    Text(String(format: "dy: %.0f", d))
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.yellow)
+                                }
+                            }
+                            .padding(8),
+                            alignment: .bottomTrailing
+                        )
                         .compositingGroup()
                     }
                 }
@@ -122,31 +143,37 @@ fileprivate struct VerticalCarousel_iOS17: View {
             .contentMargins(.vertical, verticalMargin)
             .scrollIndicators(.hidden)
             .clipped()
-            // Avoid implicit animations while the scroll view is moving
             .transaction { $0.animation = nil }
         }
         .onPreferenceChange(CardDistanceKey.self) { distances = $0 }
         .onAppear {
-            currentSelectedIndex = focusedIndex
-            selectedID = roms[safe: focusedIndex]?.id
+            // Convert HomeView index to carousel index
+            let carouselIndex = max(0, focusedIndex - indexOffset)
+            currentSelectedIndex = carouselIndex
+            selectedID = items[safe: carouselIndex]?.1.id
         }
         .scrollPosition(id: $selectedID, anchor: .center)
         .onChange(of: focusedIndex) { _, newValue in
-            currentSelectedIndex = newValue
-            selectedID = roms[safe: newValue]?.id
+            // Convert HomeView index to carousel index
+            let carouselIndex = max(0, newValue - indexOffset)
+            currentSelectedIndex = carouselIndex
+            
+            // Animate the scroll transition
+            withAnimation(.easeInOut(duration: 0.3)) {
+                selectedID = items[safe: carouselIndex]?.1.id
+            }
         }
         .onChange(of: selectedID) { _, newID in
-            if let i = roms.firstIndex(where: { $0.id == newID }) {
+            if let i = items.firstIndex(where: { $0.1.id == newID }) {
                 currentSelectedIndex = i
-                focusedIndex = i
+                // Convert carousel index back to HomeView index
+                focusedIndex = i + indexOffset
             }
         }
     }
 
-    private func zFor(_ rom: Rom) -> Double {
-        // Smaller distance => higher z. Clamp to keep numbers sane.
-        let d = abs(distances[rom.id] ?? .greatestFiniteMagnitude)
-        // Invert and scale; add a tiny tie-breaker so equal distances don’t flicker.
+    private func zFor(_ id: UUID) -> Double {
+        let d = abs(distances[id] ?? .greatestFiniteMagnitude)
         return Double(10_000 - min(9_999, d)) + 0.0001
     }
 }
@@ -169,13 +196,13 @@ private struct ScaleOnScroll: ViewModifier {
 // MARK: - Card (shared)
 
 fileprivate struct CarouselCard: View {
-    let rom: Rom
+    let kind: LibraryKind
+    let item: LibraryItem
     let isFocused: Bool
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
 
     var body: some View {
-        // Keep the outer frame constant; transforms are applied by container (iOS 17) or caller (iOS 16)
         let strokeOpacity = isFocused ? 0.85 : 0.20
         let strokeWidth: CGFloat = isFocused ? 3 : 1
 
@@ -188,7 +215,23 @@ fileprivate struct CarouselCard: View {
                         .stroke(.white.opacity(strokeOpacity), lineWidth: strokeWidth)
                 )
 
-            Text(rom.name ?? "Unknown")
+            // Show wifi badge for web games
+            if case .web = kind {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Image(systemName: "wifi")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(4)
+                            .background(Color.black.opacity(0.70), in: Circle())
+                            .padding(8)
+                    }
+                }
+            }
+
+            Text(item.displayName)
                 .font(.system(size: isFocused ? 16 : 13, weight: .semibold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 10)
@@ -197,12 +240,11 @@ fileprivate struct CarouselCard: View {
                 .padding(10)
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
-        // No scale/animation here — avoids jitter on fast scroll
     }
 
     @ViewBuilder
     private var artwork: some View {
-        if let data = rom.imageData, let ui = UIImage(data: data) {
+        if let ui = item.iconImage {
             Image(uiImage: ui).resizable()
         } else {
             ZStack {
@@ -216,9 +258,6 @@ fileprivate struct CarouselCard: View {
         }
     }
 }
-
-// MARK: - Legacy (iOS 16) implementation
-// TODO: add if needed (e.g., manual offset/scale and the same proximity-based zIndex via GeometryReader).
 
 // MARK: - Utilities
 

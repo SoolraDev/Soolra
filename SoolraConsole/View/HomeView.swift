@@ -102,149 +102,119 @@ struct HomeView: View {
                         let safeAreaTop = geometry.safeAreaInsets.top
                         let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
                         
-                        ZStack {
-
+//                            
+//                        }
+                        ZStack(alignment: .top) {
                             Image("new-bg")
                                 .resizable()
-                                .scaledToFit() // or .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                                .ignoresSafeArea()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width)
                                 .clipped()
-                                .frame(maxHeight: .infinity, alignment: .top) // 👈 aligns to top
-
-                            
-                            
-                            
+                                .ignoresSafeArea(edges: .all)
+                                .offset(y: -72) // move just the image
                         }
-                        VStack {
-                            HomeNavigationView(
-                                isSettingsPresented: $isSettingsPresented,
-                                onSettingsButtonTap: {
-                                    isSettingsPresented = true
-                                },
-                                focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                dataController: dataController, viewModel: viewModel,
-                                searchQuery: $viewModel.searchQuery
-                            )
-                            .fullScreenCover(isPresented: $viewModel.isPresented) {
-                                ZStack(alignment: .top) {
-                                    Color.black.opacity(0.6)
-                                    
-                                    VStack(spacing: 0) {
-                                        if BluetoothControllerService.shared.isControllerConnected {
-                                            // Half-height version
-                                            HalfScreenDocumentPicker { url in
-                                                Task {
-                                                    isLoading = true
-                                                    await dataController.romManager.addRom(url: url)
-                                                    withAnimation {
-                                                        roms = dataController.romManager.fetchRoms()
-                                                        isLoading = false
+
+
+                        VStack(spacing: 0) {
+                            // Top area: carousel pinned to screen y=0, nav overlaid (does not push it down)
+                            ZStack(alignment: .top) {
+                                // Carousel at the very top
+                                VerticalGameCarousel(
+                                    focusedIndex: $viewModel.focusedButtonIndex,
+                                    items: visibleItems().map { $0.element }
+                                ) { kind, item in
+                                    switch kind {
+                                    case .rom(let rom):
+                                        navigateToRom(rom)
+                                    case .web(let game):
+                                        navigateToWeb(game)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                                .ignoresSafeArea(edges: .top)
+
+                                // Nav overlaid on top; keep your existing sheets/covers attached here
+                                HomeNavigationView(
+                                    isSettingsPresented: $isSettingsPresented,
+                                    onSettingsButtonTap: {
+                                        isSettingsPresented = true
+                                    },
+                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
+                                    dataController: dataController, viewModel: viewModel,
+                                    searchQuery: $viewModel.searchQuery
+                                )
+                                .padding(.top, geometry.safeAreaInsets.top)  // keep under status bar
+                                .padding(.horizontal, 8)
+                                .fullScreenCover(isPresented: $viewModel.isPresented) {
+                                    ZStack(alignment: .top) {
+                                        Color.black.opacity(0.6)
+                                        
+                                        VStack(spacing: 0) {
+                                            if BluetoothControllerService.shared.isControllerConnected {
+                                                // Half-height version
+                                                HalfScreenDocumentPicker { url in
+                                                    Task {
+                                                        isLoading = true
+                                                        await dataController.romManager.addRom(url: url)
+                                                        withAnimation {
+                                                            roms = dataController.romManager.fetchRoms()
+                                                            isLoading = false
+                                                        }
+                                                        viewModel.isPresented = false
                                                     }
-                                                    viewModel.isPresented = false
                                                 }
-                                            }
-                                            .background(Color(.systemBackground))
-                                            .cornerRadius(16)
-                                            .shadow(radius: 10)
-                                            
-                                            Spacer()
-                                        } else {
-                                            // Full-height version
-                                            DocumentPicker { url in
-                                                Task {
-                                                    isLoading = true
-                                                    await dataController.romManager.addRom(url: url)
-                                                    withAnimation {
-                                                        roms = dataController.romManager.fetchRoms()
-                                                        isLoading = false
+                                                .background(Color(.systemBackground))
+                                                .cornerRadius(16)
+                                                .shadow(radius: 10)
+                                                
+                                                Spacer()
+                                            } else {
+                                                // Full-height version
+                                                DocumentPicker { url in
+                                                    Task {
+                                                        isLoading = true
+                                                        await dataController.romManager.addRom(url: url)
+                                                        withAnimation {
+                                                            roms = dataController.romManager.fetchRoms()
+                                                            isLoading = false
+                                                        }
+                                                        viewModel.isPresented = false
                                                     }
-                                                    viewModel.isPresented = false
                                                 }
+                                                .ignoresSafeArea() // Let it take over the screen
                                             }
-                                            .ignoresSafeArea() // Let it take over the screen
                                         }
                                     }
                                 }
-                            }
-                            .sheet(isPresented: $isShopWebviewVisible) {
-                                NavigationView {
-                                    ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
-                                        .navigationTitle("Shop")
-                                        .navigationBarTitleDisplayMode(.inline)
-                                        .navigationBarItems(leading:
-                                                                Button(action: {
-                                            isShopWebviewVisible = false
-                                        }) {
-                                            HStack {
-                                                Image(systemName: "chevron.left")
-                                                Text("Back")
-                                            }
-                                        }
-                                        )
+                                .sheet(isPresented: $isShopWebviewVisible) {
+                                    NavigationView {
+                                        ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
+                                            .navigationTitle("Shop")
+                                            .navigationBarTitleDisplayMode(.inline)
+                                            .navigationBarItems(leading:
+                                                Button(action: {
+                                                    isShopWebviewVisible = false
+                                                }) {
+                                                    HStack {
+                                                        Image(systemName: "chevron.left")
+                                                        Text("Back")
+                                                    }
+                                                }
+                                            )
+                                    }
+                                    .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
                                 }
-                                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-                                
                             }
-                            
-                            
-                            
-//                            if let (kind, item) = focusedLibraryTuple() {
-//                                switch kind {
-//                                case .rom(let rom):
-//                                    CurrentItemView(
-//                                        currentRom: rom,
-//                                        currentView: $currentView,
-//                                        focusedButtonIndex: $viewModel.focusedButtonIndex
-//                                    )
-//                                case .web:
-//                                    CurrentItemView(
-//                                        currentRom: nil,
-//                                        currentView: $currentView,
-//                                        focusedButtonIndex: $viewModel.focusedButtonIndex,
-//                                        addRomAction: nil,
-//                                        overrideImage: item.iconImage,        // <— web-game icon
-//                                        overrideTitle: item.displayName       // <— web-game name
-//                                    )
-//                                }
-//                            } else {
-//                                CurrentItemView(
-//                                    currentRom: nil,
-//                                    currentView: $currentView,
-//                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
-//                                    addRomAction: { viewModel.isPresented = true }
-//                                )
-//                            }
-//                            
-//                            
-//                            TitleSortingView(titleText: "All Games", sortingText: "A-Z")
-//                                .padding(.top, 10)
-                            
-                            VerticalGameCarousel(
-                                focusedIndex: $viewModel.focusedButtonIndex,
-                                roms: roms
-                            ) { rom in
-                                navigateToRom(rom)
-                            }
-                            .padding(.top, 8)
-
-//                            
-//                            if items.isEmpty && !isLoading {
-//                                emptyView
-//                            } else {
-//                                romGridView
-//                            }
-                            
+                            // Bottom area: controller bar
                             SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
                                 viewModel.controllerDidPress(action: action, pressed: pressed)
                             })
-                            
                             .frame(width: geometry.size.width, height: totalHeight * 0.48)
                             .edgesIgnoringSafeArea(.bottom)
                         }
-                        .edgesIgnoringSafeArea(.all)
                         .preferredColorScheme(.dark)
-                        .padding(.top, 5)
+                        // (intentionally no .edgesIgnoringSafeArea(.all) and no .padding(.top, 5))
+
                     }
                 case .game(let gameData):
                     GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
@@ -465,6 +435,7 @@ struct HomeView: View {
             
         }
         .onAppear {
+            viewModel.isCarouselMode = true 
             engagementTracker.startTracking()
             if defaultRomsLoadingState.isLoading {
                 isLoading = true
@@ -999,61 +970,55 @@ struct HomeView: View {
         @Binding var searchQuery: String // 👈 Add this
         
         var body: some View {
-            
-            VStack {
+            ZStack(alignment: .topLeading) {
+                // Logo button - top left, slightly higher
+                BlinkingFocusedButton(selectedIndex: .constant(-1), index: 0, action: { }, content: {
+                    Image("home-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 40, height: 40)
+                        .padding()
+                })
+                .offset(x: 8, y: -50) // Adjust as needed
                 
-                HStack {
-                    BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 0, action: { }, content: {
-                        Image("home-logo")
+                BlinkingFocusedButton(
+                    selectedIndex: .constant(-1),
+                    index: 2,
+                    action: {
+                        viewModel.isPresented = true   // opens DocumentPicker
+                    },
+                    content: {
+                        Image("add-rom-new")    // ← your existing asset
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 27, height: 27)
+                            .frame(width: 40, height: 40)
                             .padding()
-                    })
-                    Spacer(minLength: 10)
-                    //                    TextField("Search games...", text: $searchQuery)                        .padding(8)
-                    //                        .background(Color.white.opacity(0.15))
-                    //                        .cornerRadius(14)
-                    //                        .foregroundColor(.white)
-                    //                        .frame(height: 27)
-                    //                        .frame(maxWidth: .infinity)
-                    //                        .overlay(
-                    //                            HStack {
-                    //                                Spacer()
-                    //                                Image(systemName: "magnifyingglass")
-                    //                                    .foregroundColor(.white)
-                    //                                    .padding(.trailing, 10)
-                    //                            }
-                    //                        )
-                    
-                    
-                    BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 1, action: {
-                        onSettingsButtonTap()
-                        
-                    }, content: {
-                        Image("home-settings-icon")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .scaledToFit()
-                            .padding()
-                    })
-                    .sheet(isPresented: $isSettingsPresented, onDismiss: {
-                        // When settings is dismissed, ensure we get the delegate back
-                        viewModel.setAsDelegate()
-                    }) {
-                        SettingsView().environmentObject(dataController)
                     }
+                )
+                .offset(x: 8, y: UIScreen.main.bounds.height * 0.23)
 
-
-
-
-                }
-                .frame(height: 27)
-                .padding(.leading, 8)
-                .padding(.trailing, 8)
-                .background(Color.clear)
                 
+                // Settings button - lower, roughly halfway down the screen
+                BlinkingFocusedButton(selectedIndex: .constant(-1), index: 1, action: {
+                    onSettingsButtonTap()
+                }, content: {
+                    Image("home-settings-icon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 40, height: 40)
+                        .padding()
+                })
+                .offset(x: 0, y: -10)
+                .sheet(isPresented: $isSettingsPresented, onDismiss: {
+                    viewModel.setAsDelegate()
+                }) {
+                    SettingsView().environmentObject(dataController)
+                }
+                .offset(x: 8, y: UIScreen.main.bounds.height * 0.3) // roughly halfway down
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(Color.clear)
+
         }
     }
     
