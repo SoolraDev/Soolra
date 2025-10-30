@@ -422,6 +422,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		2F50B7E32EB408B500E250EA /* OverlayViews */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = OverlayViews;
+			sourceTree = "<group>";
+		};
 		4C0CD8AE2D54E31F00B079B5 /* Protocols */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Protocols;
@@ -571,6 +576,7 @@
 		183DF1D62862FBD10088FE1C /* View */ = {
 			isa = PBXGroup;
 			children = (
+				2F50B7E32EB408B500E250EA /* OverlayViews */,
 				92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */,
 				92E02F622E3F70CF0002B6E6 /* FullScreenWebView.swift */,
 				92EF51842E2693B0008D609E /* LicenseListView.swift */,
@@ -855,6 +861,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				2F50B7E32EB408B500E250EA /* OverlayViews */,
 				4C0CD8AE2D54E31F00B079B5 /* Protocols */,
 				4C0CD8BA2D54E71100B079B5 /* SoolraController */,
 				4C0CD8CE2D54E72800B079B5 /* Game */,
