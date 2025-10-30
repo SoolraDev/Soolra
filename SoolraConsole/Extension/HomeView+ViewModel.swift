@@ -15,9 +15,15 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     @Published var focusedButtonIndex: Int = 0
     @Published var itemsCount: Int = 0
     @Published var searchQuery: String = ""
-    @Published var isCarouselMode: Bool = true  // Toggle between carousel and grid
-
+    @Published var isCarouselMode: Bool = true
+    
     let controllerService = BluetoothControllerService.shared
+    
+    // Repeat timer for held buttons
+    private var repeatTimer: Timer?
+    private var currentHeldAction: SoolraControllerAction?
+    private var isProcessingScroll: Bool = false
+    private var lastPressTimestamp: Date = Date()
 
     private init() {
         controllerService.delegate = self
@@ -38,13 +44,46 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     }
 
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {
+        print("🎮 EVENT: \(action.rawValue) pressed=\(pressed)")
+        let isInGameArea = focusedButtonIndex >= 4
+        let isNavigationAction = [.up, .down, .left, .right].contains(action)
+        
         if !pressed {
+            print("🛑 RELEASE detected for \(action.rawValue) - STOPPING ALL TIMERS")
+            // ANY button release stops ALL timers
+            stopRepeating()
             return
         }
-        print("homeview+viewmodel Controller pressed - \(pressed), action: \(action.rawValue)")
+        
+        // If already holding this button, ignore duplicate press events
+        if currentHeldAction == action && repeatTimer != nil {
+            return
+        }
+        
+        // Execute single move immediately
+        executeAction(action, isInGameArea: isInGameArea)
+        
+        // Start repeat timer for navigation in carousel mode
+        if isCarouselMode && isInGameArea && isNavigationAction {
+            currentHeldAction = action  // Set BEFORE the delay so release can catch it
+            
+            // After 0.3s, start repeating every 0.1s
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                guard let self = self, self.currentHeldAction == action else { return }
+                
+                self.repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.executeAction(action, isInGameArea: isInGameArea)
+                }
+            }
+        }
+    }
+    
+    private func executeAction(_ action: SoolraControllerAction, isInGameArea: Bool) {
+        // Skip if already processing a scroll (prevents queue buildup)
+        guard !isProcessingScroll else { return }
         
         var endIndex = focusedButtonIndex
-        let isInGameArea = focusedButtonIndex >= 4
 
         if isCarouselMode && isInGameArea {
             // Carousel mode: single-item vertical navigation
@@ -64,7 +103,7 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
                 return
             }
         } else {
-            // Grid mode or nav button area: original logic
+            // Grid mode or nav button area
             switch action {
             case .up:
                 if (3...6).contains(endIndex) {
@@ -73,10 +112,9 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
                     endIndex -= 4
                 }
             case .down:
-                if endIndex == 0 || endIndex == 1 {
-                    endIndex = 2
-                } else if endIndex == 2 {
-                    endIndex = 3
+                // From any nav button (0-3), jump directly to first carousel item
+                if endIndex < 4 {
+                    endIndex = 4
                 } else {
                     endIndex += 4
                 }
@@ -93,7 +131,29 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
         }
 
         let maximumIndex = 3 + itemsCount
-        focusedButtonIndex = min(max(endIndex, 0), maximumIndex)
+        let newIndex = min(max(endIndex, 0), maximumIndex)
+        
+        // Stop repeating if we've hit a boundary
+        if newIndex == focusedButtonIndex {
+            stopRepeating()
+            return
+        }
+        
+        // Mark as processing and update index
+        isProcessingScroll = true
+        focusedButtonIndex = newIndex
+        
+        // Clear processing flag after animation time
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.09) { [weak self] in
+            self?.isProcessingScroll = false
+        }
+    }
+    
+    private func stopRepeating() {
+        repeatTimer?.invalidate()
+        repeatTimer = nil
+        currentHeldAction = nil
+        isProcessingScroll = false
     }
     
     func updateItemsCount(_ count: Int) {

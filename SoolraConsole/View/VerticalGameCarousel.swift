@@ -71,6 +71,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
     // Paging & selection sync
     @State private var selectedID: UUID?
     @State private var currentSelectedIndex: Int = 0
+    @State private var pendingScrollTask: Task<Void, Never>?
 
     // Live depth ordering: distance of each card's midY from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
@@ -150,17 +151,42 @@ fileprivate struct VerticalCarousel_iOS17: View {
             // Convert HomeView index to carousel index
             let carouselIndex = max(0, focusedIndex - indexOffset)
             currentSelectedIndex = carouselIndex
-            selectedID = items[safe: carouselIndex]?.1.id
+            
+            // CRITICAL: Always initialize selectedID to first item so scrollPosition works
+            // Even if focusedIndex is 0 (nav area), we still need a valid starting point
+            if !items.isEmpty {
+                selectedID = items[0].1.id
+            }
+            
+            print("🎬 Carousel onAppear - focusedIndex: \(focusedIndex), carouselIndex: \(carouselIndex), items.count: \(items.count), selectedID: \(String(describing: selectedID))")
+        }
+        .onChange(of: items.count) { oldCount, newCount in
+            print("📦 Items count changed: \(oldCount) → \(newCount)")
+            // If items just loaded and selectedID is still nil, initialize it
+            if selectedID == nil && !items.isEmpty {
+                selectedID = items[0].1.id
+                print("✨ Initialized selectedID to first item: \(String(describing: selectedID))")
+            }
         }
         .scrollPosition(id: $selectedID, anchor: .center)
-        .onChange(of: focusedIndex) { _, newValue in
+        .onChange(of: focusedIndex) { oldValue, newValue in
             // Convert HomeView index to carousel index
             let carouselIndex = max(0, newValue - indexOffset)
             currentSelectedIndex = carouselIndex
             
-            // Animate the scroll transition
-            withAnimation(.easeInOut(duration: 0.3)) {
-                selectedID = items[safe: carouselIndex]?.1.id
+            // Cancel any pending scroll
+            pendingScrollTask?.cancel()
+            
+            // Immediate update for responsive feel
+            pendingScrollTask = Task { @MainActor in
+                guard !Task.isCancelled else { return }
+                
+                let targetID = items[safe: carouselIndex]?.1.id
+                
+                // Match animation duration to timer interval for smooth continuous scroll
+                withAnimation(.easeOut(duration: 0.08)) {
+                    selectedID = targetID
+                }
             }
         }
         .onChange(of: selectedID) { _, newID in

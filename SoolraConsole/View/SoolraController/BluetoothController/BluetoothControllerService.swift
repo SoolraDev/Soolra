@@ -153,11 +153,14 @@ class BluetoothControllerService: ObservableObject {
 
         // D-pad handlers
         gamepad.dpad.up.pressedChangedHandler = { [weak self] _, _, pressed in
+            print("D-Pad Up pressed: \(pressed)")  // simple console log
             self?.delegate?.controllerDidPress(action: .up, pressed: pressed)
         }
         gamepad.dpad.down.pressedChangedHandler = { [weak self] _, _, pressed in
+            print("D-Pad Down pressed: \(pressed)")  // simple console log
             self?.delegate?.controllerDidPress(action: .down, pressed: pressed)
         }
+
         gamepad.dpad.left.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .left, pressed: pressed)
         }
@@ -179,14 +182,16 @@ class BluetoothControllerService: ObservableObject {
             self?.delegate?.controllerDidPress(action: .start, pressed: pressed)
         }
 
-        // Analog sticks
         gamepad.leftThumbstick.valueChangedHandler = { [weak self] _, xAxis, yAxis in
+            print("Left stick moved → x: \(xAxis), y: \(yAxis)")
             self?.handleStickInput(xAxis: xAxis, yAxis: yAxis, isLeftStick: true)
         }
 
         gamepad.rightThumbstick.valueChangedHandler = { [weak self] _, xAxis, yAxis in
+            print("Right stick moved → x: \(xAxis), y: \(yAxis)")
             self?.handleStickInput(xAxis: xAxis, yAxis: yAxis, isLeftStick: false)
         }
+
     }
 
     private func handleStickInput(xAxis: Float, yAxis: Float, isLeftStick: Bool) {

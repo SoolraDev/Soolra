@@ -517,29 +517,34 @@ struct HomeView: View {
 
 
         .onChange(of: controllerViewModel.lastAction) { evt in
-            guard let evt = evt, evt.pressed else { return }
-            
+            guard let evt = evt else { return }
+
             if isShopDialogVisible {
-                switch evt.action {
-                case .x: // close dialog
-                    isShopDialogVisible = false
-                case .a: // open webview in window
-                    isShopDialogVisible = false
-                    isShopWebviewVisible = true
-                default:
-                    break
+                if evt.pressed {
+                    switch evt.action {
+                    case .x:
+                        isShopDialogVisible = false
+                    case .a:
+                        isShopDialogVisible = false
+                        isShopWebviewVisible = true
+                    default: break
+                    }
                 }
                 return
             }
-            
+
             switch currentView {
             case .grid:
+                // forward BOTH press and release to your viewModel
                 viewModel.controllerDidPress(action: evt.action, pressed: evt.pressed)
+
             case .web:
+                // forward BOTH press and release to the BT delegate
                 BluetoothControllerService.shared.delegate?.controllerDidPress(
                     action: evt.action,
                     pressed: evt.pressed
                 )
+
             default:
                 break
             }
