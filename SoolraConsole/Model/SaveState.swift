@@ -164,9 +164,9 @@ final class ScreenshotSaver {
 
         for i in 0..<count {
             let pixel = bufferCopy[i]
-            let r = UInt8(((pixel >> 11) & 0x1F) * 255 / 31)
-            let g = UInt8(((pixel >> 5) & 0x3F) * 255 / 63)
-            let b = UInt8((pixel & 0x1F) * 255 / 31)
+            let r = try! UInt8(((pixel >> 11) & 0x1F) * 255 / 31)
+            let g = try! UInt8(((pixel >> 5) & 0x3F) * 255 / 63)
+            let b = try! UInt8((pixel & 0x1F) * 255 / 31)
 
             let offset = i * 4
             rgbaData[offset] = r
