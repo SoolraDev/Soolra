@@ -227,9 +227,9 @@ class GBARenderer: NSObject, MTKViewDelegate, ConsoleRenderer {
                 
                 for i in start..<end {
                     let rgb565 = pixels[i]
-                    let r = try! UInt32((rgb565 & 0xF800) >> 11) * 255 / 31
-                    let g = try! UInt32((rgb565 & 0x07E0) >> 5) * 255 / 63
-                    let b = try! UInt32(rgb565 & 0x001F) * 255 / 31
+                    let r = UInt32((rgb565 & 0xF800) >> 11) * 255 / 31
+                    let g = UInt32((rgb565 & 0x07E0) >> 5) * 255 / 63
+                    let b = UInt32(rgb565 & 0x001F) * 255 / 31
                     bgra8Pixels[i] = (UInt32(255) << 24) | (r << 16) | (g << 8) | b
                 }
             }
@@ -238,9 +238,9 @@ class GBARenderer: NSObject, MTKViewDelegate, ConsoleRenderer {
             let remainingStart = chunks * chunkSize
             for i in remainingStart..<pixels.count {
                 let rgb565 = pixels[i]
-                let r = try! UInt32((rgb565 & 0xF800) >> 11) * 255 / 31
-                let g = try! UInt32((rgb565 & 0x07E0) >> 5) * 255 / 63
-                let b = try! UInt32(rgb565 & 0x001F) * 255 / 31
+                let r = UInt32((rgb565 & 0xF800) >> 11) * 255 / 31
+                let g = UInt32((rgb565 & 0x07E0) >> 5) * 255 / 63
+                let b = UInt32(rgb565 & 0x001F) * 255 / 31
                 bgra8Pixels[i] = (UInt32(255) << 24) | (r << 16) | (g << 8) | b
             }
             

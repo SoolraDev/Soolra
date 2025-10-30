@@ -4,9 +4,7 @@
 //
 //  Created by Michael Essiet on 29/10/2025.
 //
-
 import PrivySDK
-import Web3
 
 public class WalletManager {
     public let privyClient: Privy
