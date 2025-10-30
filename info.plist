@@ -29,18 +29,31 @@
 			</array>
 		</dict>
 		<dict>
-        	<key>CFBundleTypeName</key>
-        	<string>ZIP Archive</string>
-        	<key>LSHandlerRank</key>
-        	<string>Alternate</string>
-        	<key>LSItemContentTypes</key>
-        	<array>
-            	<string>com.pkware.zip-archive</string>
-        	</array>
-    	</dict>
+			<key>CFBundleTypeName</key>
+			<string>ZIP Archive</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.pkware.zip-archive</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLName</key>
+			<string>com.soolra.soolra</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>soolra</string>
+			</array>
+		</dict>
+	</array>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
@@ -48,6 +61,11 @@
 			<string>ExtendedGamepad</string>
 		</dict>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>DINCondensed-Regular.ttf</string>
@@ -108,11 +126,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
-
 </dict>
 </plist>

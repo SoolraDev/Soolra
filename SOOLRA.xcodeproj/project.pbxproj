@@ -15,6 +15,12 @@
 		185B91812869EE8C003F88F5 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 185B917F2869EE8C003F88F5 /* Model.xcdatamodeld */; };
 		186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */; };
 		18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EBB74A2864A13A00903F43 /* HomeView.swift */; };
+		2F50B7D22EB2A5A900E250EA /* WalletManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F50B7D12EB2A59C00E250EA /* WalletManager.swift */; };
+		2F50B7D52EB2A5E000E250EA /* Privy in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7D42EB2A5E000E250EA /* Privy */; };
+		2F50B7DC2EB2B22F00E250EA /* Web3 in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7DB2EB2B22F00E250EA /* Web3 */; };
+		2F50B7DE2EB2B22F00E250EA /* Web3ContractABI in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7DD2EB2B22F00E250EA /* Web3ContractABI */; };
+		2F50B7E02EB2B22F00E250EA /* Web3PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7DF2EB2B22F00E250EA /* Web3PromiseKit */; };
+		2F50B7E22EB3FB5F00E250EA /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F50B7E12EB3FB3800E250EA /* DataManager.swift */; };
 		4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9253D32D47ED2B00E38366 /* HapticManager.swift */; };
 		4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB5AA5E2D61B206003E1677 /* MetalManager.swift */; };
 		4CC26D9A2D4BABC600F3D262 /* ConsoleCoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC26D992D4BABC300F3D262 /* ConsoleCoreManager.swift */; };
@@ -218,6 +224,8 @@
 		185B91802869EE8C003F88F5 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+distanceTo.swift"; sourceTree = "<group>"; };
 		18EBB74A2864A13A00903F43 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		2F50B7D12EB2A59C00E250EA /* WalletManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletManager.swift; sourceTree = "<group>"; };
+		2F50B7E12EB3FB3800E250EA /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.release.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.release.xcconfig"; sourceTree = "<group>"; };
 		4C23EA0A2D50048400039871 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4C9253D32D47ED2B00E38366 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
@@ -461,9 +469,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F50B7DE2EB2B22F00E250EA /* Web3ContractABI in Frameworks */,
 				92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */,
 				4CEF41CB2D21A4E40068BC5B /* ZIPFoundation in Frameworks */,
 				9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */,
+				2F50B7D52EB2A5E000E250EA /* Privy in Frameworks */,
+				2F50B7E02EB2B22F00E250EA /* Web3PromiseKit in Frameworks */,
+				2F50B7DC2EB2B22F00E250EA /* Web3 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,6 +558,8 @@
 		183DF1D32862E1780088FE1C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				2F50B7E12EB3FB3800E250EA /* DataManager.swift */,
+				2F50B7D12EB2A59C00E250EA /* WalletManager.swift */,
 				928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */,
 				4CEF41C72D21A4670068BC5B /* RomManager.swift */,
 				92678D802DAA76F5001CEDD6 /* Cheat.swift */,
@@ -854,6 +868,10 @@
 			packageProductDependencies = (
 				4CEF41CA2D21A4E40068BC5B /* ZIPFoundation */,
 				92678D762DAA70E6001CEDD6 /* SQLite */,
+				2F50B7D42EB2A5E000E250EA /* Privy */,
+				2F50B7DB2EB2B22F00E250EA /* Web3 */,
+				2F50B7DD2EB2B22F00E250EA /* Web3ContractABI */,
+				2F50B7DF2EB2B22F00E250EA /* Web3PromiseKit */,
 			);
 			productName = NesEmulator;
 			productReference = 183DF16A2862C99E0088FE1C /* SOOLRA.app */;
@@ -885,6 +903,8 @@
 			packageReferences = (
 				4CEF41C92D21A4E40068BC5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite" */,
+				2F50B7D32EB2A5E000E250EA /* XCRemoteSwiftPackageReference "privy-ios" */,
+				2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 183DF16B2862C99E0088FE1C /* Products */;
@@ -1162,6 +1182,8 @@
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
 				928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */,
+				2F50B7D22EB2A5A900E250EA /* WalletManager.swift in Sources */,
+				2F50B7E22EB3FB5F00E250EA /* DataManager.swift in Sources */,
 				183DF16E2862C99E0088FE1C /* SoolraApp.swift in Sources */,
 				185B91812869EE8C003F88F5 /* Model.xcdatamodeld in Sources */,
 				180C86F0286B3F02009E7C0D /* HomeView+ViewModel.swift in Sources */,
@@ -1423,6 +1445,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2F50B7D32EB2A5E000E250EA /* XCRemoteSwiftPackageReference "privy-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/privy-io/privy-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+		2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/chainnodesorg/Web3.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.8;
+			};
+		};
 		4CEF41C92D21A4E40068BC5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
@@ -1442,6 +1480,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2F50B7D42EB2A5E000E250EA /* Privy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F50B7D32EB2A5E000E250EA /* XCRemoteSwiftPackageReference "privy-ios" */;
+			productName = Privy;
+		};
+		2F50B7DB2EB2B22F00E250EA /* Web3 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */;
+			productName = Web3;
+		};
+		2F50B7DD2EB2B22F00E250EA /* Web3ContractABI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */;
+			productName = Web3ContractABI;
+		};
+		2F50B7DF2EB2B22F00E250EA /* Web3PromiseKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */;
+			productName = Web3PromiseKit;
+		};
 		4CEF41CA2D21A4E40068BC5B /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4CEF41C92D21A4E40068BC5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
