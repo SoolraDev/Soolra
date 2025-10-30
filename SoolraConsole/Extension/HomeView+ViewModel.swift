@@ -24,6 +24,7 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     private var currentHeldAction: SoolraControllerAction?
     private var isProcessingScroll: Bool = false
     private var lastPressTimestamp: Date = Date()
+    private var pendingTimerTask: DispatchWorkItem?  // Track the delayed timer creation
 
     private init() {
         controllerService.delegate = self
@@ -50,7 +51,7 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
         
         if !pressed {
             print("🛑 RELEASE detected for \(action.rawValue) - STOPPING ALL TIMERS")
-            // ANY button release stops ALL timers
+            // ANY button release stops ALL timers AND pending timer creation
             stopRepeating()
             return
         }
@@ -65,23 +66,35 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
         
         // Start repeat timer for navigation in carousel mode
         if isCarouselMode && isInGameArea && isNavigationAction {
+            // ALWAYS stop any existing timer before starting a new one
+            stopRepeating()
+            
             currentHeldAction = action  // Set BEFORE the delay so release can catch it
             
             // After 0.3s, start repeating every 0.1s
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            let task = DispatchWorkItem { [weak self] in
                 guard let self = self, self.currentHeldAction == action else { return }
                 
+                print("⏰ Timer starting for \(action.rawValue)")
                 self.repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
                     guard let self = self else { return }
                     self.executeAction(action, isInGameArea: isInGameArea)
                 }
             }
+            
+            pendingTimerTask = task
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: task)
         }
     }
     
     private func executeAction(_ action: SoolraControllerAction, isInGameArea: Bool) {
+        print("⚡ executeAction called: \(action.rawValue), isInGameArea: \(isInGameArea), isProcessing: \(isProcessingScroll)")
+        
         // Skip if already processing a scroll (prevents queue buildup)
-        guard !isProcessingScroll else { return }
+        guard !isProcessingScroll else {
+            print("⏭️ Skipped - already processing")
+            return
+        }
         
         var endIndex = focusedButtonIndex
 
@@ -150,6 +163,9 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     }
     
     private func stopRepeating() {
+        print("🛑 stopRepeating - cancelling timer and pending task")
+        pendingTimerTask?.cancel()  // Cancel the delayed timer creation
+        pendingTimerTask = nil
         repeatTimer?.invalidate()
         repeatTimer = nil
         currentHeldAction = nil
