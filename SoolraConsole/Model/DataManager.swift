@@ -130,7 +130,7 @@ private func updateUserMetricsAPI(metrics: UserMetrics) async throws {
     }
 
     var request = URLRequest(url: url)
-    request.httpMethod = "PUT" // Or "PUT"
+    request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpBody = try JSONEncoder().encode(payload)
 
