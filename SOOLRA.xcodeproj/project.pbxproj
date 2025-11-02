@@ -21,6 +21,7 @@
 		2F50B7DE2EB2B22F00E250EA /* Web3ContractABI in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7DD2EB2B22F00E250EA /* Web3ContractABI */; };
 		2F50B7E02EB2B22F00E250EA /* Web3PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7DF2EB2B22F00E250EA /* Web3PromiseKit */; };
 		2F50B7E22EB3FB5F00E250EA /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F50B7E12EB3FB3800E250EA /* DataManager.swift */; };
+		2FA242AE2EB77C9F0073C2BF /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242AD2EB77C900073C2BF /* TimeInterval.swift */; };
 		4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9253D32D47ED2B00E38366 /* HapticManager.swift */; };
 		4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB5AA5E2D61B206003E1677 /* MetalManager.swift */; };
 		4CC26D9A2D4BABC600F3D262 /* ConsoleCoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC26D992D4BABC300F3D262 /* ConsoleCoreManager.swift */; };
@@ -226,6 +227,7 @@
 		18EBB74A2864A13A00903F43 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		2F50B7D12EB2A59C00E250EA /* WalletManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletManager.swift; sourceTree = "<group>"; };
 		2F50B7E12EB3FB3800E250EA /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		2FA242AD2EB77C900073C2BF /* TimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeInterval.swift; sourceTree = "<group>"; };
 		3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.release.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.release.xcconfig"; sourceTree = "<group>"; };
 		4C23EA0A2D50048400039871 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4C9253D32D47ED2B00E38366 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
@@ -427,6 +429,11 @@
 			path = OverlayViews;
 			sourceTree = "<group>";
 		};
+		2FA242A62EB775790073C2BF /* SharedViews */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SharedViews;
+			sourceTree = "<group>";
+		};
 		4C0CD8AE2D54E31F00B079B5 /* Protocols */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Protocols;
@@ -502,6 +509,7 @@
 		180C86AD2869FAF7009E7C0D /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				2FA242AD2EB77C900073C2BF /* TimeInterval.swift */,
 				186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */,
 				180C86EF286B3F02009E7C0D /* HomeView+ViewModel.swift */,
 			);
@@ -536,6 +544,7 @@
 		183DF16C2862C99E0088FE1C /* SoolraConsole */ = {
 			isa = PBXGroup;
 			children = (
+				2FA242A62EB775790073C2BF /* SharedViews */,
 				92678D5C2DA805B4001CEDD6 /* Cheats */,
 				183DF1712862C9A00088FE1C /* Assets.xcassets */,
 				180C86AA2869F898009E7C0D /* Core */,
@@ -862,6 +871,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				2F50B7E32EB408B500E250EA /* OverlayViews */,
+				2FA242A62EB775790073C2BF /* SharedViews */,
 				4C0CD8AE2D54E31F00B079B5 /* Protocols */,
 				4C0CD8BA2D54E71100B079B5 /* SoolraController */,
 				4C0CD8CE2D54E72800B079B5 /* Game */,
@@ -1197,6 +1207,7 @@
 				4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */,
 				7032EDC12C76059400828A41 /* SettingsView.swift in Sources */,
 				92A582922EA652C50044FE05 /* StackerViewModel.swift in Sources */,
+				2FA242AE2EB77C9F0073C2BF /* TimeInterval.swift in Sources */,
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
 				92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */,
 				92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */,
