@@ -1,28 +1,24 @@
-//
+
 //  VerticalGameCarousel.swift
 //  SOOLRA
 //
 //  Created by Kai Yoshida on 23/10/2025.
 //
-
 import SwiftUI
-
 // MARK: - Public wrapper
 /// Drop-in vertical game picker with iOS 17+ paging and an iOS 16 fallback.
-/// - Use `VerticalGameCarousel(focusedIndex:onOpen:)` anywhere in your UI.
-/// - Bind `focusedIndex` to your existing `viewModel.focusedButtonIndex`.
-/// - Supply your items in display order via the `items` parameter.
+/// - Use VerticalGameCarousel(focusedIndex:onOpen:) anywhere in your UI.
+/// - Bind focusedIndex to your existing viewModel.focusedButtonIndex.
+/// - Supply your items in display order via the items parameter.
 struct VerticalGameCarousel: View {
     @Binding var focusedIndex: Int
     let items: [(LibraryKind, LibraryItem)]
     let onOpen: (LibraryKind, LibraryItem) -> Void
     let indexOffset: Int // Offset to convert HomeView index to carousel index
-
     // Layout knobs
     private let cardSizeFocused = CGSize(width: 220, height: 220)
     private let cardSizeUnfocused = CGSize(width: 120, height: 120)
     private let spacing: CGFloat = 22
-
     init(
         focusedIndex: Binding<Int>,
         items: [(LibraryKind, LibraryItem)],
@@ -34,7 +30,6 @@ struct VerticalGameCarousel: View {
         self.indexOffset = indexOffset
         self.onOpen = onOpen
     }
-
     var body: some View {
         if #available(iOS 17, *) {
             VerticalCarousel_iOS17(
@@ -52,50 +47,48 @@ struct VerticalGameCarousel: View {
         }
     }
 }
-
 // MARK: - iOS 17+ implementation
-
 @available(iOS 17, *)
 fileprivate struct VerticalCarousel_iOS17: View {
     @Binding var focusedIndex: Int
     let items: [(LibraryKind, LibraryItem)]
     let indexOffset: Int
     let onOpen: (LibraryKind, LibraryItem) -> Void
-
     // Layout
     private let reveal: CGFloat = 100
     private let extraGap: CGFloat = -100
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
-
     // Paging & selection sync
     @State private var selectedID: UUID?
     @State private var currentSelectedIndex: Int = 0
     @State private var pendingScrollTask: Task<Void, Never>?
-
     // Live depth ordering: distance of each card's midY from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
-
     private struct CardDistanceKey: PreferenceKey {
         static var defaultValue: [UUID: CGFloat] = [:]
         static func reduce(value: inout [UUID: CGFloat], nextValue: () -> [UUID: CGFloat]) {
             value.merge(nextValue(), uniquingKeysWith: { $1 })
         }
     }
-
     var body: some View {
-        let overlapSpacing = -(cardSizeUnfocused.height - reveal) + extraGap
+        let overlapAmount: CGFloat = 20 // How much cards overlap
+        let cardSpacing = cardSizeUnfocused.height - overlapAmount
         let viewportHeight = cardSizeFocused.height + 2 * reveal
         let verticalMargin = viewportHeight / 2 - cardSizeFocused.height / 2
         let focusedScale: CGFloat = 0.75
         let unfocusedScale: CGFloat = (cardSizeUnfocused.height / cardSizeFocused.height) * 0.75
-
         GeometryReader { outer in
             ScrollView(.vertical) {
-                LazyVStack(spacing: overlapSpacing) {
-                    ForEach(items.indices, id: \.self) { index in
-                        let (kind, item) = items[index]
+                // Use ZStack for proper z-index control
+                ZStack(alignment: .top) {
+                    // Create cards in reverse order so higher indices naturally appear on top
+                    ForEach(Array(items.enumerated()), id: \.offset) { index, tuple in
+                        let (kind, item) = tuple
                         let isFocused = (index == currentSelectedIndex)
+                        
+                        // Calculate card position
+                        let yOffset = CGFloat(index) * cardSpacing
                         
                         CarouselCard(
                             kind: kind,
@@ -116,10 +109,11 @@ fileprivate struct VerticalCarousel_iOS17: View {
                                                 value: [item.id: cardMidY - viewportMid])
                             }
                         )
+                        .offset(y: yOffset)
                         .zIndex(zFor(item.id))
                         .overlay(
                             VStack {
-                                Text("z: \(zFor(item.id)))")
+                                Text("z: \(Int(zFor(item.id)))")
                                     .font(.system(size: 10))
                                     .foregroundColor(.white)
                                     .padding(4)
@@ -134,10 +128,14 @@ fileprivate struct VerticalCarousel_iOS17: View {
                             .padding(8),
                             alignment: .bottomTrailing
                         )
-                        .compositingGroup()
+                        // Don't use compositingGroup as it can interfere with z-index
                     }
+                    
+                    // Invisible view to define scrollable content size
+                    Color.clear
+                        .frame(height: CGFloat(items.count - 1) * cardSpacing + cardSizeFocused.height)
                 }
-                .scrollTargetLayout()
+                .frame(minHeight: CGFloat(items.count - 1) * cardSpacing + cardSizeFocused.height)
             }
             .frame(height: viewportHeight)
             .scrollTargetBehavior(.viewAligned)
@@ -146,18 +144,18 @@ fileprivate struct VerticalCarousel_iOS17: View {
             .clipped()
             .transaction { $0.animation = nil }
         }
-        .onPreferenceChange(CardDistanceKey.self) { distances = $0 }
+        .onPreferenceChange(CardDistanceKey.self) { newDistances in
+            distances = newDistances
+        }
         .onAppear {
             // Convert HomeView index to carousel index
             let carouselIndex = max(0, focusedIndex - indexOffset)
             currentSelectedIndex = carouselIndex
-            
             // CRITICAL: Always initialize selectedID to first item so scrollPosition works
             // Even if focusedIndex is 0 (nav area), we still need a valid starting point
             if !items.isEmpty {
                 selectedID = items[0].1.id
             }
-            
             print("🎬 Carousel onAppear - focusedIndex: \(focusedIndex), carouselIndex: \(carouselIndex), items.count: \(items.count), selectedID: \(String(describing: selectedID))")
         }
         .onChange(of: items.count) { oldCount, newCount in
@@ -173,16 +171,12 @@ fileprivate struct VerticalCarousel_iOS17: View {
             // Convert HomeView index to carousel index
             let carouselIndex = max(0, newValue - indexOffset)
             currentSelectedIndex = carouselIndex
-            
             // Cancel any pending scroll
             pendingScrollTask?.cancel()
-            
             // Immediate update for responsive feel
             pendingScrollTask = Task { @MainActor in
                 guard !Task.isCancelled else { return }
-                
                 let targetID = items[safe: carouselIndex]?.1.id
-                
                 // Match animation duration to timer interval for smooth continuous scroll
                 withAnimation(.easeOut(duration: 0.08)) {
                     selectedID = targetID
@@ -197,19 +191,34 @@ fileprivate struct VerticalCarousel_iOS17: View {
             }
         }
     }
-
+    
     private func zFor(_ id: UUID) -> Double {
-        let d = abs(distances[id] ?? .greatestFiniteMagnitude)
-        return Double(10_000 - min(9_999, d)) + 0.0001
+        // The card closest to the viewport center gets the highest z-index
+        // This ensures the middle card overlaps cards both above and below
+        
+        guard let distance = distances[id] else {
+            // Default low z-index for cards without distance info yet
+            return 0
+        }
+        
+        let absDistance = abs(distance)
+        
+        // Use a very high base z-index to ensure proper layering
+        // The middle card (smallest distance) gets the highest value
+        let maxZ = 100000.0
+        
+        // Invert the distance so closer cards have much higher z-indices
+        // This creates a strong layering effect
+        let zIndex = maxZ - min(absDistance * 10, maxZ - 1)
+        
+        return zIndex
     }
 }
-
 /// Tiny modifier that applies a scroll-driven transform (stateless, buttery smooth)
 @available(iOS 17, *)
 private struct ScaleOnScroll: ViewModifier {
     let focusedScale: CGFloat
     let unfocusedScale: CGFloat
-
     func body(content: Content) -> some View {
         content.scrollTransition(.interactive, axis: .vertical) { c, phase in
             c
@@ -218,20 +227,16 @@ private struct ScaleOnScroll: ViewModifier {
         }
     }
 }
-
 // MARK: - Card (shared)
-
 fileprivate struct CarouselCard: View {
     let kind: LibraryKind
     let item: LibraryItem
     let isFocused: Bool
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
-
     var body: some View {
         let strokeOpacity = isFocused ? 0.85 : 0.20
         let strokeWidth: CGFloat = isFocused ? 3 : 1
-
         ZStack(alignment: .bottomLeading) {
             artwork
                 .scaledToFill()
@@ -240,7 +245,9 @@ fileprivate struct CarouselCard: View {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .stroke(.white.opacity(strokeOpacity), lineWidth: strokeWidth)
                 )
-
+            // Add shadow to help with depth perception
+            .shadow(color: .black.opacity(isFocused ? 0.3 : 0.1), radius: isFocused ? 10 : 5, y: 2)
+            
             // Show wifi badge for web games
             if case .web = kind {
                 VStack {
@@ -256,7 +263,6 @@ fileprivate struct CarouselCard: View {
                     }
                 }
             }
-
             Text(item.displayName)
                 .font(.system(size: isFocused ? 16 : 13, weight: .semibold))
                 .foregroundStyle(.white)
@@ -267,7 +273,6 @@ fileprivate struct CarouselCard: View {
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
     }
-
     @ViewBuilder
     private var artwork: some View {
         if let ui = item.iconImage {
@@ -284,9 +289,7 @@ fileprivate struct CarouselCard: View {
         }
     }
 }
-
 // MARK: - Utilities
-
 extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil
