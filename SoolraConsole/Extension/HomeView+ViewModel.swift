@@ -72,19 +72,22 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
             currentHeldAction = action  // Set BEFORE the delay so release can catch it
             
             // After 0.3s, start repeating every 0.1s
+            // After 0.3s, start repeating every 0.1s
             let task = DispatchWorkItem { [weak self] in
                 guard let self = self, self.currentHeldAction == action else { return }
                 
                 print("⏰ Timer starting for \(action.rawValue)")
-                self.repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                self.repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.12, repeats: true) { [weak self] _ in  // Changed from 0.1 to 0.12
                     guard let self = self else { return }
                     self.executeAction(action, isInGameArea: isInGameArea)
                 }
             }
             
             pendingTimerTask = task
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: task)
-        }
+            // Clear processing flag after animation time
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.11) { [weak self] in  // Changed from 0.09 to 0.11
+                self?.isProcessingScroll = false
+            }        }
     }
     
     private func executeAction(_ action: SoolraControllerAction, isInGameArea: Bool) {

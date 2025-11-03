@@ -54,40 +54,43 @@ fileprivate struct VerticalCarousel_iOS17: View {
     let items: [(LibraryKind, LibraryItem)]
     let indexOffset: Int
     let onOpen: (LibraryKind, LibraryItem) -> Void
+    
     // Layout
     private let reveal: CGFloat = 100
-    private let extraGap: CGFloat = -100
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
+    
     // Paging & selection sync
     @State private var selectedID: UUID?
     @State private var currentSelectedIndex: Int = 0
     @State private var pendingScrollTask: Task<Void, Never>?
+    @State private var scrollOffset: CGFloat = 0
+    
     // Live depth ordering: distance of each card's midY from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
+    
     private struct CardDistanceKey: PreferenceKey {
         static var defaultValue: [UUID: CGFloat] = [:]
         static func reduce(value: inout [UUID: CGFloat], nextValue: () -> [UUID: CGFloat]) {
             value.merge(nextValue(), uniquingKeysWith: { $1 })
         }
     }
+    
     var body: some View {
-        let overlapAmount: CGFloat = 20 // How much cards overlap
+        let overlapAmount: CGFloat = 20
         let cardSpacing = cardSizeUnfocused.height - overlapAmount
         let viewportHeight = cardSizeFocused.height + 2 * reveal
         let verticalMargin = viewportHeight / 2 - cardSizeFocused.height / 2
         let focusedScale: CGFloat = 0.75
         let unfocusedScale: CGFloat = (cardSizeUnfocused.height / cardSizeFocused.height) * 0.75
+        
         GeometryReader { outer in
             ScrollView(.vertical) {
-                // Use ZStack for proper z-index control
                 ZStack(alignment: .top) {
-                    // Create cards in reverse order so higher indices naturally appear on top
                     ForEach(Array(items.enumerated()), id: \.offset) { index, tuple in
                         let (kind, item) = tuple
                         let isFocused = (index == currentSelectedIndex)
                         
-                        // Calculate card position
                         let yOffset = CGFloat(index) * cardSpacing
                         
                         CarouselCard(
@@ -124,91 +127,86 @@ fileprivate struct VerticalCarousel_iOS17: View {
                                         .font(.system(size: 10))
                                         .foregroundColor(.yellow)
                                 }
+                                Text("idx: \(index)")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.cyan)
                             }
                             .padding(8),
                             alignment: .bottomTrailing
                         )
-                        // Don't use compositingGroup as it can interfere with z-index
                     }
                     
-                    // Invisible view to define scrollable content size
                     Color.clear
                         .frame(height: CGFloat(items.count - 1) * cardSpacing + cardSizeFocused.height)
                 }
                 .frame(minHeight: CGFloat(items.count - 1) * cardSpacing + cardSizeFocused.height)
+                .offset(y: scrollOffset)
             }
             .frame(height: viewportHeight)
-            .scrollTargetBehavior(.viewAligned)
             .contentMargins(.vertical, verticalMargin)
             .scrollIndicators(.hidden)
             .clipped()
-            .transaction { $0.animation = nil }
+            .scrollDisabled(false ) // Disable user scrolling since we're controlling it manually
         }
         .onPreferenceChange(CardDistanceKey.self) { newDistances in
             distances = newDistances
         }
         .onAppear {
-            // Convert HomeView index to carousel index
             let carouselIndex = max(0, focusedIndex - indexOffset)
             currentSelectedIndex = carouselIndex
-            // CRITICAL: Always initialize selectedID to first item so scrollPosition works
-            // Even if focusedIndex is 0 (nav area), we still need a valid starting point
             if !items.isEmpty {
-                selectedID = items[0].1.id
+                selectedID = items[carouselIndex].1.id
+                // Set initial scroll position
+                scrollOffset = -CGFloat(carouselIndex) * (cardSizeUnfocused.height - 20)
             }
-            print("🎬 Carousel onAppear - focusedIndex: \(focusedIndex), carouselIndex: \(carouselIndex), items.count: \(items.count), selectedID: \(String(describing: selectedID))")
+            print("🎬 Carousel onAppear - focusedIndex: \(focusedIndex), carouselIndex: \(carouselIndex), items.count: \(items.count), scrollOffset: \(scrollOffset)")
         }
         .onChange(of: items.count) { oldCount, newCount in
             print("📦 Items count changed: \(oldCount) → \(newCount)")
-            // If items just loaded and selectedID is still nil, initialize it
             if selectedID == nil && !items.isEmpty {
                 selectedID = items[0].1.id
-                print("✨ Initialized selectedID to first item: \(String(describing: selectedID))")
+                scrollOffset = 0
             }
         }
-        .scrollPosition(id: $selectedID, anchor: .center)
         .onChange(of: focusedIndex) { oldValue, newValue in
-            // Convert HomeView index to carousel index
             let carouselIndex = max(0, newValue - indexOffset)
+            print("📍 Carousel focusedIndex changed: \(oldValue) → \(newValue), carouselIndex: \(carouselIndex)")
+            print("   currentSelectedIndex: \(currentSelectedIndex)")
+            
             currentSelectedIndex = carouselIndex
-            // Cancel any pending scroll
+            
             pendingScrollTask?.cancel()
-            // Immediate update for responsive feel
+            
             pendingScrollTask = Task { @MainActor in
-                guard !Task.isCancelled else { return }
-                let targetID = items[safe: carouselIndex]?.1.id
-                // Match animation duration to timer interval for smooth continuous scroll
-                withAnimation(.easeOut(duration: 0.08)) {
-                    selectedID = targetID
+                guard !Task.isCancelled else {
+                    print("   ❌ Task was cancelled")
+                    return
                 }
-            }
-        }
-        .onChange(of: selectedID) { _, newID in
-            if let i = items.firstIndex(where: { $0.1.id == newID }) {
-                currentSelectedIndex = i
-                // Convert carousel index back to HomeView index
-                focusedIndex = i + indexOffset
+                let targetID = items[safe: carouselIndex]?.1.id
+                print("   🎯 Target ID: \(String(describing: targetID)), scrolling to index: \(carouselIndex)")
+                
+                selectedID = targetID
+                
+                // Calculate target scroll position
+                let cardSpacing = cardSizeUnfocused.height - 20
+                let targetOffset = -CGFloat(carouselIndex) * cardSpacing
+                
+                print("   📏 Scrolling from \(scrollOffset) to \(targetOffset)")
+                
+                withAnimation(.easeOut(duration: 0.3)) {
+                    scrollOffset = targetOffset
+                }
             }
         }
     }
     
     private func zFor(_ id: UUID) -> Double {
-        // The card closest to the viewport center gets the highest z-index
-        // This ensures the middle card overlaps cards both above and below
-        
         guard let distance = distances[id] else {
-            // Default low z-index for cards without distance info yet
             return 0
         }
         
         let absDistance = abs(distance)
-        
-        // Use a very high base z-index to ensure proper layering
-        // The middle card (smallest distance) gets the highest value
         let maxZ = 100000.0
-        
-        // Invert the distance so closer cards have much higher z-indices
-        // This creates a strong layering effect
         let zIndex = maxZ - min(absDistance * 10, maxZ - 1)
         
         return zIndex
