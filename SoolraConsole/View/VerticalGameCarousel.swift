@@ -17,7 +17,7 @@ struct VerticalGameCarousel: View {
     let indexOffset: Int // Offset to convert HomeView index to carousel index
     
     // Layout knobs
-    private let cardSizeFocused = CGSize(width: 220, height: 220)
+    private let cardSizeFocused = CGSize(width: 230, height: 230)
     private let cardSizeUnfocused = CGSize(width: 120, height: 120)
     private let spacing: CGFloat = 22
     
@@ -64,7 +64,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
     let cardSizeUnfocused: CGSize
     
     // Paging & selection sync
-    @State private var selectedID: String?  // Changed to String to match compound IDs
+    @State private var selectedID: String?
     @State private var currentSelectedIndex: Int = 0
     @State private var pendingScrollTask: Task<Void, Never>?
     
@@ -108,7 +108,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
                             cardSizeUnfocused: cardSizeUnfocused
                         )
                         .onTapGesture { onOpen(kind, item) }
-                        .id(itemID)  // Use compound ID that includes z-bucket
+                        .id(itemID)
                         .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))
                         .background(
                             GeometryReader { cardGeo in
@@ -120,23 +120,23 @@ fileprivate struct VerticalCarousel_iOS17: View {
                             }
                         )
                         .zIndex(zIndex)
-                        .overlay(
-                            VStack {
-                                Text("z: \(String(format: "%.0f", zIndex))")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.white)
-                                    .padding(4)
-                                    .background(Color.black.opacity(0.6))
-                                    .cornerRadius(6)
-                                if let d = distances[item.id] {
-                                    Text(String(format: "dy: %.0f", d))
-                                        .font(.system(size: 10))
-                                        .foregroundColor(.yellow)
-                                }
-                            }
-                            .padding(8),
-                            alignment: .bottomTrailing
-                        )
+//                        .overlay(
+//                            VStack {
+//                                Text("z: \(String(format: "%.0f", zIndex))")
+//                                    .font(.system(size: 10))
+//                                    .foregroundColor(.white)
+//                                    .padding(4)
+//                                    .background(Color.black.opacity(0.6))
+//                                    .cornerRadius(6)
+//                                if let d = distances[item.id] {
+//                                    Text(String(format: "dy: %.0f", d))
+//                                        .font(.system(size: 10))
+//                                        .foregroundColor(.yellow)
+//                                }
+//                            }
+//                            .padding(8),
+//                            alignment: .bottomTrailing
+//                        )
                         .compositingGroup()
                     }
                 }
@@ -151,10 +151,8 @@ fileprivate struct VerticalCarousel_iOS17: View {
         }
         .onPreferenceChange(CardDistanceKey.self) { distances = $0 }
         .onAppear {
-            // Convert HomeView index to carousel index
             let carouselIndex = max(0, focusedIndex - indexOffset)
             currentSelectedIndex = carouselIndex
-            // Initialize selectedID with compound ID
             if !items.isEmpty {
                 let item = items[0].1
                 let zIndex = zFor(item.id)
@@ -164,7 +162,6 @@ fileprivate struct VerticalCarousel_iOS17: View {
         }
         .onChange(of: items.count) { oldCount, newCount in
             print("📦 Items count changed: \(oldCount) → \(newCount)")
-            // If items just loaded and selectedID is still nil, initialize it
             if selectedID == nil && !items.isEmpty {
                 let item = items[0].1
                 let zIndex = zFor(item.id)
@@ -174,27 +171,22 @@ fileprivate struct VerticalCarousel_iOS17: View {
         }
         .scrollPosition(id: $selectedID, anchor: .center)
         .onChange(of: focusedIndex) { oldValue, newValue in
-            // Convert HomeView index to carousel index
             let carouselIndex = max(0, newValue - indexOffset)
             currentSelectedIndex = carouselIndex
             
-            // Cancel any pending scroll
             pendingScrollTask?.cancel()
             
-            // Immediate update for responsive feel
             pendingScrollTask = Task { @MainActor in
                 guard !Task.isCancelled else { return }
                 guard let (_, item) = items[safe: carouselIndex] else { return }
                 let zIndex = zFor(item.id)
                 let targetID = compoundID(for: item, zIndex: zIndex)
-                // Match animation duration to timer interval for smooth continuous scroll
                 withAnimation(.easeOut(duration: 0.08)) {
                     selectedID = targetID
                 }
             }
         }
         .onChange(of: selectedID) { _, newID in
-            // Extract UUID from compound ID (before the last dash)
             guard let newID = newID,
                   let lastDashIndex = newID.lastIndex(of: "-") else { return }
             let uuidString = String(newID[..<lastDashIndex])
@@ -202,12 +194,10 @@ fileprivate struct VerticalCarousel_iOS17: View {
             if let uuid = UUID(uuidString: uuidString),
                let i = items.firstIndex(where: { $0.1.id == uuid }) {
                 currentSelectedIndex = i
-                // Convert carousel index back to HomeView index
                 focusedIndex = i + indexOffset
             }
         }
         .onChange(of: distances) { _, _ in
-            // When distances update, update selectedID to reflect new z-index
             guard let index = items.indices.first(where: { items[$0].1.id.uuidString == selectedID?.split(separator: "-").first.map(String.init) }) else { return }
             let item = items[index].1
             let newZIndex = zFor(item.id)
@@ -220,17 +210,16 @@ fileprivate struct VerticalCarousel_iOS17: View {
     
     private func zFor(_ id: UUID) -> Double {
         guard let d = distances[id], d.isFinite else {
-            // If no distance data yet or infinite, return lowest priority
             return 0
         }
         let distance = abs(d)
-        // Clamp to reasonable range
         let clampedDistance = min(distance, 9_999)
         return Double(10_000) - clampedDistance
     }
 }
 
 // MARK: - Card (shared)
+@available(iOS 17, *)
 fileprivate struct CarouselCard: View {
     let kind: LibraryKind
     let item: LibraryItem
@@ -242,13 +231,14 @@ fileprivate struct CarouselCard: View {
         let strokeOpacity = isFocused ? 0.85 : 0.20
         let strokeWidth: CGFloat = isFocused ? 3 : 1
         
-        ZStack(alignment: .bottomLeading) {
+        ZStack(alignment: .bottom) {
             artwork
                 .scaledToFill()
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(.white.opacity(strokeOpacity), lineWidth: strokeWidth)
+//                        .stroke(.white.opacity(strokeOpacity), lineWidth: strokeWidth)
+                        .stroke(Color(red: 252/255, green: 112/255, blue: 242/255).opacity(strokeOpacity), lineWidth: strokeWidth)
                 )
             
             // Show wifi badge for web games
@@ -266,14 +256,41 @@ fileprivate struct CarouselCard: View {
                     }
                 }
             }
-            
-            Text(item.displayName)
-                .font(.system(size: isFocused ? 16 : 13, weight: .semibold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(.black.opacity(0.55), in: Capsule())
-                .padding(10)
+        }
+        .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
+        .overlay(alignment: .bottom) {
+            if isFocused {
+                Text(item.displayName)
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .padding(.horizontal, 30)
+                    .padding(.vertical, 8)
+                    .padding(.bottom, 10)
+                    .background(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 131/255, green: 37/255, blue: 126/255).opacity(1),
+                                Color(red: 131/255, green: 37/255, blue: 126/255).opacity(1),
+                                Color(red: 131/255, green: 37/255, blue: 126/255).opacity(0.8),
+//                                Color(red: 138/255, green: 39/255, blue: 133/255).opacity(0.8),
+//                                Color(red: 138/255, green: 39/255, blue: 133/255).opacity(0.8),
+                                Color(red: 191/255, green: 165/255, blue: 189/255).opacity(0.8)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        in: UnevenRoundedRectangle(
+                            topLeadingRadius: 0,
+                            bottomLeadingRadius: 15,
+                            bottomTrailingRadius: 15,
+                            topTrailingRadius: 0
+                        )
+                    )
+                    .offset(y: 56)
+                    
+            }
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
     }
@@ -294,6 +311,8 @@ fileprivate struct CarouselCard: View {
         }
     }
 }
+
+
 /// Tiny modifier that applies a scroll-driven transform (stateless, buttery smooth)
 @available(iOS 17, *)
 private struct ScaleOnScroll: ViewModifier {
