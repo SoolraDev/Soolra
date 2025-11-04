@@ -1,28 +1,26 @@
-//
 //  VerticalGameCarousel.swift
 //  SOOLRA
 //
 //  Created by Kai Yoshida on 23/10/2025.
 //
-
 import SwiftUI
 
 // MARK: - Public wrapper
 /// Drop-in vertical game picker with iOS 17+ paging and an iOS 16 fallback.
-/// - Use `VerticalGameCarousel(focusedIndex:onOpen:)` anywhere in your UI.
-/// - Bind `focusedIndex` to your existing `viewModel.focusedButtonIndex`.
-/// - Supply your items in display order via the `items` parameter.
+/// - Use VerticalGameCarousel(focusedIndex:onOpen:) anywhere in your UI.
+/// - Bind focusedIndex to your existing viewModel.focusedButtonIndex.
+/// - Supply your items in display order via the items parameter.
 struct VerticalGameCarousel: View {
     @Binding var focusedIndex: Int
     let items: [(LibraryKind, LibraryItem)]
     let onOpen: (LibraryKind, LibraryItem) -> Void
     let indexOffset: Int // Offset to convert HomeView index to carousel index
-
+    
     // Layout knobs
     private let cardSizeFocused = CGSize(width: 220, height: 220)
     private let cardSizeUnfocused = CGSize(width: 120, height: 120)
     private let spacing: CGFloat = 22
-
+    
     init(
         focusedIndex: Binding<Int>,
         items: [(LibraryKind, LibraryItem)],
@@ -34,7 +32,7 @@ struct VerticalGameCarousel: View {
         self.indexOffset = indexOffset
         self.onOpen = onOpen
     }
-
+    
     var body: some View {
         if #available(iOS 17, *) {
             VerticalCarousel_iOS17(
@@ -52,50 +50,55 @@ struct VerticalGameCarousel: View {
         }
     }
 }
-
-// MARK: - iOS 17+ implementation
-
 @available(iOS 17, *)
 fileprivate struct VerticalCarousel_iOS17: View {
     @Binding var focusedIndex: Int
     let items: [(LibraryKind, LibraryItem)]
     let indexOffset: Int
     let onOpen: (LibraryKind, LibraryItem) -> Void
-
+    
     // Layout
     private let reveal: CGFloat = 100
     private let extraGap: CGFloat = -100
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
-
+    
     // Paging & selection sync
-    @State private var selectedID: UUID?
+    @State private var selectedID: String?  // Changed to String to match compound IDs
     @State private var currentSelectedIndex: Int = 0
     @State private var pendingScrollTask: Task<Void, Never>?
-
+    
     // Live depth ordering: distance of each card's midY from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
-
+    
     private struct CardDistanceKey: PreferenceKey {
         static var defaultValue: [UUID: CGFloat] = [:]
         static func reduce(value: inout [UUID: CGFloat], nextValue: () -> [UUID: CGFloat]) {
             value.merge(nextValue(), uniquingKeysWith: { $1 })
         }
     }
-
+    
+    // Helper to create compound ID
+    private func compoundID(for item: LibraryItem, zIndex: Double) -> String {
+        let zBucket = Int(zIndex / 50)
+        return "\(item.id.uuidString)-\(zBucket)"
+    }
+    
     var body: some View {
         let overlapSpacing = -(cardSizeUnfocused.height - reveal) + extraGap
         let viewportHeight = cardSizeFocused.height + 2 * reveal
         let verticalMargin = viewportHeight / 2 - cardSizeFocused.height / 2
         let focusedScale: CGFloat = 0.75
         let unfocusedScale: CGFloat = (cardSizeUnfocused.height / cardSizeFocused.height) * 0.75
-
+        
         GeometryReader { outer in
             ScrollView(.vertical) {
                 LazyVStack(spacing: overlapSpacing) {
                     ForEach(items.indices, id: \.self) { index in
                         let (kind, item) = items[index]
                         let isFocused = (index == currentSelectedIndex)
+                        let zIndex = zFor(item.id)
+                        let itemID = compoundID(for: item, zIndex: zIndex)
                         
                         CarouselCard(
                             kind: kind,
@@ -105,7 +108,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
                             cardSizeUnfocused: cardSizeUnfocused
                         )
                         .onTapGesture { onOpen(kind, item) }
-                        .id(item.id)
+                        .id(itemID)  // Use compound ID that includes z-bucket
                         .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))
                         .background(
                             GeometryReader { cardGeo in
@@ -116,10 +119,10 @@ fileprivate struct VerticalCarousel_iOS17: View {
                                                 value: [item.id: cardMidY - viewportMid])
                             }
                         )
-                        .zIndex(zFor(item.id))
+                        .zIndex(zIndex)
                         .overlay(
                             VStack {
-                                Text("z: \(zFor(item.id)))")
+                                Text("z: \(String(format: "%.0f", zIndex))")
                                     .font(.system(size: 10))
                                     .foregroundColor(.white)
                                     .padding(4)
@@ -151,20 +154,21 @@ fileprivate struct VerticalCarousel_iOS17: View {
             // Convert HomeView index to carousel index
             let carouselIndex = max(0, focusedIndex - indexOffset)
             currentSelectedIndex = carouselIndex
-            
-            // CRITICAL: Always initialize selectedID to first item so scrollPosition works
-            // Even if focusedIndex is 0 (nav area), we still need a valid starting point
+            // Initialize selectedID with compound ID
             if !items.isEmpty {
-                selectedID = items[0].1.id
+                let item = items[0].1
+                let zIndex = zFor(item.id)
+                selectedID = compoundID(for: item, zIndex: zIndex)
             }
-            
             print("🎬 Carousel onAppear - focusedIndex: \(focusedIndex), carouselIndex: \(carouselIndex), items.count: \(items.count), selectedID: \(String(describing: selectedID))")
         }
         .onChange(of: items.count) { oldCount, newCount in
             print("📦 Items count changed: \(oldCount) → \(newCount)")
             // If items just loaded and selectedID is still nil, initialize it
             if selectedID == nil && !items.isEmpty {
-                selectedID = items[0].1.id
+                let item = items[0].1
+                let zIndex = zFor(item.id)
+                selectedID = compoundID(for: item, zIndex: zIndex)
                 print("✨ Initialized selectedID to first item: \(String(describing: selectedID))")
             }
         }
@@ -180,9 +184,9 @@ fileprivate struct VerticalCarousel_iOS17: View {
             // Immediate update for responsive feel
             pendingScrollTask = Task { @MainActor in
                 guard !Task.isCancelled else { return }
-                
-                let targetID = items[safe: carouselIndex]?.1.id
-                
+                guard let (_, item) = items[safe: carouselIndex] else { return }
+                let zIndex = zFor(item.id)
+                let targetID = compoundID(for: item, zIndex: zIndex)
                 // Match animation duration to timer interval for smooth continuous scroll
                 withAnimation(.easeOut(duration: 0.08)) {
                     selectedID = targetID
@@ -190,48 +194,54 @@ fileprivate struct VerticalCarousel_iOS17: View {
             }
         }
         .onChange(of: selectedID) { _, newID in
-            if let i = items.firstIndex(where: { $0.1.id == newID }) {
+            // Extract UUID from compound ID (before the last dash)
+            guard let newID = newID,
+                  let lastDashIndex = newID.lastIndex(of: "-") else { return }
+            let uuidString = String(newID[..<lastDashIndex])
+            
+            if let uuid = UUID(uuidString: uuidString),
+               let i = items.firstIndex(where: { $0.1.id == uuid }) {
                 currentSelectedIndex = i
                 // Convert carousel index back to HomeView index
                 focusedIndex = i + indexOffset
             }
         }
-    }
-
-    private func zFor(_ id: UUID) -> Double {
-        let d = abs(distances[id] ?? .greatestFiniteMagnitude)
-        return Double(10_000 - min(9_999, d)) + 0.0001
-    }
-}
-
-/// Tiny modifier that applies a scroll-driven transform (stateless, buttery smooth)
-@available(iOS 17, *)
-private struct ScaleOnScroll: ViewModifier {
-    let focusedScale: CGFloat
-    let unfocusedScale: CGFloat
-
-    func body(content: Content) -> some View {
-        content.scrollTransition(.interactive, axis: .vertical) { c, phase in
-            c
-                .scaleEffect(phase.isIdentity ? focusedScale : unfocusedScale)
-                .opacity(phase.isIdentity ? 1.0 : 0.95)
+        .onChange(of: distances) { _, _ in
+            // When distances update, update selectedID to reflect new z-index
+            guard let index = items.indices.first(where: { items[$0].1.id.uuidString == selectedID?.split(separator: "-").first.map(String.init) }) else { return }
+            let item = items[index].1
+            let newZIndex = zFor(item.id)
+            let newID = compoundID(for: item, zIndex: newZIndex)
+            if newID != selectedID {
+                selectedID = newID
+            }
         }
+    }
+    
+    private func zFor(_ id: UUID) -> Double {
+        guard let d = distances[id], d.isFinite else {
+            // If no distance data yet or infinite, return lowest priority
+            return 0
+        }
+        let distance = abs(d)
+        // Clamp to reasonable range
+        let clampedDistance = min(distance, 9_999)
+        return Double(10_000) - clampedDistance
     }
 }
 
 // MARK: - Card (shared)
-
 fileprivate struct CarouselCard: View {
     let kind: LibraryKind
     let item: LibraryItem
     let isFocused: Bool
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
-
+    
     var body: some View {
         let strokeOpacity = isFocused ? 0.85 : 0.20
         let strokeWidth: CGFloat = isFocused ? 3 : 1
-
+        
         ZStack(alignment: .bottomLeading) {
             artwork
                 .scaledToFill()
@@ -240,7 +250,7 @@ fileprivate struct CarouselCard: View {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .stroke(.white.opacity(strokeOpacity), lineWidth: strokeWidth)
                 )
-
+            
             // Show wifi badge for web games
             if case .web = kind {
                 VStack {
@@ -256,7 +266,7 @@ fileprivate struct CarouselCard: View {
                     }
                 }
             }
-
+            
             Text(item.displayName)
                 .font(.system(size: isFocused ? 16 : 13, weight: .semibold))
                 .foregroundStyle(.white)
@@ -267,7 +277,7 @@ fileprivate struct CarouselCard: View {
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
     }
-
+    
     @ViewBuilder
     private var artwork: some View {
         if let ui = item.iconImage {
@@ -284,9 +294,24 @@ fileprivate struct CarouselCard: View {
         }
     }
 }
+/// Tiny modifier that applies a scroll-driven transform (stateless, buttery smooth)
+@available(iOS 17, *)
+private struct ScaleOnScroll: ViewModifier {
+    let focusedScale: CGFloat
+    let unfocusedScale: CGFloat
+    
+    func body(content: Content) -> some View {
+        content.scrollTransition(.interactive, axis: .vertical) { c, phase in
+            c
+                .scaleEffect(phase.isIdentity ? focusedScale : unfocusedScale)
+                .opacity(phase.isIdentity ? 1.0 : 0.95)
+        }
+    }
+}
+
+
 
 // MARK: - Utilities
-
 extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil
