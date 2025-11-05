@@ -111,7 +111,7 @@ struct HomeView: View {
                                 .frame(width: geometry.size.width)
                                 .clipped()
                                 .ignoresSafeArea(edges: .all)
-                                .offset(y: -72) // move just the image
+                                .offset(y: -56) // move just the image
                         }
 
 
@@ -209,7 +209,7 @@ struct HomeView: View {
                             SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
                                 viewModel.controllerDidPress(action: action, pressed: pressed)
                             })
-                            .frame(width: geometry.size.width, height: totalHeight * 0.48)
+                            .frame(width: geometry.size.width, height: totalHeight * 0.45)
                             .edgesIgnoringSafeArea(.bottom)
                         }
                         .preferredColorScheme(.dark)
@@ -984,23 +984,23 @@ struct HomeView: View {
                         .frame(width: 40, height: 40)
                         .padding()
                 })
-                .offset(x: 8, y: -50) // Adjust as needed
+                .offset(x: 8, y: -50)
                 
                 BlinkingFocusedButton(
                     selectedIndex: .constant(-1),
                     index: 2,
                     action: {
-                        viewModel.isPresented = true   // opens DocumentPicker
+                        viewModel.isPresented = true
                     },
                     content: {
-                        Image("add-rom-new")    // ← your existing asset
+                        Image("add-rom-new")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 40, height: 40)
                             .padding()
                     }
                 )
-                .offset(x: 8, y: UIScreen.main.bounds.height * 0.23)
+                .offset(x: 8, y: UIScreen.main.bounds.height * 0.245)
 
                 
                 // Settings button - lower, roughly halfway down the screen
@@ -1019,7 +1019,7 @@ struct HomeView: View {
                 }) {
                     SettingsView().environmentObject(dataController)
                 }
-                .offset(x: 8, y: UIScreen.main.bounds.height * 0.3) // roughly halfway down
+                .offset(x: 8, y: UIScreen.main.bounds.height * 0.318)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.clear)
