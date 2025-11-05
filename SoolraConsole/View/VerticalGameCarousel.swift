@@ -33,7 +33,6 @@ struct VerticalGameCarousel: View {
     
     var body: some View {
         if #available(iOS 17, *) {
-
             VerticalCarousel_iOS17(
                 focusedIndex: $focusedIndex,
                 items: items,
@@ -58,7 +57,6 @@ struct VerticalGameCarousel: View {
         }
     }
 }
-
 // MARK: - iOS 16 Fallback
 fileprivate struct VerticalCarousel_iOS16: View {
     @Binding var focusedIndex: Int
@@ -201,14 +199,12 @@ fileprivate struct VerticalCarousel_iOS16: View {
         }
     }
 }
-
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: [Int: CGFloat] = [:]
     static func reduce(value: inout [Int: CGFloat], nextValue: () -> [Int: CGFloat]) {
         value.merge(nextValue(), uniquingKeysWith: { $1 })
     }
 }
-
 // MARK: - iOS 17 Version
 @available(iOS 17, *)
 fileprivate struct VerticalCarousel_iOS17: View {
@@ -229,9 +225,9 @@ fileprivate struct VerticalCarousel_iOS17: View {
     @State private var pendingScrollTask: Task<Void, Never>?
     @State private var isInitialScrollComplete: Bool = false
     @State private var isChangingBucket: Bool = false
-
     // Live depth ordering: distance of each card's midY from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
+    @State private var showFocus: Bool = false // Simple on/off switch
     
     private struct CardDistanceKey: PreferenceKey {
         static var defaultValue: [UUID: CGFloat] = [:]
@@ -291,6 +287,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
                             kind: kind,
                             item: item,
                             isFocused: isFocused,
+                            showFocus: isFocused && showFocus, // Show if focused AND flag is on
                             cardSizeFocused: cardSizeFocused,
                             cardSizeUnfocused: cardSizeUnfocused
                         )
@@ -347,6 +344,10 @@ fileprivate struct VerticalCarousel_iOS17: View {
                 // Show carousel after scroll completes
                 try? await Task.sleep(nanoseconds: 10_000_000) // 10ms to ensure scroll is done
                 isInitialScrollComplete = true
+                // Turn on focus after everything settles
+                try? await Task.sleep(nanoseconds: 200_000_000) // 200ms
+                showFocus = true
+                print("✅ Focus enabled")
             }
         }
         .onChange(of: items.count) { oldCount, newCount in
@@ -363,6 +364,9 @@ fileprivate struct VerticalCarousel_iOS17: View {
             let carouselIndex = max(0, newValue - indexOffset)
             currentSelectedIndex = carouselIndex
             
+            // Turn off focus when navigating
+            showFocus = false
+            
             pendingScrollTask?.cancel()
             
             pendingScrollTask = Task { @MainActor in
@@ -376,21 +380,28 @@ fileprivate struct VerticalCarousel_iOS17: View {
             }
         }
         .onChange(of: distances) { _, _ in
+            print("📏 Distances changed")
             guard let index = items.indices.first(where: { items[$0].1.id.uuidString == selectedID?.split(separator: "-").first.map(String.init) }) else { return }
             let item = items[index].1
             let newZIndex = zFor(item.id)
             let newID = compoundID(for: item, zIndex: newZIndex)
+            print("🔍 Check bucket - old: \(selectedID ?? "nil"), new: \(newID)")
             if newID != selectedID {
+                print("🔄 Bucket change detected")
                 isChangingBucket = true
                 selectedID = newID
+                
+                // Turn focus back on after bucket change
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 100_000_000)
+                    isChangingBucket = false
+                    showFocus = true
+                    print("✅ Focus re-enabled after bucket change")
+                }
             }
         }
-
         .onChange(of: selectedID) { _, newID in
-            guard !isChangingBucket else {
-                isChangingBucket = false
-                return
-            }
+            guard !isChangingBucket else { return }
             
             guard let newID = newID,
                   let lastDashIndex = newID.lastIndex(of: "-") else { return }
@@ -400,6 +411,15 @@ fileprivate struct VerticalCarousel_iOS17: View {
                let i = items.firstIndex(where: { $0.1.id == uuid }) {
                 currentSelectedIndex = i
                 focusedIndex = i + indexOffset
+                
+                // Turn focus back on after scroll settles (fallback if distances doesn't fire)
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 150_000_000)
+                    if selectedID == newID {
+                        showFocus = true
+                        print("✅ Focus re-enabled after scroll (fallback)")
+                    }
+                }
             }
         }
     }
@@ -419,12 +439,15 @@ fileprivate struct CarouselCard: View {
     let kind: LibraryKind
     let item: LibraryItem
     let isFocused: Bool
+    let showFocus: Bool // NEW: Control visibility of focus effects
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
     
     var body: some View {
-        let strokeOpacity = isFocused ? 0.85 : 0.20
-        let strokeWidth: CGFloat = isFocused ? 3 : 1
+        let strokeOpacity = (isFocused && showFocus) ? 0.85 : 0.20
+        let strokeWidth: CGFloat = (isFocused && showFocus) ? 3 : 1
+        
+        let _ = print("🎴 Card render - item: \(item.displayName), isFocused: \(isFocused), showFocus: \(showFocus), strokeOpacity: \(strokeOpacity)")
         
         ZStack(alignment: .bottom) {
             artwork
@@ -453,7 +476,7 @@ fileprivate struct CarouselCard: View {
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
         .overlay(alignment: .bottom) {
-            if isFocused {
+            if isFocused && showFocus { // Only show when focused AND showFocus is true
                 Text(item.displayName)
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(.white)
@@ -481,8 +504,7 @@ fileprivate struct CarouselCard: View {
                         )
                     )
                     .offset(y: 56)
-                    
-            }
+                    }
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
     }
