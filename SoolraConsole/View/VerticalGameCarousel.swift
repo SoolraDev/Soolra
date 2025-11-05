@@ -413,8 +413,9 @@ fileprivate struct VerticalCarousel_iOS17: View {
                 focusedIndex = i + indexOffset
                 
                 // Turn focus back on after scroll settles (fallback if distances doesn't fire)
+                // Longer delay so cards swiped past don't show focus
                 Task { @MainActor in
-                    try? await Task.sleep(nanoseconds: 150_000_000)
+                    try? await Task.sleep(nanoseconds: 385_000_000) // 300ms
                     if selectedID == newID {
                         showFocus = true
                         print("✅ Focus re-enabled after scroll (fallback)")
