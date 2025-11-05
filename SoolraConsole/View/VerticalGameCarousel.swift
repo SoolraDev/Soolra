@@ -66,7 +66,8 @@ fileprivate struct VerticalCarousel_iOS17: View {
     @State private var currentSelectedIndex: Int
     @State private var pendingScrollTask: Task<Void, Never>?
     @State private var isInitialScrollComplete: Bool = false
-    
+    @State private var isChangingBucket: Bool = false
+
     // Live depth ordering: distance of each card's midY from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
     
@@ -212,7 +213,23 @@ fileprivate struct VerticalCarousel_iOS17: View {
                 }
             }
         }
+        .onChange(of: distances) { _, _ in
+            guard let index = items.indices.first(where: { items[$0].1.id.uuidString == selectedID?.split(separator: "-").first.map(String.init) }) else { return }
+            let item = items[index].1
+            let newZIndex = zFor(item.id)
+            let newID = compoundID(for: item, zIndex: newZIndex)
+            if newID != selectedID {
+                isChangingBucket = true  // ADD THIS
+                selectedID = newID
+            }
+        }
+
         .onChange(of: selectedID) { _, newID in
+            guard !isChangingBucket else {  // ADD THIS CHECK
+                isChangingBucket = false    // ADD THIS
+                return                      // ADD THIS
+            }                               // ADD THIS
+            
             guard let newID = newID,
                   let lastDashIndex = newID.lastIndex(of: "-") else { return }
             let uuidString = String(newID[..<lastDashIndex])
@@ -221,15 +238,6 @@ fileprivate struct VerticalCarousel_iOS17: View {
                let i = items.firstIndex(where: { $0.1.id == uuid }) {
                 currentSelectedIndex = i
                 focusedIndex = i + indexOffset
-            }
-        }
-        .onChange(of: distances) { _, _ in
-            guard let index = items.indices.first(where: { items[$0].1.id.uuidString == selectedID?.split(separator: "-").first.map(String.init) }) else { return }
-            let item = items[index].1
-            let newZIndex = zFor(item.id)
-            let newID = compoundID(for: item, zIndex: newZIndex)
-            if newID != selectedID {
-                selectedID = newID
             }
         }
     }
