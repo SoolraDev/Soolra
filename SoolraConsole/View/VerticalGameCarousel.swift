@@ -18,7 +18,6 @@ struct VerticalGameCarousel: View {
     // Layout knobs
     private let cardSizeFocused = CGSize(width: 230, height: 230)
     private let cardSizeUnfocused = CGSize(width: 120, height: 120)
-    private let spacing: CGFloat = 22
     
     init(
         focusedIndex: Binding<Int>,
@@ -57,8 +56,8 @@ fileprivate struct VerticalCarousel_iOS17: View {
     let onOpen: (LibraryKind, LibraryItem) -> Void
     
     // Layout
-    private let reveal: CGFloat = 100
-    private let extraGap: CGFloat = -100
+    private let reveal: CGFloat = 120
+    private let extraGap: CGFloat = -120
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
     
