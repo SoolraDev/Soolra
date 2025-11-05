@@ -4,7 +4,6 @@
 //  Created by Kai Yoshida on 23/10/2025.
 //
 import SwiftUI
-
 // MARK: - Public wrapper
 /// Drop-in vertical game picker with iOS 17+ paging and an iOS 16 fallback.
 /// - Use VerticalGameCarousel(focusedIndex:onOpen:) anywhere in your UI.
@@ -65,8 +64,9 @@ fileprivate struct VerticalCarousel_iOS17: View {
     
     // Paging & selection sync
     @State private var selectedID: String?
-    @State private var currentSelectedIndex: Int = 0
+    @State private var currentSelectedIndex: Int
     @State private var pendingScrollTask: Task<Void, Never>?
+    @State private var isInitialScrollComplete: Bool = false
     
     // Live depth ordering: distance of each card's midY from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
@@ -82,6 +82,31 @@ fileprivate struct VerticalCarousel_iOS17: View {
     private func compoundID(for item: LibraryItem, zIndex: Double) -> String {
         let zBucket = Int(zIndex / 50)
         return "\(item.id.uuidString)-\(zBucket)"
+    }
+    
+    // CHANGE 1: Add custom init to set selectedID to correct position
+    init(focusedIndex: Binding<Int>, items: [(LibraryKind, LibraryItem)], indexOffset: Int, onOpen: @escaping (LibraryKind, LibraryItem) -> Void, cardSizeFocused: CGSize, cardSizeUnfocused: CGSize) {
+        self._focusedIndex = focusedIndex
+        self.items = items
+        self.indexOffset = indexOffset
+        self.onOpen = onOpen
+        self.cardSizeFocused = cardSizeFocused
+        self.cardSizeUnfocused = cardSizeUnfocused
+        
+        // Calculate correct carousel index
+        let carouselIndex = max(0, focusedIndex.wrappedValue - indexOffset)
+        self._currentSelectedIndex = State(initialValue: carouselIndex)
+        
+        // Set selectedID to the correct position (not item 0)
+        if !items.isEmpty, carouselIndex < items.count {
+            let item = items[carouselIndex].1
+            let defaultZIndex = 10000.0
+            let zBucket = Int(defaultZIndex / 50)
+            let initialID = "\(item.id.uuidString)-\(zBucket)"
+            self._selectedID = State(initialValue: initialID)
+        } else {
+            self._selectedID = State(initialValue: nil)
+        }
     }
     
     var body: some View {
@@ -120,23 +145,6 @@ fileprivate struct VerticalCarousel_iOS17: View {
                             }
                         )
                         .zIndex(zIndex)
-//                        .overlay(
-//                            VStack {
-//                                Text("z: \(String(format: "%.0f", zIndex))")
-//                                    .font(.system(size: 10))
-//                                    .foregroundColor(.white)
-//                                    .padding(4)
-//                                    .background(Color.black.opacity(0.6))
-//                                    .cornerRadius(6)
-//                                if let d = distances[item.id] {
-//                                    Text(String(format: "dy: %.0f", d))
-//                                        .font(.system(size: 10))
-//                                        .foregroundColor(.yellow)
-//                                }
-//                            }
-//                            .padding(8),
-//                            alignment: .bottomTrailing
-//                        )
                         .compositingGroup()
                     }
                 }
@@ -148,17 +156,36 @@ fileprivate struct VerticalCarousel_iOS17: View {
             .scrollIndicators(.hidden)
             .clipped()
             .transaction { $0.animation = nil }
+            .opacity(isInitialScrollComplete ? 1 : 0)
         }
         .onPreferenceChange(CardDistanceKey.self) { distances = $0 }
         .onAppear {
             let carouselIndex = max(0, focusedIndex - indexOffset)
             currentSelectedIndex = carouselIndex
-            if !items.isEmpty {
-                let item = items[0].1
+            // CHANGE 2: Only set if nil, and use carouselIndex not 0
+            if selectedID == nil && !items.isEmpty {
+                let safeIndex = min(carouselIndex, items.count - 1)
+                let item = items[safeIndex].1
                 let zIndex = zFor(item.id)
                 selectedID = compoundID(for: item, zIndex: zIndex)
             }
             print("🎬 Carousel onAppear - focusedIndex: \(focusedIndex), carouselIndex: \(carouselIndex), items.count: \(items.count), selectedID: \(String(describing: selectedID))")
+            
+            // Force scroll to position after layout
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_000_000) // 1ms - just enough for layout
+                if !items.isEmpty {
+                    let safeIndex = min(carouselIndex, items.count - 1)
+                    let item = items[safeIndex].1
+                    let zIndex = zFor(item.id)
+                    let targetID = compoundID(for: item, zIndex: zIndex)
+                    selectedID = targetID
+                    print("📍 Scrolled to: \(targetID)")
+                }
+                // Show carousel after scroll completes
+                try? await Task.sleep(nanoseconds: 10_000_000) // 10ms to ensure scroll is done
+                isInitialScrollComplete = true
+            }
         }
         .onChange(of: items.count) { oldCount, newCount in
             print("📦 Items count changed: \(oldCount) → \(newCount)")
@@ -217,7 +244,6 @@ fileprivate struct VerticalCarousel_iOS17: View {
         return Double(10_000) - clampedDistance
     }
 }
-
 // MARK: - Card (shared)
 @available(iOS 17, *)
 fileprivate struct CarouselCard: View {
@@ -311,8 +337,6 @@ fileprivate struct CarouselCard: View {
         }
     }
 }
-
-
 /// Tiny modifier that applies a scroll-driven transform (stateless, buttery smooth)
 @available(iOS 17, *)
 private struct ScaleOnScroll: ViewModifier {
@@ -327,9 +351,6 @@ private struct ScaleOnScroll: ViewModifier {
         }
     }
 }
-
-
-
 // MARK: - Utilities
 extension Array {
     subscript(safe index: Int) -> Element? {

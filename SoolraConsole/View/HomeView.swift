@@ -73,7 +73,6 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var hSize
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
-    @State private var selectedCarouselID: UUID? = nil
 
     private let dialogSpring = Animation.spring(response: 0.32, dampingFraction: 0.86, blendDuration: 0.15)
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
@@ -720,7 +719,9 @@ struct HomeView: View {
         }
         Task { @MainActor in
             self.currentView = .web(game)
-            viewModel.focusedButtonIndex = 4
+            if #unavailable(iOS 17) {
+                viewModel.focusedButtonIndex = 4
+            }
             engagementTracker.setCurrentRom(game.name)
         }
     }
@@ -735,12 +736,11 @@ struct HomeView: View {
                 // Load everything before transitioning view
                 let gameData = try await loadRom(rom: rom, consoleManager: consoleManager)
                 consoleManager.cheatCodesManager = CheatCodesManager(consoleManager: consoleManager)
-                // Once everything is ready, update the view
                 await MainActor.run {
-                    //withAnimation(.easeInOut(duration: 0.3)) {
                     self.currentView = .game(gameData)
-                    viewModel.focusedButtonIndex = 4
-                    //}
+                    if #unavailable(iOS 17) {
+                        viewModel.focusedButtonIndex = 4
+                    }
                 }
                 engagementTracker.setCurrentRom(rom.name ?? "none")
             } catch {
