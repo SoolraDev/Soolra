@@ -8,7 +8,13 @@
 import SwiftUI
 
 struct ProfileView: View {
-    let userMetrics: UserMetrics
+    private let userMetrics: UserMetrics = UserMetrics(
+        userId: "",
+        points: 100,
+        lastUpdated: Date(),
+        ranking: 100,
+        totalTimePlayed: 100000
+    )
     @Binding var isPresented: Bool
 
     var body: some View {
@@ -34,10 +40,10 @@ struct ProfileView: View {
                 .overlay(
                     Circle().stroke(Color.purple, lineWidth: 3)
                 )
-                .offset(x:-120, y: 60)
+                .offset(x: -120, y: 60)
             }
             .padding(.bottom, 40)
-            
+
             // MARK: profile info
             VStack(spacing: 16) {
                 MetricBanner(
@@ -45,24 +51,96 @@ struct ProfileView: View {
                     title: "Points Earned",
                     value: "\(userMetrics.points)"
                 )
-                
+
                 MetricBanner(
                     iconName: "trophy.fill",
                     title: "Time Played Ranking",
                     value: "\(userMetrics.ranking)"
                 )
-                
+
                 MetricBanner(
                     iconName: "hourglass",
                     title: "Total Time Played",
                     value: userMetrics.totalTimePlayed.toWordedString()
                 )
             }.padding()
-            Button("Dismiss") { isPresented = false }
+
+            Group {
+                Text("Top 3 games")
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+
+                HStack {
+                    ForEach(0..<3) { index in
+                        AsyncImage(
+                            url: URL(
+                                string:
+                                    "https://random.danielpetrica.com/api/random?format=thumb"
+                            )
+                        ) { image in
+                            image.resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 111, height: 97)
+                                .cornerRadius(10)
+                                .gradientBorder(
+                                    RoundedRectangle(cornerRadius: 10),
+                                    colors: [
+                                        Color(hex: "#FF00E1"),
+                                        Color(hex: "#FCC4FF"),
+                                    ]
+                                )
+                        } placeholder: {
+                            ProgressView()
+                        }
+                    }
+                }
+            }
+
+            Group {
+                Text("Treasures")
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+
+                ScrollView(.horizontal, showsIndicators: true) {
+                    HStack {
+                        ForEach(0..<10) { index in
+                            AsyncImage(
+                                url: URL(
+                                    string:
+                                        "https://random.danielpetrica.com/api/random?format=thumb"
+                                )
+                            ) { image in
+                                image.resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 70, height: 70)
+                                    .clipShape(.circle)
+                                    .gradientBorder(
+                                        Circle(),
+                                        colors: [
+                                            Color(hex: "#FF00E1"),
+                                            Color(hex: "#FCC4FF"),
+                                        ]
+                                    )
+                            } placeholder: {
+                                ProgressView()
+                            }
+                        }
+                    }
+                }.padding(.horizontal)
+            }
+
+            Button("Close") { withAnimation { isPresented.toggle() } }
                 .padding()
                 .tint(.white)
         }
         .purpleGradientBackground()
+        .background(.ultraThinMaterial)
         .cornerRadius(20)
         .frame(maxWidth: 400, maxHeight: .infinity)
         .padding()
@@ -75,15 +153,7 @@ struct ProfileView: View {
     struct PreviewContainer: View {
         @State private var isPresented: Bool = true
         var body: some View {
-            let userMetrics = UserMetrics(
-                userId: "",
-                points: 100,
-                lastUpdated: Date(),
-                ranking: 1,
-                totalTimePlayed: 10000
-            )
             return ProfileView(
-                userMetrics: userMetrics,
                 isPresented: $isPresented
             )
         }
@@ -92,7 +162,6 @@ struct ProfileView: View {
 }
 
 struct ProfileViewModifier: ViewModifier {
-    let userMetrics: UserMetrics
     @Binding var isPresented: Bool
 
     func body(content: Content) -> some View {
@@ -100,7 +169,6 @@ struct ProfileViewModifier: ViewModifier {
             .overlay(alignment: .center) {
                 if isPresented {
                     ProfileView(
-                        userMetrics: userMetrics,
                         isPresented: $isPresented
                     )
                     .overlayBackground(isPresented: $isPresented)
@@ -110,12 +178,11 @@ struct ProfileViewModifier: ViewModifier {
 }
 
 extension View {
-    func profileOverlay(isPresented: Binding<Bool>, userMetrics: UserMetrics)
+    func profileOverlay(isPresented: Binding<Bool>)
         -> some View
     {
         modifier(
             ProfileViewModifier(
-                userMetrics: userMetrics,
                 isPresented: isPresented
             )
         )
@@ -130,7 +197,7 @@ extension View {
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 160 / 255, green: 158 / 255, blue: 181 / 255)
-                        .opacity(0.29),
+                        .opacity(0.1),
                     Color(red: 115 / 255, green: 46 / 255, blue: 210 / 255)
                         .opacity(0.89),
                 ]),

@@ -14,19 +14,27 @@ struct MetricBanner: View {
     let value: String
 
     private let shape = AngledBannerShape()
-    private let purpleColor = Color(red: 115/255, green: 90/255, blue: 184/255)
-    private let pinkGlowColor = Color(red: 236/255, green: 93/255, blue: 204/255)
+    private let purpleColor = Color(
+        red: 115 / 255,
+        green: 90 / 255,
+        blue: 184 / 255
+    )
+    private let pinkGlowColor = Color(
+        red: 236 / 255,
+        green: 93 / 255,
+        blue: 204 / 255
+    )
 
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: iconName)
                 .font(.system(size: 20))
-            
+
             Text(title)
                 .fontWeight(.bold)
-            
+
             Spacer()
-            
+
             Text(value)
                 .fontWeight(.semibold)
         }
@@ -58,21 +66,22 @@ struct PlayerStatsView: View {
     var body: some View {
         ZStack {
             // Background from your previous request
-            Color(red: 60/255, green: 55/255, blue: 90/255).ignoresSafeArea()
-            
+            Color(red: 60 / 255, green: 55 / 255, blue: 90 / 255)
+                .ignoresSafeArea()
+
             VStack(spacing: 16) {
                 MetricBanner(
                     iconName: "target",
                     title: "Points Earned",
                     value: "16"
                 )
-                
+
                 MetricBanner(
                     iconName: "trophy.fill",
                     title: "Time Played Ranking",
                     value: "89%"
                 )
-                
+
                 MetricBanner(
                     iconName: "hourglass",
                     title: "Total Time Played",

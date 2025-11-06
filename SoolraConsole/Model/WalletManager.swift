@@ -1,31 +1,107 @@
-//
-//  WalletManager.swift
-//  SOOLRA
-//
-//  Created by Michael Essiet on 29/10/2025.
-//
 import PrivySDK
+import SwiftUI // Or Combine, for ObservableObject
 
-public class WalletManager {
+extension AuthState: @retroactive Equatable {
+    public static func == (lhs: PrivySDK.AuthState, rhs: PrivySDK.AuthState) -> Bool {
+        // Use a switch on a tuple to compare all possible combinations
+        switch (lhs, rhs) {
+        // Case 1: Both are .notReady. They are equal.
+        case (.notReady, .notReady):
+            return true
+
+        // Case 2: Both are .unauthenticated. They are equal.
+        case (.unauthenticated, .unauthenticated):
+            return true
+
+        // Case 3: Both are .authenticatedUnverified. Since the context has no properties, they are equal.
+        case (.authenticatedUnverified, .authenticatedUnverified):
+            return true
+
+        // Case 4: Both are .authenticated. Compare them by the user's ID.
+        case let (.authenticated(lhsUser), .authenticated(rhsUser)):
+            return lhsUser.id == rhsUser.id
+
+        // Default: If none of the above patterns match, the states are not equal.
+        default:
+            return false
+        }
+    }
+}
+
+@MainActor
+public class WalletManager: ObservableObject {
+    // MARK: - Published Properties
+    
+    @Published public var authState: AuthState?
+    @Published public var privyUser: PrivyUser?
+    @Published public var isLoading: Bool = false
+    @Published public var errorMessage: String?
+
     public let privyClient: Privy
-    public var privyUser: PrivyUser?
 
     init() {
         let privyConfig = PrivyConfig(
             appId: "cmhce45oa003jl40b67t2vutc",
             appClientId: "client-WY6STFdmgPu6LfcrVXcaSA6XkDLHC59UeaxwAY2aautjw",
-            loggingConfig: .init(
-                logLevel: .verbose
-            )
+            loggingConfig: .init(logLevel: .verbose)
         )
         self.privyClient = PrivySdk.initialize(config: privyConfig)
+        
+        // Initial check for auth state
+        Task {
+            await checkInitialAuthState()
+        }
+    }
+    
+    // MARK: - Public Auth Methods
+
+    public func checkInitialAuthState() async {
+        self.isLoading = true
+        self.authState = await self.privyClient.getAuthState()
+        self.privyUser = await self.privyClient.getUser()
+        self.isLoading = false
     }
 
-    func signInWithGoogle() async throws -> PrivyUser {
-        self.privyUser = try await self.privyClient.oAuth.login(with: .google)
-        return self.privyUser!
+    public func signInWithGoogle() async {
+        self.isLoading = true
+        self.errorMessage = nil
+        do {
+            self.privyUser = try await self.privyClient.oAuth.login(with: .google)
+            self.authState = .authenticated(self.privyUser!)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+        self.isLoading = false
     }
 
+    public func requestSignInOtp(email: String) async throws {
+        // This method doesn't change the global state, so it can remain a simple throwing function
+        // for the EmailAuthView to handle locally.
+        try await self.privyClient.email.sendCode(to: email)
+    }
+
+    public func verifySignInOtp(otp: String, email: String) async {
+        self.isLoading = true
+        self.errorMessage = nil
+        do {
+            self.privyUser = try await self.privyClient.email.loginWithCode(otp, sentTo: email)
+            self.authState = .authenticated(self.privyUser!)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+        self.isLoading = false
+    }
+    
+    public func signOut() async {
+        self.isLoading = true
+        await self.privyUser?.logout()
+        self.privyUser = nil
+        debugPrint(self.privyUser)
+        self.authState = await self.privyClient.getAuthState()
+        self.isLoading = false
+    }
+
+    // ... (rest of your wallet methods like createWallet, signTransaction, etc.)
     func createWallet() async throws -> EmbeddedEthereumWallet? {
         return try await self.privyUser?.createEthereumWallet()
     }
@@ -70,3 +146,5 @@ public class WalletManager {
             )
     }
 }
+
+@MainActor public let walletManager = WalletManager()

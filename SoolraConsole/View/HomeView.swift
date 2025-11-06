@@ -4,11 +4,11 @@
 //  Copyright © 2025 SOOLRA. All rights reserved.
 //
 
-import SwiftUI
 import CoreData
 import Foundation
-import WebKit
 import Network
+import SwiftUI
+import WebKit
 
 // Data to pass to GameView
 struct GameViewData: Equatable {
@@ -16,7 +16,7 @@ struct GameViewData: Equatable {
     let romPath: URL
     let consoleManager: ConsoleCoreManager
     let pauseViewModel: PauseGameViewModel
-    
+
     static func == (lhs: GameViewData, rhs: GameViewData) -> Bool {
         return lhs.name == rhs.name && lhs.romPath == rhs.romPath
     }
@@ -50,17 +50,18 @@ struct HomeView: View {
     @EnvironmentObject var dataController: CoreDataController
     @EnvironmentObject var consoleManager: ConsoleCoreManager
     @EnvironmentObject var saveStateManager: SaveStateManager
-    @ObservedObject private var controllerService = BluetoothControllerService.shared
-    
+    @ObservedObject private var controllerService = BluetoothControllerService
+        .shared
+
     @StateObject private var viewModel = HomeViewModel.shared
     @StateObject private var engagementTracker = EngagementTracker()
-    @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState.shared
-    
+    @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState
+        .shared
+
     @StateObject private var network = NetworkMonitor()
     @State private var isOfflineDialogVisible = false
     @State private var pendingWebGame: WebGame? = nil
 
-    
     @State private var isEditMode: EditMode = .inactive
     @State private var isSettingsPresented: Bool = false
     @State private var currentView: CurrentView = .grid
@@ -73,9 +74,14 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var hSize
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
-    private let dialogSpring = Animation.spring(response: 0.32, dampingFraction: 0.86, blendDuration: 0.15)
+    @State private var isProfileViewPresented: Bool = false
+    private let dialogSpring = Animation.spring(
+        response: 0.32,
+        dampingFraction: 0.86,
+        blendDuration: 0.15
+    )
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
-    
+
     var backgroundImage: UIImage? {
         guard let (kind, item) = focusedLibraryTuple() else { return nil }
         switch kind {
@@ -86,8 +92,6 @@ struct HomeView: View {
         }
     }
 
-
-    
     var body: some View {
         ZStack(alignment: .top) {
             Color(red: 41 / 255, green: 3 / 255, blue: 135 / 255)
@@ -98,23 +102,47 @@ struct HomeView: View {
                     GeometryReader { geometry in
                         let safeAreaBottom = geometry.safeAreaInsets.bottom
                         let safeAreaTop = geometry.safeAreaInsets.top
-                        let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
-                        
+                        let totalHeight =
+                            geometry.size.height + safeAreaTop + safeAreaBottom
+
                         ZStack {
                             if let bgImage = backgroundImage {
                                 Image(uiImage: bgImage)
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width, height: totalHeight)
+                                    .frame(
+                                        width: geometry.size.width,
+                                        height: totalHeight
+                                    )
                                     .clipped()
                                     .edgesIgnoringSafeArea(.all)
                                     .overlay(
                                         LinearGradient(
                                             gradient: Gradient(stops: [
-                                                .init(color: Color.black.opacity(0.7), location: 0),
-                                                .init(color: Color.black.opacity(0.7), location: 0.3),
-                                                .init(color: Color.black.opacity(0.8), location: 0.7),
-                                                .init(color: Color.black.opacity(0.95), location: 1.0)
+                                                .init(
+                                                    color: Color.black.opacity(
+                                                        0.7
+                                                    ),
+                                                    location: 0
+                                                ),
+                                                .init(
+                                                    color: Color.black.opacity(
+                                                        0.7
+                                                    ),
+                                                    location: 0.3
+                                                ),
+                                                .init(
+                                                    color: Color.black.opacity(
+                                                        0.8
+                                                    ),
+                                                    location: 0.7
+                                                ),
+                                                .init(
+                                                    color: Color.black.opacity(
+                                                        0.95
+                                                    ),
+                                                    location: 1.0
+                                                ),
                                             ]),
                                             startPoint: .top,
                                             endPoint: .bottom
@@ -124,14 +152,14 @@ struct HomeView: View {
                                 Image("home-background")
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width, height: totalHeight)
+                                    .frame(
+                                        width: geometry.size.width,
+                                        height: totalHeight
+                                    )
                                     .clipped()
                                     .edgesIgnoringSafeArea(.all)
                             }
-                            
-                            
-                            
-                            
+
                         }
                         VStack {
                             HomeNavigationView(
@@ -139,115 +167,161 @@ struct HomeView: View {
                                 onSettingsButtonTap: {
                                     isSettingsPresented = true
                                 },
-                                focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                dataController: dataController, viewModel: viewModel,
-                                searchQuery: $viewModel.searchQuery
+                                focusedButtonIndex: $viewModel
+                                    .focusedButtonIndex,
+                                dataController: dataController,
+                                viewModel: viewModel,
+                                searchQuery: $viewModel.searchQuery,
+                                isProfilePresented: $isProfileViewPresented
                             )
-                            .fullScreenCover(isPresented: $viewModel.isPresented) {
+                            .fullScreenCover(
+                                isPresented: $viewModel.isPresented
+                            ) {
                                 ZStack(alignment: .top) {
                                     Color.black.opacity(0.6)
-                                    
+
                                     VStack(spacing: 0) {
-                                        if BluetoothControllerService.shared.isControllerConnected {
+                                        if BluetoothControllerService.shared
+                                            .isControllerConnected
+                                        {
                                             // Half-height version
                                             HalfScreenDocumentPicker { url in
                                                 Task {
                                                     isLoading = true
-                                                    await dataController.romManager.addRom(url: url)
+                                                    await dataController
+                                                        .romManager.addRom(
+                                                            url: url
+                                                        )
                                                     withAnimation {
-                                                        roms = dataController.romManager.fetchRoms()
+                                                        roms = dataController
+                                                            .romManager
+                                                            .fetchRoms()
                                                         isLoading = false
                                                     }
-                                                    viewModel.isPresented = false
+                                                    viewModel.isPresented =
+                                                        false
                                                 }
                                             }
-                                            .background(Color(.systemBackground))
+                                            .background(
+                                                Color(.systemBackground)
+                                            )
                                             .cornerRadius(16)
                                             .shadow(radius: 10)
-                                            
+
                                             Spacer()
                                         } else {
                                             // Full-height version
                                             DocumentPicker { url in
                                                 Task {
                                                     isLoading = true
-                                                    await dataController.romManager.addRom(url: url)
+                                                    await dataController
+                                                        .romManager.addRom(
+                                                            url: url
+                                                        )
                                                     withAnimation {
-                                                        roms = dataController.romManager.fetchRoms()
+                                                        roms = dataController
+                                                            .romManager
+                                                            .fetchRoms()
                                                         isLoading = false
                                                     }
-                                                    viewModel.isPresented = false
+                                                    viewModel.isPresented =
+                                                        false
                                                 }
                                             }
-                                            .ignoresSafeArea() // Let it take over the screen
+                                            .ignoresSafeArea()  // Let it take over the screen
                                         }
                                     }
                                 }
                             }
                             .sheet(isPresented: $isShopWebviewVisible) {
                                 NavigationView {
-                                    ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
-                                        .navigationTitle("Shop")
-                                        .navigationBarTitleDisplayMode(.inline)
-                                        .navigationBarItems(leading:
-                                                                Button(action: {
-                                            isShopWebviewVisible = false
-                                        }) {
-                                            HStack {
-                                                Image(systemName: "chevron.left")
-                                                Text("Back")
+                                    ShopWebView(
+                                        url: URL(
+                                            string: "https://shop.soolra.com/"
+                                        )!
+                                    )
+                                    .navigationTitle("Shop")
+                                    .navigationBarTitleDisplayMode(.inline)
+                                    .navigationBarItems(
+                                        leading:
+                                            Button(action: {
+                                                isShopWebviewVisible = false
+                                            }) {
+                                                HStack {
+                                                    Image(
+                                                        systemName:
+                                                            "chevron.left"
+                                                    )
+                                                    Text("Back")
+                                                }
                                             }
-                                        }
-                                        )
+                                    )
                                 }
-                                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-                                
+                                .preferredColorScheme(
+                                    themeManager.isDarkMode ? .dark : .light
+                                )
+
                             }
-                            
-                            
-                            
+
                             if let (kind, item) = focusedLibraryTuple() {
                                 switch kind {
                                 case .rom(let rom):
                                     CurrentItemView(
                                         currentRom: rom,
                                         currentView: $currentView,
-                                        focusedButtonIndex: $viewModel.focusedButtonIndex
+                                        focusedButtonIndex: $viewModel
+                                            .focusedButtonIndex
                                     )
                                 case .web:
                                     CurrentItemView(
                                         currentRom: nil,
                                         currentView: $currentView,
-                                        focusedButtonIndex: $viewModel.focusedButtonIndex,
+                                        focusedButtonIndex: $viewModel
+                                            .focusedButtonIndex,
                                         addRomAction: nil,
-                                        overrideImage: item.iconImage,        // <— web-game icon
-                                        overrideTitle: item.displayName       // <— web-game name
+                                        overrideImage: item.iconImage,  // <— web-game icon
+                                        overrideTitle: item.displayName  // <— web-game name
                                     )
                                 }
                             } else {
                                 CurrentItemView(
                                     currentRom: nil,
                                     currentView: $currentView,
-                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                    addRomAction: { viewModel.isPresented = true }
+                                    focusedButtonIndex: $viewModel
+                                        .focusedButtonIndex,
+                                    addRomAction: {
+                                        viewModel.isPresented = true
+                                    }
                                 )
                             }
-                            
-                            
-                            TitleSortingView(titleText: "All Games", sortingText: "A-Z")
-                                .padding(.top, 10)
-                            
+
+                            TitleSortingView(
+                                titleText: "All Games",
+                                sortingText: "A-Z"
+                            )
+                            .padding(.top, 10)
+
                             if items.isEmpty && !isLoading {
                                 emptyView
                             } else {
                                 romGridView
                             }
-                            
-                            SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
-                                viewModel.controllerDidPress(action: action, pressed: pressed)
-                            })
-                            
-                            .frame(width: geometry.size.width, height: totalHeight * 0.48)
+
+                            SoolraControllerView(
+                                controllerViewModel: controllerViewModel,
+                                currentView: $currentView,
+                                onButton: { action, pressed in
+                                    viewModel.controllerDidPress(
+                                        action: action,
+                                        pressed: pressed
+                                    )
+                                }
+                            )
+
+                            .frame(
+                                width: geometry.size.width,
+                                height: totalHeight * 0.48
+                            )
                             .edgesIgnoringSafeArea(.bottom)
                         }
                         .edgesIgnoringSafeArea(.all)
@@ -255,124 +329,142 @@ struct HomeView: View {
                         .padding(.top, 5)
                     }
                 case .game(let gameData):
-                    GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
-                        .environmentObject(gameData.consoleManager)
+                    GameView(
+                        data: gameData,
+                        currentView: $currentView,
+                        pauseViewModel: gameData.pauseViewModel
+                    )
+                    .environmentObject(gameData.consoleManager)
                 case .web(let webGame):
                     GeometryReader { geometry in
                         let safeAreaBottom = geometry.safeAreaInsets.bottom
-                        let safeAreaTop    = geometry.safeAreaInsets.top
-                        let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
-                        
+                        let safeAreaTop = geometry.safeAreaInsets.top
+                        let totalHeight =
+                            geometry.size.height + safeAreaTop + safeAreaBottom
+
                         ZStack(alignment: .bottom) {
                             // Web game fills the screen (no Spacer/VStack pushing the controller up)
                             WebGameContainerView(game: webGame) {
                                 currentView = .grid
                             }
-                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .frame(
+                                width: geometry.size.width,
+                                height: geometry.size.height
+                            )
                             .edgesIgnoringSafeArea(.all)
-                            
+
                             // Controller pinned to bottom with the SAME sizing math as grid
                             let safeAreaBottom = geometry.safeAreaInsets.bottom
-                            let safeAreaTop    = geometry.safeAreaInsets.top
-                            let totalHeight    = geometry.size.height + safeAreaTop + safeAreaBottom
-                            
-                            SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
-                                BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
-                            })
-                            .frame(width: geometry.size.width, height: totalHeight * 0.46)
+                            let safeAreaTop = geometry.safeAreaInsets.top
+                            let totalHeight =
+                                geometry.size.height + safeAreaTop
+                                + safeAreaBottom
+
+                            SoolraControllerView(
+                                controllerViewModel: controllerViewModel,
+                                currentView: $currentView,
+                                onButton: { action, pressed in
+                                    BluetoothControllerService.shared.delegate?
+                                        .controllerDidPress(
+                                            action: action,
+                                            pressed: pressed
+                                        )
+                                }
+                            )
+                            .frame(
+                                width: geometry.size.width,
+                                height: totalHeight * 0.46
+                            )
                             .edgesIgnoringSafeArea(.bottom)
                             .offset(y: safeAreaBottom * 0.20 + 8)
-                            
+
                         }
                     }
-                    
-                    
-                    
+
                 }
             }
             .allowsHitTesting(!isShopDialogVisible && !isOfflineDialogVisible)
             if isShopDialogVisible {
-              ZStack {
-                  // Dimmer (back layer) — tappable to close
-                  Color.black.opacity(0.60)
-                    .ignoresSafeArea()
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                      withAnimation(dialogSpring) { isShopDialogVisible = false }
+                ZStack {
+                    // Dimmer (back layer) — tappable to close
+                    Color.black.opacity(0.60)
+                        .ignoresSafeArea()
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(dialogSpring) {
+                                isShopDialogVisible = false
+                            }
+                        }
+                        .transition(.opacity)
+
+                    GeometryReader { g in
+                        let w = g.size.width
+                        let h = g.size.height
+                        let safeTop = g.safeAreaInsets.top
+                        let safeBottom = g.safeAreaInsets.bottom
+
+                        // Keep your aspect + topPad
+                        let aspect: CGFloat = 1688.0 / 780.0  // H/W
+                        let topPad: CGFloat = -25
+
+                        // Fit image to BOTH axes so it never overflows on short screens; lightly cap on iPad
+                        let maxH = h - safeTop - safeBottom
+                        let isiPad = UIDevice.current.userInterfaceIdiom == .pad
+                        let capW: CGFloat = isiPad ? min(w, 600) : w
+                        let imgW = min(capW, maxH / aspect)  // CHANGED
+                        let imgH = imgW * aspect
+
+                        let xCenter = w / 2
+                        let yTop = safeTop + topPad  // keeps your topPad behavior, but honors safe area
+
+                        Image("shopDlg")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: imgW)
+                            .position(x: xCenter, y: yTop + imgH / 2)
+                            .contentShape(Rectangle())  // define tappable area
+                            .onTapGesture { /* absorb taps on image */  }
+
+                        // 2) Close (X) hotspot
+                        Button {
+                            withAnimation(dialogSpring) {
+                                isShopDialogVisible = false
+                            }
+                        } label: {
+                            Rectangle().fill(Color.white.opacity(0.0015))  // reliably hit-testable
+                        }
+                        .frame(width: imgW * 0.30, height: imgH * 0.15)
+                        .position(
+                            x: (xCenter - imgW / 2) + imgW * 0.84,
+                            y: yTop + imgH * 0.26
+                        )
+
+                        // 3) Order Now hotspot
+                        Button {
+                            withAnimation(dialogSpring) {
+                                isShopDialogVisible = false
+                            }
+                            isShopWebviewVisible = true
+                        } label: {
+                            Rectangle().fill(Color.white.opacity(0.0015))
+                        }
+                        .frame(width: imgW * 0.64, height: imgH * 0.12)
+                        .position(
+                            x: (xCenter - imgW / 2) + imgW * 0.50,
+                            y: yTop + imgH * 0.86
+                        )
                     }
-                    .transition(.opacity)
-
-
-                GeometryReader { g in
-                  let w = g.size.width
-                  let h = g.size.height
-                  let safeTop = g.safeAreaInsets.top
-                  let safeBottom = g.safeAreaInsets.bottom
-
-                  // Keep your aspect + topPad
-                  let aspect: CGFloat = 1688.0 / 780.0   // H/W
-                  let topPad: CGFloat = -25
-
-                  // Fit image to BOTH axes so it never overflows on short screens; lightly cap on iPad
-                  let maxH = h - safeTop - safeBottom
-                  let isiPad = UIDevice.current.userInterfaceIdiom == .pad
-                  let capW: CGFloat = isiPad ? min(w, 600) : w
-                  let imgW = min(capW, maxH / aspect)   // CHANGED
-                  let imgH = imgW * aspect
-
-                  let xCenter = w / 2
-                  let yTop = safeTop + topPad           // keeps your topPad behavior, but honors safe area
-
-                    Image("shopDlg")
-                      .resizable()
-                      .scaledToFit()
-                      .frame(width: imgW)
-                      .position(x: xCenter, y: yTop + imgH/2)
-                      .contentShape(Rectangle())          // define tappable area
-                      .onTapGesture { /* absorb taps on image */ }
-
-
-
-                  // 2) Close (X) hotspot
-                  Button {
-                    withAnimation(dialogSpring) {
-                      isShopDialogVisible = false
-                    }
-                  } label: {
-                    Rectangle().fill(Color.white.opacity(0.0015))  // reliably hit-testable
-                  }
-                  .frame(width: imgW * 0.30, height: imgH * 0.15)
-                  .position(
-                    x: (xCenter - imgW/2) + imgW * 0.84,
-                    y: yTop + imgH * 0.26
-                  )
-
-                  // 3) Order Now hotspot
-                  Button {
-                    withAnimation(dialogSpring) {
-                      isShopDialogVisible = false
-                    }
-                    isShopWebviewVisible = true
-                  } label: {
-                    Rectangle().fill(Color.white.opacity(0.0015))
-                  }
-                  .frame(width: imgW * 0.64, height: imgH * 0.12)
-                  .position(
-                    x: (xCenter - imgW/2) + imgW * 0.50,
-                    y: yTop + imgH * 0.86
-                  )
                 }
-              }
-              .zIndex(1500)
-              .transition(
-                .asymmetric(
-                  insertion: .opacity
-                    .combined(with: .scale(scale: 0.96, anchor: .top)),
-                  removal: .opacity
-                    .combined(with: .scale(scale: 0.2, anchor: .top))
+                .zIndex(1500)
+                .transition(
+                    .asymmetric(
+                        insertion: .opacity
+                            .combined(with: .scale(scale: 0.96, anchor: .top)),
+                        removal: .opacity
+                            .combined(with: .scale(scale: 0.2, anchor: .top))
+                    )
                 )
-              )
-              .animation(dialogSpring, value: isShopDialogVisible)
+                .animation(dialogSpring, value: isShopDialogVisible)
             }
             if isOfflineDialogVisible {
                 ZStack {
@@ -380,7 +472,11 @@ struct HomeView: View {
                     Color.black.opacity(0.40)
                         .ignoresSafeArea()
                         .contentShape(Rectangle())
-                        .onTapGesture { withAnimation(dialogSpring) { isOfflineDialogVisible = false } }
+                        .onTapGesture {
+                            withAnimation(dialogSpring) {
+                                isOfflineDialogVisible = false
+                            }
+                        }
                         .transition(.opacity)
 
                     // The dialog card
@@ -393,26 +489,40 @@ struct HomeView: View {
                             .font(.custom("DINCondensed-Regular", size: 26))
                             .foregroundColor(.white)
 
-                        Text("This web game needs internet. Connect to Wi-Fi or cellular, then try again.")
-                            .font(.system(size: 15))
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.white.opacity(0.9))
+                        Text(
+                            "This web game needs internet. Connect to Wi-Fi or cellular, then try again."
+                        )
+                        .font(.system(size: 15))
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.white.opacity(0.9))
 
                         HStack(spacing: 10) {
                             Button {
-                                withAnimation(dialogSpring) { isOfflineDialogVisible = false }
+                                withAnimation(dialogSpring) {
+                                    isOfflineDialogVisible = false
+                                }
                             } label: {
                                 Text("Close")
                                     .fontWeight(.semibold)
-                                    .padding(.vertical, 10).frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10).frame(
+                                        maxWidth: .infinity
+                                    )
                                     .background(Color.white.opacity(0.18))
                                     .cornerRadius(12)
-                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.22), lineWidth: 1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(
+                                                Color.white.opacity(0.22),
+                                                lineWidth: 1
+                                            )
+                                    )
                             }
 
                             Button {
                                 // Try again immediately; if online now, open the game.
-                                if network.isConnected, let game = pendingWebGame {
+                                if network.isConnected,
+                                    let game = pendingWebGame
+                                {
                                     isOfflineDialogVisible = false
                                     pendingWebGame = nil
                                     navigateToWeb(game)
@@ -420,57 +530,68 @@ struct HomeView: View {
                             } label: {
                                 Text("Try Again")
                                     .fontWeight(.semibold)
-                                    .padding(.vertical, 10).frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10).frame(
+                                        maxWidth: .infinity
+                                    )
                                     .background(Color.white.opacity(0.28))
                                     .cornerRadius(12)
-                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.30), lineWidth: 1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(
+                                                Color.white.opacity(0.30),
+                                                lineWidth: 1
+                                            )
+                                    )
                             }
                         }
                         .padding(.top, 4)
                     }
                     .padding(20)
                     .frame(maxWidth: 360)
-                    .background(Color.black.opacity(0.8))   // ← 60% transparent dark
-                    .cornerRadius(18)                        // ← rounded corners
+                    .background(Color.black.opacity(0.8))  // ← 60% transparent dark
+                    .cornerRadius(18)  // ← rounded corners
                     .shadow(radius: 20, y: 8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18)
                             .stroke(Color.white.opacity(0.10), lineWidth: 1)
                     )
-                    .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .center)))
+                    .transition(
+                        .opacity.combined(
+                            with: .scale(scale: 0.96, anchor: .center)
+                        )
+                    )
                     .animation(dialogSpring, value: isOfflineDialogVisible)
                 }
-                .zIndex(1600) // above shop dialog (which uses 1500)
+                .zIndex(1600)  // above shop dialog (which uses 1500)
             }
-
-
 
             // Loading overlay
             if isLoading {
                 ZStack {
                     // Dimmed background
                     Color.black.opacity(0.3)
-                        .edgesIgnoringSafeArea(.all) // Optional: If you want to dim the screen
-                    
+                        .edgesIgnoringSafeArea(.all)  // Optional: If you want to dim the screen
+
                     // Spinner overlay
                     VStack(spacing: 15) {
                         ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white)) // Adjust spinner color
-                            .scaleEffect(1.5) // Adjust size
-                        
+                            .progressViewStyle(
+                                CircularProgressViewStyle(tint: .white)
+                            )  // Adjust spinner color
+                            .scaleEffect(1.5)  // Adjust size
+
                         Text("Loading...")
-                            .foregroundColor(.white) // Match text color to spinner
-                            .font(.headline) // Adjust font style
+                            .foregroundColor(.white)  // Match text color to spinner
+                            .font(.headline)  // Adjust font style
                     }
                     .padding(30)
-                    .background(Color.black.opacity(0.8)) // Darker background for contrast
-                    .cornerRadius(20) // Rounded corners
-                    .shadow(radius: 10) // Optional shadow
+                    .background(Color.black.opacity(0.8))  // Darker background for contrast
+                    .cornerRadius(20)  // Rounded corners
+                    .shadow(radius: 10)  // Optional shadow
                 }
-                .zIndex(1000) // Ensure it stays on top
+                .zIndex(1000)  // Ensure it stays on top
             }
-            
-            
+
         }
         .onAppear {
             engagementTracker.startTracking()
@@ -483,9 +604,10 @@ struct HomeView: View {
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                withAnimation(dialogSpring) {
-                    isShopDialogVisible = !BluetoothControllerService.shared.isControllerConnected
-//                }
+                //                withAnimation(dialogSpring) {
+                isShopDialogVisible = !BluetoothControllerService.shared
+                    .isControllerConnected
+                //                }
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
@@ -496,17 +618,25 @@ struct HomeView: View {
         }
 
         .onOpenURL { url in
-            guard ["nes", "gba", "zip" ].contains(url.pathExtension.lowercased()) else { return }
+            guard
+                ["nes", "gba", "zip"].contains(url.pathExtension.lowercased())
+            else { return }
             Task {
                 print("📥 Importing ROM from external URL: \(url)")
                 isLoading = true
                 await dataController.romManager.addRom(url: url)
                 isLoading = false
                 let updatedRoms = dataController.romManager.fetchRoms()
-                let newRom = updatedRoms.first(where: { $0.url?.lastPathComponent == url.lastPathComponent }) ?? updatedRoms.first
+                let newRom =
+                    updatedRoms.first(where: {
+                        $0.url?.lastPathComponent == url.lastPathComponent
+                    }) ?? updatedRoms.first
                 // Navigate to game screen on main actor
                 if let rom = newRom {
-                    NotificationCenter.default.post(name: .launchRomFromExternalSource, object: rom)
+                    NotificationCenter.default.post(
+                        name: .launchRomFromExternalSource,
+                        object: rom
+                    )
                     if let exitTask = PauseGameViewModel.exitAction?() {
                         await exitTask.value
                     }
@@ -524,12 +654,12 @@ struct HomeView: View {
                 isLoading = false
             }
         }
-        
+
         .onChange(of: roms.count) { newCount in
             rebuildItems()
             viewModel.updateItemsCount(newCount + webGames.count)
         }
-        
+
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
                 let idx = index - 4
@@ -552,15 +682,14 @@ struct HomeView: View {
             viewModel.selectedGameIndex = nil
         }
 
-
         .onChange(of: controllerViewModel.lastAction) { evt in
             guard let evt = evt, evt.pressed else { return }
-            
+
             if isShopDialogVisible {
                 switch evt.action {
-                case .x: // close dialog
+                case .x:  // close dialog
                     isShopDialogVisible = false
-                case .a: // open webview in window
+                case .a:  // open webview in window
                     isShopDialogVisible = false
                     isShopWebviewVisible = true
                 default:
@@ -568,10 +697,13 @@ struct HomeView: View {
                 }
                 return
             }
-            
+
             switch currentView {
             case .grid:
-                viewModel.controllerDidPress(action: evt.action, pressed: evt.pressed)
+                viewModel.controllerDidPress(
+                    action: evt.action,
+                    pressed: evt.pressed
+                )
             case .web:
                 BluetoothControllerService.shared.delegate?.controllerDidPress(
                     action: evt.action,
@@ -581,8 +713,6 @@ struct HomeView: View {
                 break
             }
         }
-
-
 
         .onChange(of: isSettingsPresented) { newValue in
             if !isSettingsPresented {
@@ -598,13 +728,18 @@ struct HomeView: View {
             }
         }
         .environmentObject(controllerViewModel)
+        .profileOverlay(isPresented: $isProfileViewPresented)
     }
-    
+
     func rebuildItems() {
-        let romItems: [(LibraryKind, LibraryItem)] = roms.map { (.rom($0), $0 as LibraryItem) }
-        let webItems: [(LibraryKind, LibraryItem)] = webGames.map { (.web($0), $0 as LibraryItem) }
+        let romItems: [(LibraryKind, LibraryItem)] = roms.map {
+            (.rom($0), $0 as LibraryItem)
+        }
+        let webItems: [(LibraryKind, LibraryItem)] = webGames.map {
+            (.web($0), $0 as LibraryItem)
+        }
         // Decide ordering rules; here we interleave after the upload tile or simply append:
-        items =  webItems + romItems
+        items = webItems + romItems
     }
 
     private func focusedLibraryTuple() -> (LibraryKind, LibraryItem)? {
@@ -627,8 +762,7 @@ struct HomeView: View {
             }
         }
     }
-    
-    
+
     private func controllerActionButtonPressed() {
         let i = viewModel.focusedButtonIndex
         switch i {
@@ -652,10 +786,8 @@ struct HomeView: View {
         }
     }
 
-    
     // MARK: - Subviews
-    
-    
+
     private var emptyView: some View {
         VStack {
             Spacer()
@@ -671,7 +803,7 @@ struct HomeView: View {
             Spacer()
             Spacer()
             Spacer()
-            
+
             Button("Upload games") {
                 viewModel.isPresented.toggle()
             }
@@ -684,12 +816,12 @@ struct HomeView: View {
         .padding()
         .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
     }
-    
+
     private var romGridView: some View {
         ScrollViewReader { scrollProxy in
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
-                    
+
                     // Upload button
                     Button(action: {
                         viewModel.isPresented.toggle()
@@ -697,8 +829,7 @@ struct HomeView: View {
                         addRomIcon()
                     }
                     .id(3)
-                    
-                    
+
                     ForEach(visibleItems(), id: \.element.1.id) { pair in
                         let index = pair.offset
                         let kind = pair.element.0
@@ -706,18 +837,29 @@ struct HomeView: View {
 
                         VStack(spacing: 4) {
                             Button {
-                                if case .rom(let rom) = kind { navigateToRom(rom) }
-                                else if case .web(let webGame) = kind { navigateToWeb(webGame) }
+                                if case .rom(let rom) = kind {
+                                    navigateToRom(rom)
+                                } else if case .web(let webGame) = kind {
+                                    navigateToWeb(webGame)
+                                }
                             } label: {
-                                libraryIcon(for: kind, item: item, index: index + 4)
+                                libraryIcon(
+                                    for: kind,
+                                    item: item,
+                                    index: index + 4
+                                )
                             }
                             .id(index + 4)
 
-                            if isEditMode == .active, case .rom(let rom) = kind {
+                            if isEditMode == .active, case .rom(let rom) = kind
+                            {
                                 Button {
                                     withAnimation {
-                                        dataController.romManager.deleteRom(rom: rom)
-                                        roms = dataController.romManager.fetchRoms()
+                                        dataController.romManager.deleteRom(
+                                            rom: rom
+                                        )
+                                        roms = dataController.romManager
+                                            .fetchRoms()
                                         rebuildItems()
                                     }
                                 } label: {
@@ -741,9 +883,6 @@ struct HomeView: View {
         }
     }
 
-
-    
-    
     private func navigateToWeb(_ game: WebGame) {
         if !network.isConnected {
             pendingWebGame = game
@@ -757,16 +896,23 @@ struct HomeView: View {
         }
     }
 
-
     private func navigateToRom(_ rom: Rom) {
         Task {
             do {
                 // Create console manager and load ROM and init cheat manager
-                let consoleManager = try ConsoleCoreManager(metalManager: metalManager, gameName: rom.name ?? "none")
-                
+                let consoleManager = try ConsoleCoreManager(
+                    metalManager: metalManager,
+                    gameName: rom.name ?? "none"
+                )
+
                 // Load everything before transitioning view
-                let gameData = try await loadRom(rom: rom, consoleManager: consoleManager)
-                consoleManager.cheatCodesManager = CheatCodesManager(consoleManager: consoleManager)
+                let gameData = try await loadRom(
+                    rom: rom,
+                    consoleManager: consoleManager
+                )
+                consoleManager.cheatCodesManager = CheatCodesManager(
+                    consoleManager: consoleManager
+                )
                 // Once everything is ready, update the view
                 await MainActor.run {
                     //withAnimation(.easeInOut(duration: 0.3)) {
@@ -780,10 +926,12 @@ struct HomeView: View {
             }
         }
     }
-    
+
     private func romIcon(for rom: Rom, index: Int) -> some View {
         VStack {
-            if let imageData = rom.imageData, let uiImage = UIImage(data: imageData) {
+            if let imageData = rom.imageData,
+                let uiImage = UIImage(data: imageData)
+            {
                 VStack(spacing: 3) {
                     Image(uiImage: uiImage)
                         .resizable()
@@ -792,17 +940,21 @@ struct HomeView: View {
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(viewModel.focusedButtonIndex == index ? Color.white : Color.clear, lineWidth: 4)
+                                .stroke(
+                                    viewModel.focusedButtonIndex == index
+                                        ? Color.white : SwiftUI.Color.clear,
+                                    lineWidth: 4
+                                )
                                 .padding(1)
                         )
-                    
+
                     Text(rom.name ?? "Unknown")
                         .font(.custom("Ebrima", size: 13))
                         .foregroundColor(.primary)
                         .lineLimit(1)
                 }
                 .frame(width: 88)
-                
+
             } else {
                 VStack(spacing: 3) {
                     Image(systemName: "gamecontroller.fill")
@@ -814,23 +966,27 @@ struct HomeView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(Color.white, lineWidth: 1)
                         )
-                    
+
                     Text(rom.name ?? "Unknown")
                         .font(.custom("Ebrima", size: 13))
                         .foregroundColor(.primary)
                         .lineLimit(1)
                 }
                 .frame(width: 88)
-                
+
             }
         }
         .cornerRadius(8)
         .shadow(radius: 4)
         .contentShape(Rectangle())
     }
-    
+
     @ViewBuilder
-    private func libraryIcon(for kind: LibraryKind, item: LibraryItem, index: Int) -> some View {
+    private func libraryIcon(
+        for kind: LibraryKind,
+        item: LibraryItem,
+        index: Int
+    ) -> some View {
         switch kind {
         case .rom(let rom):
             romIcon(for: rom, index: index)  // existing UI
@@ -847,7 +1003,11 @@ struct HomeView: View {
                             // keep focus ring
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(viewModel.focusedButtonIndex == index ? .white : .clear, lineWidth: 4)
+                                    .stroke(
+                                        viewModel.focusedButtonIndex == index
+                                            ? .white : SwiftUI.Color.clear,
+                                        lineWidth: 4
+                                    )
                                     .padding(1)
                             )
                     } else {
@@ -878,13 +1038,17 @@ struct HomeView: View {
 
         }
     }
-    
-    private func visibleItems() -> [(offset: Int, element: (LibraryKind, LibraryItem))] {
+
+    private func visibleItems() -> [(
+        offset: Int, element: (LibraryKind, LibraryItem)
+    )] {
         Array(items.enumerated())
             .filter { pair in
                 let (_, item) = pair.element
-                return viewModel.searchQuery.isEmpty ||
-                       item.searchKey.localizedCaseInsensitiveContains(viewModel.searchQuery)
+                return viewModel.searchQuery.isEmpty
+                    || item.searchKey.localizedCaseInsensitiveContains(
+                        viewModel.searchQuery
+                    )
             }
     }
 
@@ -898,7 +1062,6 @@ struct HomeView: View {
             .padding([.trailing, .bottom], 2)
     }
 
-    
     private func addRomIcon() -> some View {
         VStack(spacing: 3) {
             Image("home-new-item-big")
@@ -909,10 +1072,14 @@ struct HomeView: View {
                 .clipped()
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(viewModel.focusedButtonIndex == 3 ? Color.white : Color.clear, lineWidth: 4)
+                        .stroke(
+                            viewModel.focusedButtonIndex == 3
+                                ? Color.white : SwiftUI.Color.clear,
+                            lineWidth: 4
+                        )
                         .padding(1)
                 )
-            
+
             Text("Upload games")
                 .font(.custom("Ebrima", size: 13))
                 .foregroundColor(.primary)
@@ -920,13 +1087,14 @@ struct HomeView: View {
         }
         .frame(width: 88)
     }
-    
-    
-    private func loadRom(rom: Rom, consoleManager: ConsoleCoreManager) async throws -> GameViewData {
+
+    private func loadRom(rom: Rom, consoleManager: ConsoleCoreManager)
+        async throws -> GameViewData
+    {
         guard let url = rom.url else {
             throw NSError(domain: "Invalid URL", code: -1, userInfo: nil)
         }
-        
+
         // Determine console type based on file extension
         let consoleType: ConsoleCoreManager.ConsoleType
         switch url.pathExtension.lowercased() {
@@ -937,13 +1105,16 @@ struct HomeView: View {
         default:
             throw ConsoleCoreManagerError.invalidCoreType
         }
-        
+
         // Load console asynchronously
         try await consoleManager.loadConsole(type: consoleType, romPath: url)
-        
+
         // Create pause view model with console manager
-        let pauseViewModel = PauseGameViewModel(consoleManager: consoleManager, currentRom: rom)
-        
+        let pauseViewModel = PauseGameViewModel(
+            consoleManager: consoleManager,
+            currentRom: rom
+        )
+
         // Set up exit action after view is fully initialized
         pauseViewModel.setExitAction {
             // Return the task so we can await it
@@ -951,10 +1122,10 @@ struct HomeView: View {
                 do {
                     // First stop accepting new frames
                     await consoleManager.shutdown()
-                    
+
                     // Wait a bit for any in-flight frames to complete
                     // try await Task.sleep(nanoseconds: 1_000_000_000) // 1second
-                    
+
                     // Then navigate away
                     roms = dataController.romManager.fetchRoms()
                     rebuildItems()
@@ -967,7 +1138,7 @@ struct HomeView: View {
                 }
             }
         }
-        
+
         return GameViewData(
             name: rom.name!,
             romPath: url,
@@ -975,13 +1146,13 @@ struct HomeView: View {
             pauseViewModel: pauseViewModel
         )
     }
-    
+
     struct BlinkingFocusedButton<Content: View>: View {
         @Binding var selectedIndex: Int
         let index: Int
         let action: () -> Void
         let content: () -> Content
-        
+
         var body: some View {
             Button(action: {
                 action()
@@ -989,7 +1160,11 @@ struct HomeView: View {
                 content()
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(selectedIndex == index ? Color.white : Color.clear, lineWidth: 2)
+                            .stroke(
+                                selectedIndex == index
+                                    ? Color.white : SwiftUI.Color.clear,
+                                lineWidth: 2
+                            )
                             .padding(.horizontal, 10)
                             .padding(.vertical, 10)
                     )
@@ -997,27 +1172,34 @@ struct HomeView: View {
             .buttonStyle(PlainButtonStyle())
         }
     }
-    
+
     struct HomeNavigationView: View {
         @Binding var isSettingsPresented: Bool
         var onSettingsButtonTap: () -> Void
         @Binding var focusedButtonIndex: Int
         let dataController: CoreDataController
         let viewModel: HomeViewModel
-        @Binding var searchQuery: String // 👈 Add this
-        
+        @Binding var searchQuery: String  // 👈 Add this
+        @Binding var isProfilePresented: Bool
+        @StateObject private var manager = walletManager
+
         var body: some View {
-            
+
             VStack {
-                
+
                 HStack {
-                    BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 0, action: { }, content: {
-                        Image("home-logo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 27, height: 27)
-                            .padding()
-                    })
+                    BlinkingFocusedButton(
+                        selectedIndex: $focusedButtonIndex,
+                        index: 0,
+                        action: {},
+                        content: {
+                            Image("home-logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 27, height: 27)
+                                .padding()
+                        }
+                    )
                     Spacer(minLength: 10)
                     //                    TextField("Search games...", text: $searchQuery)                        .padding(8)
                     //                        .background(Color.white.opacity(0.15))
@@ -1033,38 +1215,66 @@ struct HomeView: View {
                     //                                    .padding(.trailing, 10)
                     //                            }
                     //                        )
-                    
-                    
-                    BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 1, action: {
-                        onSettingsButtonTap()
-                        
-                    }, content: {
-                        Image("home-settings-icon")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .scaledToFit()
-                            .padding()
-                    })
-                    .sheet(isPresented: $isSettingsPresented, onDismiss: {
-                        // When settings is dismissed, ensure we get the delegate back
-                        viewModel.setAsDelegate()
-                    }) {
+
+                    BlinkingFocusedButton(
+                        selectedIndex: $focusedButtonIndex,
+                        index: 1,
+                        action: {},
+                        content: {
+                            Group {
+                                switch manager.authState {
+                                case .authenticated:
+                                    Button(action: {
+                                        withAnimation{
+                                            isProfilePresented = true
+                                        }
+                                    }) {
+                                        Image(systemName: "person.circle")
+                                            .font(.title)
+                                            .foregroundStyle(Color.white)
+                                    }
+                                default:
+                                    AuthButton()
+                                }
+                            }
+                        }
+                    )
+
+                    BlinkingFocusedButton(
+                        selectedIndex: $focusedButtonIndex,
+                        index: 2,
+                        action: {
+                            onSettingsButtonTap()
+
+                        },
+                        content: {
+                            Image("home-settings-icon")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .scaledToFit()
+                                .padding()
+                        }
+                    )
+                    .sheet(
+                        isPresented: $isSettingsPresented,
+                        onDismiss: {
+                            // When settings is dismissed, ensure we get the delegate back
+                            viewModel.setAsDelegate()
+                        }
+                    ) {
                         SettingsView().environmentObject(dataController)
                     }
-
-
-
 
                 }
                 .frame(height: 27)
                 .padding(.leading, 8)
                 .padding(.trailing, 8)
                 .background(Color.clear)
-                
+
             }
         }
     }
-    
+
     struct CurrentItemView: View {
         var currentRom: Rom?
         @Binding var currentView: CurrentView
@@ -1087,19 +1297,37 @@ struct HomeView: View {
                     Group {
                         if let img = overrideImage {
                             // show web‑game icon (or any custom image)
-                            CustomImageView(image: Image(uiImage: img), width: 118, height: 105)
-                                .frame(width: 134, height: 120)
-                        } else if let data = currentRom?.imageData, let uiImage = UIImage(data: data) {
-                            CustomImageView(image: Image(uiImage: uiImage), width: 118, height: 105)
-                                .frame(width: 134, height: 120)
+                            CustomImageView(
+                                image: Image(uiImage: img),
+                                width: 118,
+                                height: 105
+                            )
+                            .frame(width: 134, height: 120)
+                        } else if let data = currentRom?.imageData,
+                            let uiImage = UIImage(data: data)
+                        {
+                            CustomImageView(
+                                image: Image(uiImage: uiImage),
+                                width: 118,
+                                height: 105
+                            )
+                            .frame(width: 134, height: 120)
                         } else if let image = UIImage(named: "home-new-item") {
-                            CustomImageView(image: Image(uiImage: image), width: 118, height: 105)
-                                .frame(width: 134, height: 120)
+                            CustomImageView(
+                                image: Image(uiImage: image),
+                                width: 118,
+                                height: 105
+                            )
+                            .frame(width: 134, height: 120)
                         }
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(focusedButtonIndex == 2 ? Color.white : Color.clear, lineWidth: 3)
+                            .stroke(
+                                focusedButtonIndex == 2
+                                    ? Color.white : SwiftUI.Color.clear,
+                                lineWidth: 3
+                            )
                             .padding(1)
                     )
                 }
@@ -1124,7 +1352,7 @@ struct HomeView: View {
 struct TitleSortingView: View {
     let titleText: String
     let sortingText: String
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -1132,14 +1360,14 @@ struct TitleSortingView: View {
                     .font(.custom("DINCondensed-Regular", size: 20))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Text(sortingText)
                     .font(.custom("DINCondensed-Regular", size: 20))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.horizontal)
-            
+
             Rectangle()
                 .fill(Color.white)
                 .frame(height: 1)
@@ -1152,7 +1380,7 @@ struct CustomImageView: View {
     let image: Image
     let width: Double
     let height: Double
-    
+
     var body: some View {
         ZStack {
             image
@@ -1172,11 +1400,10 @@ extension Collection {
 }
 
 extension Notification.Name {
-    static let launchRomFromExternalSource = Notification.Name("launchRomFromExternalSource")
+    static let launchRomFromExternalSource = Notification.Name(
+        "launchRomFromExternalSource"
+    )
 }
-
-
-
 
 struct ShopWebView: UIViewRepresentable {
     let url: URL
@@ -1189,8 +1416,6 @@ struct ShopWebView: UIViewRepresentable {
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 }
-
-
 
 final class NetworkMonitor: ObservableObject {
     private let monitor = NWPathMonitor()
@@ -1208,3 +1433,4 @@ final class NetworkMonitor: ObservableObject {
 
     deinit { monitor.cancel() }
 }
+
