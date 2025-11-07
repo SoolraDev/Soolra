@@ -8,9 +8,113 @@ import SwiftUI
 
 struct WalletView: View {
     @Binding var isPresented: Bool
+    @StateObject var walletmanager = walletManager
+    @State var usdcBalance: String = "0.00"
+    @State var usdtBalance: String = "0.00"
+    @State var soolBalance: String = "0.00"
+    @State private var notificationsEnabled: Bool = false
+    @State private var isWebviewPresented: Bool = false
 
     var body: some View {
+        VStack(spacing: 16) {
+            Text("Balances")
+                .font(.largeTitle)
+                .foregroundStyle(.white)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fontWeight(.semibold)
 
+            HStack {
+                Text("USDT").foregroundStyle(.white).fontWeight(.semibold)
+                Spacer()
+                AngledBanner {
+                    Text(usdtBalance)
+                }
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: 400)
+
+            HStack {
+                Text("USDC").foregroundStyle(.white).fontWeight(.semibold)
+                Spacer()
+                AngledBanner {
+                    Text(usdcBalance)
+                }
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: 400)
+
+            //            HStack {
+            //                Text("SOOL").foregroundStyle(.white).fontWeight(.semibold)
+            //                Spacer()
+            //                AngledBanner {
+            //                    Text(soolBalance)
+            //                }
+            //            }
+            //            .padding(.horizontal)
+            //            .frame(maxWidth: 400)
+
+            AngledBanner {
+                // TODO: Implement
+                Button("Get SOOL") {}
+                    .frame(maxWidth: 400)
+                    .disabled(true)
+            }
+            .padding()
+
+            VStack {
+                Menu {
+                    Toggle("Enable notifications", isOn: $notificationsEnabled)
+                        .padding()
+                        .disabled(true)
+
+                    Menu {
+                        Text("Placeholder")
+                    } label: {
+                        Text("Language settings").fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                            .padding()
+                    }
+                    .menuStyle(.automatic)
+
+                    HStack {
+                        Link("Privacy policy", destination: URL(string: "https://shop.soolra.com/policies/privacy-policy")!)
+//                        Button("Privacy policy") {
+//                            isWebviewPresented = true
+//                        }.sheet(isPresented: $isWebviewPresented) {
+//                            WebView(
+//                                url: URL(
+//                                    string:
+//                                        "https://shop.soolra.com/policies/privacy-policy"
+//                                )!
+//                            )
+//                        }
+                    }
+
+                } label: {
+                    HStack {
+                        Image(systemName: "gear")
+                        Text("General settings").fontWeight(.semibold)
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                    }
+                    .foregroundStyle(.white)
+                    .padding()
+                }
+                .menuStyle(.automatic)
+                .menuOrder(.fixed)
+            }
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding()
+        }
+        .purpleGradientBackground()
+        .background(.ultraThinMaterial)
+        .cornerRadius(20)
+        .frame(maxWidth: 400, maxHeight: .infinity)
+        .padding()
+        .edgesIgnoringSafeArea(.all)
+        .background(.gray.opacity(0.5))
     }
 }
 
@@ -26,6 +130,18 @@ struct WalletViewModifier: ViewModifier {
                 }
             }
     }
+}
+
+struct WalletPreview: View {
+    @State var isPresented = true
+
+    var body: some View {
+        WalletView(isPresented: $isPresented)
+    }
+}
+
+#Preview {
+    WalletPreview()
 }
 
 extension View {

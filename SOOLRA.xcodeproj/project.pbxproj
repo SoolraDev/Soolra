@@ -24,6 +24,7 @@
 		2FA242AE2EB77C9F0073C2BF /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242AD2EB77C900073C2BF /* TimeInterval.swift */; };
 		2FA242B32EBAA47B0073C2BF /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242B22EBAA4750073C2BF /* View.swift */; };
 		2FA242B52EBAA7340073C2BF /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242B42EBAA7310073C2BF /* Color.swift */; };
+		2FA242B72EBEA10E0073C2BF /* OverlayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242B62EBEA1040073C2BF /* OverlayState.swift */; };
 		4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9253D32D47ED2B00E38366 /* HapticManager.swift */; };
 		4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB5AA5E2D61B206003E1677 /* MetalManager.swift */; };
 		4CC26D9A2D4BABC600F3D262 /* ConsoleCoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC26D992D4BABC300F3D262 /* ConsoleCoreManager.swift */; };
@@ -232,6 +233,7 @@
 		2FA242AD2EB77C900073C2BF /* TimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeInterval.swift; sourceTree = "<group>"; };
 		2FA242B22EBAA4750073C2BF /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		2FA242B42EBAA7310073C2BF /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		2FA242B62EBEA1040073C2BF /* OverlayState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayState.swift; sourceTree = "<group>"; };
 		3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.release.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.release.xcconfig"; sourceTree = "<group>"; };
 		4C23EA0A2D50048400039871 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4C9253D32D47ED2B00E38366 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
@@ -578,6 +580,7 @@
 		183DF1D32862E1780088FE1C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				2FA242B62EBEA1040073C2BF /* OverlayState.swift */,
 				2F50B7E12EB3FB3800E250EA /* DataManager.swift */,
 				2F50B7D12EB2A59C00E250EA /* WalletManager.swift */,
 				928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */,
@@ -1216,6 +1219,7 @@
 				2FA242B52EBAA7340073C2BF /* Color.swift in Sources */,
 				2FA242AE2EB77C9F0073C2BF /* TimeInterval.swift in Sources */,
 				2FA242B32EBAA47B0073C2BF /* View.swift in Sources */,
+				2FA242B72EBEA10E0073C2BF /* OverlayState.swift in Sources */,
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
 				92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */,
 				92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */,

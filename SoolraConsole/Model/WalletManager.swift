@@ -68,6 +68,9 @@ public class WalletManager: ObservableObject {
         do {
             self.privyUser = try await self.privyClient.oAuth.login(with: .google)
             self.authState = .authenticated(self.privyUser!)
+            if self.privyUser?.embeddedEthereumWallets.isEmpty == true {
+                try await self.createWallet()
+            }
         } catch {
             self.errorMessage = error.localizedDescription
         }
@@ -86,6 +89,9 @@ public class WalletManager: ObservableObject {
         do {
             self.privyUser = try await self.privyClient.email.loginWithCode(otp, sentTo: email)
             self.authState = .authenticated(self.privyUser!)
+            if self.privyUser?.embeddedEthereumWallets.isEmpty == true {
+                try await self.createWallet()
+            }
         } catch {
             self.errorMessage = error.localizedDescription
         }
@@ -96,7 +102,6 @@ public class WalletManager: ObservableObject {
         self.isLoading = true
         await self.privyUser?.logout()
         self.privyUser = nil
-        debugPrint(self.privyUser)
         self.authState = await self.privyClient.getAuthState()
         self.isLoading = false
     }
@@ -104,6 +109,10 @@ public class WalletManager: ObservableObject {
     // ... (rest of your wallet methods like createWallet, signTransaction, etc.)
     func createWallet() async throws -> EmbeddedEthereumWallet? {
         return try await self.privyUser?.createEthereumWallet()
+    }
+    
+    func getAddress() -> String? {
+        return self.privyUser?.embeddedEthereumWallets.first?.address
     }
 
     func signTransaction(transaction: EthereumRpcRequest.UnsignedEthTransaction)

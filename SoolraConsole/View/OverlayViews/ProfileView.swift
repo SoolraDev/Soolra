@@ -16,6 +16,7 @@ struct ProfileView: View {
         totalTimePlayed: 100000
     )
     @Binding var isPresented: Bool
+    @StateObject private var vv = overlayState
 
     var body: some View {
         VStack(spacing: 16) {

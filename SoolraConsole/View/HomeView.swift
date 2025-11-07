@@ -74,13 +74,17 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var hSize
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
-    @State private var isProfileViewPresented: Bool = false
+
+    @StateObject private var overlaystate = overlayState
+
     private let dialogSpring = Animation.spring(
         response: 0.32,
         dampingFraction: 0.86,
         blendDuration: 0.15
     )
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
+
+    private let brandBackground = Color(red: 41.0/255.0, green: 3.0/255.0, blue: 135.0/255.0)
 
     var backgroundImage: UIImage? {
         guard let (kind, item) = focusedLibraryTuple() else { return nil }
@@ -94,240 +98,12 @@ struct HomeView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color(red: 41 / 255, green: 3 / 255, blue: 135 / 255)
+            brandBackground
                 .edgesIgnoringSafeArea(.all)
             Group {
                 switch currentView {
-                case .grid, .gameDetail:  // Handle both grid and gameDetail the same way
-                    GeometryReader { geometry in
-                        let safeAreaBottom = geometry.safeAreaInsets.bottom
-                        let safeAreaTop = geometry.safeAreaInsets.top
-                        let totalHeight =
-                            geometry.size.height + safeAreaTop + safeAreaBottom
-
-                        ZStack {
-                            if let bgImage = backgroundImage {
-                                Image(uiImage: bgImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(
-                                        width: geometry.size.width,
-                                        height: totalHeight
-                                    )
-                                    .clipped()
-                                    .edgesIgnoringSafeArea(.all)
-                                    .overlay(
-                                        LinearGradient(
-                                            gradient: Gradient(stops: [
-                                                .init(
-                                                    color: Color.black.opacity(
-                                                        0.7
-                                                    ),
-                                                    location: 0
-                                                ),
-                                                .init(
-                                                    color: Color.black.opacity(
-                                                        0.7
-                                                    ),
-                                                    location: 0.3
-                                                ),
-                                                .init(
-                                                    color: Color.black.opacity(
-                                                        0.8
-                                                    ),
-                                                    location: 0.7
-                                                ),
-                                                .init(
-                                                    color: Color.black.opacity(
-                                                        0.95
-                                                    ),
-                                                    location: 1.0
-                                                ),
-                                            ]),
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                            } else {
-                                Image("home-background")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(
-                                        width: geometry.size.width,
-                                        height: totalHeight
-                                    )
-                                    .clipped()
-                                    .edgesIgnoringSafeArea(.all)
-                            }
-
-                        }
-                        VStack {
-                            HomeNavigationView(
-                                isSettingsPresented: $isSettingsPresented,
-                                onSettingsButtonTap: {
-                                    isSettingsPresented = true
-                                },
-                                focusedButtonIndex: $viewModel
-                                    .focusedButtonIndex,
-                                dataController: dataController,
-                                viewModel: viewModel,
-                                searchQuery: $viewModel.searchQuery,
-                                isProfilePresented: $isProfileViewPresented
-                            )
-                            .fullScreenCover(
-                                isPresented: $viewModel.isPresented
-                            ) {
-                                ZStack(alignment: .top) {
-                                    Color.black.opacity(0.6)
-
-                                    VStack(spacing: 0) {
-                                        if BluetoothControllerService.shared
-                                            .isControllerConnected
-                                        {
-                                            // Half-height version
-                                            HalfScreenDocumentPicker { url in
-                                                Task {
-                                                    isLoading = true
-                                                    await dataController
-                                                        .romManager.addRom(
-                                                            url: url
-                                                        )
-                                                    withAnimation {
-                                                        roms = dataController
-                                                            .romManager
-                                                            .fetchRoms()
-                                                        isLoading = false
-                                                    }
-                                                    viewModel.isPresented =
-                                                        false
-                                                }
-                                            }
-                                            .background(
-                                                Color(.systemBackground)
-                                            )
-                                            .cornerRadius(16)
-                                            .shadow(radius: 10)
-
-                                            Spacer()
-                                        } else {
-                                            // Full-height version
-                                            DocumentPicker { url in
-                                                Task {
-                                                    isLoading = true
-                                                    await dataController
-                                                        .romManager.addRom(
-                                                            url: url
-                                                        )
-                                                    withAnimation {
-                                                        roms = dataController
-                                                            .romManager
-                                                            .fetchRoms()
-                                                        isLoading = false
-                                                    }
-                                                    viewModel.isPresented =
-                                                        false
-                                                }
-                                            }
-                                            .ignoresSafeArea()  // Let it take over the screen
-                                        }
-                                    }
-                                }
-                            }
-                            .sheet(isPresented: $isShopWebviewVisible) {
-                                NavigationView {
-                                    ShopWebView(
-                                        url: URL(
-                                            string: "https://shop.soolra.com/"
-                                        )!
-                                    )
-                                    .navigationTitle("Shop")
-                                    .navigationBarTitleDisplayMode(.inline)
-                                    .navigationBarItems(
-                                        leading:
-                                            Button(action: {
-                                                isShopWebviewVisible = false
-                                            }) {
-                                                HStack {
-                                                    Image(
-                                                        systemName:
-                                                            "chevron.left"
-                                                    )
-                                                    Text("Back")
-                                                }
-                                            }
-                                    )
-                                }
-                                .preferredColorScheme(
-                                    themeManager.isDarkMode ? .dark : .light
-                                )
-
-                            }
-
-                            if let (kind, item) = focusedLibraryTuple() {
-                                switch kind {
-                                case .rom(let rom):
-                                    CurrentItemView(
-                                        currentRom: rom,
-                                        currentView: $currentView,
-                                        focusedButtonIndex: $viewModel
-                                            .focusedButtonIndex
-                                    )
-                                case .web:
-                                    CurrentItemView(
-                                        currentRom: nil,
-                                        currentView: $currentView,
-                                        focusedButtonIndex: $viewModel
-                                            .focusedButtonIndex,
-                                        addRomAction: nil,
-                                        overrideImage: item.iconImage,  // <— web-game icon
-                                        overrideTitle: item.displayName  // <— web-game name
-                                    )
-                                }
-                            } else {
-                                CurrentItemView(
-                                    currentRom: nil,
-                                    currentView: $currentView,
-                                    focusedButtonIndex: $viewModel
-                                        .focusedButtonIndex,
-                                    addRomAction: {
-                                        viewModel.isPresented = true
-                                    }
-                                )
-                            }
-
-                            TitleSortingView(
-                                titleText: "All Games",
-                                sortingText: "A-Z"
-                            )
-                            .padding(.top, 10)
-
-                            if items.isEmpty && !isLoading {
-                                emptyView
-                            } else {
-                                romGridView
-                            }
-
-                            SoolraControllerView(
-                                controllerViewModel: controllerViewModel,
-                                currentView: $currentView,
-                                onButton: { action, pressed in
-                                    viewModel.controllerDidPress(
-                                        action: action,
-                                        pressed: pressed
-                                    )
-                                }
-                            )
-
-                            .frame(
-                                width: geometry.size.width,
-                                height: totalHeight * 0.48
-                            )
-                            .edgesIgnoringSafeArea(.bottom)
-                        }
-                        .edgesIgnoringSafeArea(.all)
-                        .preferredColorScheme(.dark)
-                        .padding(.top, 5)
-                    }
+                case .grid, .gameDetail:
+                    gridAndDetailView
                 case .game(let gameData):
                     GameView(
                         data: gameData,
@@ -336,262 +112,14 @@ struct HomeView: View {
                     )
                     .environmentObject(gameData.consoleManager)
                 case .web(let webGame):
-                    GeometryReader { geometry in
-                        let safeAreaBottom = geometry.safeAreaInsets.bottom
-                        let safeAreaTop = geometry.safeAreaInsets.top
-                        let totalHeight =
-                            geometry.size.height + safeAreaTop + safeAreaBottom
-
-                        ZStack(alignment: .bottom) {
-                            // Web game fills the screen (no Spacer/VStack pushing the controller up)
-                            WebGameContainerView(game: webGame) {
-                                currentView = .grid
-                            }
-                            .frame(
-                                width: geometry.size.width,
-                                height: geometry.size.height
-                            )
-                            .edgesIgnoringSafeArea(.all)
-
-                            // Controller pinned to bottom with the SAME sizing math as grid
-                            let safeAreaBottom = geometry.safeAreaInsets.bottom
-                            let safeAreaTop = geometry.safeAreaInsets.top
-                            let totalHeight =
-                                geometry.size.height + safeAreaTop
-                                + safeAreaBottom
-
-                            SoolraControllerView(
-                                controllerViewModel: controllerViewModel,
-                                currentView: $currentView,
-                                onButton: { action, pressed in
-                                    BluetoothControllerService.shared.delegate?
-                                        .controllerDidPress(
-                                            action: action,
-                                            pressed: pressed
-                                        )
-                                }
-                            )
-                            .frame(
-                                width: geometry.size.width,
-                                height: totalHeight * 0.46
-                            )
-                            .edgesIgnoringSafeArea(.bottom)
-                            .offset(y: safeAreaBottom * 0.20 + 8)
-
-                        }
-                    }
-
+                    webViewContainer(webGame)
                 }
             }
             .allowsHitTesting(!isShopDialogVisible && !isOfflineDialogVisible)
-            if isShopDialogVisible {
-                ZStack {
-                    // Dimmer (back layer) — tappable to close
-                    Color.black.opacity(0.60)
-                        .ignoresSafeArea()
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            withAnimation(dialogSpring) {
-                                isShopDialogVisible = false
-                            }
-                        }
-                        .transition(.opacity)
 
-                    GeometryReader { g in
-                        let w = g.size.width
-                        let h = g.size.height
-                        let safeTop = g.safeAreaInsets.top
-                        let safeBottom = g.safeAreaInsets.bottom
-
-                        // Keep your aspect + topPad
-                        let aspect: CGFloat = 1688.0 / 780.0  // H/W
-                        let topPad: CGFloat = -25
-
-                        // Fit image to BOTH axes so it never overflows on short screens; lightly cap on iPad
-                        let maxH = h - safeTop - safeBottom
-                        let isiPad = UIDevice.current.userInterfaceIdiom == .pad
-                        let capW: CGFloat = isiPad ? min(w, 600) : w
-                        let imgW = min(capW, maxH / aspect)  // CHANGED
-                        let imgH = imgW * aspect
-
-                        let xCenter = w / 2
-                        let yTop = safeTop + topPad  // keeps your topPad behavior, but honors safe area
-
-                        Image("shopDlg")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: imgW)
-                            .position(x: xCenter, y: yTop + imgH / 2)
-                            .contentShape(Rectangle())  // define tappable area
-                            .onTapGesture { /* absorb taps on image */  }
-
-                        // 2) Close (X) hotspot
-                        Button {
-                            withAnimation(dialogSpring) {
-                                isShopDialogVisible = false
-                            }
-                        } label: {
-                            Rectangle().fill(Color.white.opacity(0.0015))  // reliably hit-testable
-                        }
-                        .frame(width: imgW * 0.30, height: imgH * 0.15)
-                        .position(
-                            x: (xCenter - imgW / 2) + imgW * 0.84,
-                            y: yTop + imgH * 0.26
-                        )
-
-                        // 3) Order Now hotspot
-                        Button {
-                            withAnimation(dialogSpring) {
-                                isShopDialogVisible = false
-                            }
-                            isShopWebviewVisible = true
-                        } label: {
-                            Rectangle().fill(Color.white.opacity(0.0015))
-                        }
-                        .frame(width: imgW * 0.64, height: imgH * 0.12)
-                        .position(
-                            x: (xCenter - imgW / 2) + imgW * 0.50,
-                            y: yTop + imgH * 0.86
-                        )
-                    }
-                }
-                .zIndex(1500)
-                .transition(
-                    .asymmetric(
-                        insertion: .opacity
-                            .combined(with: .scale(scale: 0.96, anchor: .top)),
-                        removal: .opacity
-                            .combined(with: .scale(scale: 0.2, anchor: .top))
-                    )
-                )
-                .animation(dialogSpring, value: isShopDialogVisible)
-            }
-            if isOfflineDialogVisible {
-                ZStack {
-                    // Dim the background and allow tap to dismiss
-                    Color.black.opacity(0.40)
-                        .ignoresSafeArea()
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            withAnimation(dialogSpring) {
-                                isOfflineDialogVisible = false
-                            }
-                        }
-                        .transition(.opacity)
-
-                    // The dialog card
-                    VStack(spacing: 14) {
-                        Image(systemName: "wifi.exclamationmark")
-                            .font(.system(size: 28, weight: .semibold))
-                            .padding(.top, 4)
-
-                        Text("No Internet Connection")
-                            .font(.custom("DINCondensed-Regular", size: 26))
-                            .foregroundColor(.white)
-
-                        Text(
-                            "This web game needs internet. Connect to Wi-Fi or cellular, then try again."
-                        )
-                        .font(.system(size: 15))
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.white.opacity(0.9))
-
-                        HStack(spacing: 10) {
-                            Button {
-                                withAnimation(dialogSpring) {
-                                    isOfflineDialogVisible = false
-                                }
-                            } label: {
-                                Text("Close")
-                                    .fontWeight(.semibold)
-                                    .padding(.vertical, 10).frame(
-                                        maxWidth: .infinity
-                                    )
-                                    .background(Color.white.opacity(0.18))
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(
-                                                Color.white.opacity(0.22),
-                                                lineWidth: 1
-                                            )
-                                    )
-                            }
-
-                            Button {
-                                // Try again immediately; if online now, open the game.
-                                if network.isConnected,
-                                    let game = pendingWebGame
-                                {
-                                    isOfflineDialogVisible = false
-                                    pendingWebGame = nil
-                                    navigateToWeb(game)
-                                }
-                            } label: {
-                                Text("Try Again")
-                                    .fontWeight(.semibold)
-                                    .padding(.vertical, 10).frame(
-                                        maxWidth: .infinity
-                                    )
-                                    .background(Color.white.opacity(0.28))
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(
-                                                Color.white.opacity(0.30),
-                                                lineWidth: 1
-                                            )
-                                    )
-                            }
-                        }
-                        .padding(.top, 4)
-                    }
-                    .padding(20)
-                    .frame(maxWidth: 360)
-                    .background(Color.black.opacity(0.8))  // ← 60% transparent dark
-                    .cornerRadius(18)  // ← rounded corners
-                    .shadow(radius: 20, y: 8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 18)
-                            .stroke(Color.white.opacity(0.10), lineWidth: 1)
-                    )
-                    .transition(
-                        .opacity.combined(
-                            with: .scale(scale: 0.96, anchor: .center)
-                        )
-                    )
-                    .animation(dialogSpring, value: isOfflineDialogVisible)
-                }
-                .zIndex(1600)  // above shop dialog (which uses 1500)
-            }
-
-            // Loading overlay
-            if isLoading {
-                ZStack {
-                    // Dimmed background
-                    Color.black.opacity(0.3)
-                        .edgesIgnoringSafeArea(.all)  // Optional: If you want to dim the screen
-
-                    // Spinner overlay
-                    VStack(spacing: 15) {
-                        ProgressView()
-                            .progressViewStyle(
-                                CircularProgressViewStyle(tint: .white)
-                            )  // Adjust spinner color
-                            .scaleEffect(1.5)  // Adjust size
-
-                        Text("Loading...")
-                            .foregroundColor(.white)  // Match text color to spinner
-                            .font(.headline)  // Adjust font style
-                    }
-                    .padding(30)
-                    .background(Color.black.opacity(0.8))  // Darker background for contrast
-                    .cornerRadius(20)  // Rounded corners
-                    .shadow(radius: 10)  // Optional shadow
-                }
-                .zIndex(1000)  // Ensure it stays on top
-            }
-
+            if isShopDialogVisible { shopDialog }
+            if isOfflineDialogVisible { offlineDialog }
+            if isLoading { loadingOverlay }
         }
         .onAppear {
             engagementTracker.startTracking()
@@ -728,7 +256,327 @@ struct HomeView: View {
             }
         }
         .environmentObject(controllerViewModel)
-        .profileOverlay(isPresented: $isProfileViewPresented)
+        .profileOverlay(isPresented: overlaystate.isProfileOverlayVisible)
+        .walletOverlay(isPresented: overlaystate.isWalletOverlayVisible)
+    }
+
+    @ViewBuilder
+    private var gridAndDetailView: some View {
+        GeometryReader { geometry in
+            let safeAreaBottom = geometry.safeAreaInsets.bottom
+            let safeAreaTop = geometry.safeAreaInsets.top
+            let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
+
+            ZStack {
+                backgroundView(geometry: geometry, totalHeight: totalHeight)
+            }
+            VStack {
+                HomeNavigationView(
+                    isSettingsPresented: $isSettingsPresented,
+                    onSettingsButtonTap: { isSettingsPresented = true },
+                    focusedButtonIndex: $viewModel.focusedButtonIndex,
+                    dataController: dataController,
+                    viewModel: viewModel,
+                    searchQuery: $viewModel.searchQuery,
+                    isProfilePresented: overlaystate.isProfileOverlayVisible
+                )
+                .fullScreenCover(isPresented: $viewModel.isPresented) {
+                    addRomSheet
+                }
+                .sheet(isPresented: $isShopWebviewVisible) {
+                    shopWebSheet
+                }
+
+                if let (kind, item) = focusedLibraryTuple() {
+                    switch kind {
+                    case .rom(let rom):
+                        CurrentItemView(
+                            currentRom: rom,
+                            currentView: $currentView,
+                            focusedButtonIndex: $viewModel.focusedButtonIndex
+                        )
+                    case .web:
+                        CurrentItemView(
+                            currentRom: nil,
+                            currentView: $currentView,
+                            focusedButtonIndex: $viewModel.focusedButtonIndex,
+                            addRomAction: nil,
+                            overrideImage: item.iconImage,
+                            overrideTitle: item.displayName
+                        )
+                    }
+                } else {
+                    CurrentItemView(
+                        currentRom: nil,
+                        currentView: $currentView,
+                        focusedButtonIndex: $viewModel.focusedButtonIndex,
+                        addRomAction: { viewModel.isPresented = true }
+                    )
+                }
+
+                TitleSortingView(titleText: "All Games", sortingText: "A-Z")
+                    .padding(.top, 10)
+
+                if items.isEmpty && !isLoading {
+                    emptyView
+                } else {
+                    romGridView
+                }
+
+                SoolraControllerView(
+                    controllerViewModel: controllerViewModel,
+                    currentView: $currentView,
+                    onButton: { action, pressed in
+                        viewModel.controllerDidPress(action: action, pressed: pressed)
+                    }
+                )
+                .frame(width: geometry.size.width, height: totalHeight * 0.48)
+                .edgesIgnoringSafeArea(.bottom)
+            }
+            .edgesIgnoringSafeArea(.all)
+            .preferredColorScheme(.dark)
+            .padding(.top, 5)
+        }
+    }
+
+    @ViewBuilder
+    private func webViewContainer(_ webGame: WebGame) -> some View {
+        GeometryReader { geometry in
+            let safeAreaBottom = geometry.safeAreaInsets.bottom
+            let safeAreaTop = geometry.safeAreaInsets.top
+            let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
+
+            ZStack(alignment: .bottom) {
+                WebGameContainerView(game: webGame) { currentView = .grid }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .edgesIgnoringSafeArea(.all)
+
+                SoolraControllerView(
+                    controllerViewModel: controllerViewModel,
+                    currentView: $currentView,
+                    onButton: { action, pressed in
+                        BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
+                    }
+                )
+                .frame(width: geometry.size.width, height: totalHeight * 0.46)
+                .edgesIgnoringSafeArea(.bottom)
+                .offset(y: safeAreaBottom * 0.20 + 8)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func backgroundView(geometry: GeometryProxy, totalHeight: CGFloat) -> some View {
+        if let bgImage = backgroundImage {
+            Image(uiImage: bgImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: geometry.size.width, height: totalHeight)
+                .clipped()
+                .edgesIgnoringSafeArea(.all)
+                .overlay(
+                    LinearGradient(
+                        gradient: Gradient(stops: [
+                            .init(color: Color.black.opacity(0.7), location: 0),
+                            .init(color: Color.black.opacity(0.7), location: 0.3),
+                            .init(color: Color.black.opacity(0.8), location: 0.7),
+                            .init(color: Color.black.opacity(0.95), location: 1.0),
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+        } else {
+            Image("home-background")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: geometry.size.width, height: totalHeight)
+                .clipped()
+                .edgesIgnoringSafeArea(.all)
+        }
+    }
+
+    @ViewBuilder
+    private var addRomSheet: some View {
+        ZStack(alignment: .top) {
+            Color.black.opacity(0.6)
+            VStack(spacing: 0) {
+                if BluetoothControllerService.shared.isControllerConnected {
+                    HalfScreenDocumentPicker { url in
+                        Task {
+                            isLoading = true
+                            await dataController.romManager.addRom(url: url)
+                            withAnimation {
+                                roms = dataController.romManager.fetchRoms()
+                                isLoading = false
+                            }
+                            viewModel.isPresented = false
+                        }
+                    }
+                    .background(Color(.systemBackground))
+                    .cornerRadius(16)
+                    .shadow(radius: 10)
+                    Spacer()
+                } else {
+                    DocumentPicker { url in
+                        Task {
+                            isLoading = true
+                            await dataController.romManager.addRom(url: url)
+                            withAnimation {
+                                roms = dataController.romManager.fetchRoms()
+                                isLoading = false
+                            }
+                            viewModel.isPresented = false
+                        }
+                    }
+                    .ignoresSafeArea()
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var shopWebSheet: some View {
+        NavigationView {
+            ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
+                .navigationTitle("Shop")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarItems(leading: Button(action: { isShopWebviewVisible = false }) {
+                    HStack { Image(systemName: "chevron.left"); Text("Back") }
+                })
+        }
+        .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+    }
+
+    @ViewBuilder
+    private var shopDialog: some View {
+        ZStack {
+            Color.black.opacity(0.60)
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture { withAnimation(dialogSpring) { isShopDialogVisible = false } }
+                .transition(.opacity)
+
+            GeometryReader { g in
+                let w = g.size.width
+                let h = g.size.height
+                let safeTop = g.safeAreaInsets.top
+                let safeBottom = g.safeAreaInsets.bottom
+                let aspect: CGFloat = 1688.0 / 780.0
+                let topPad: CGFloat = -25
+                let maxH = h - safeTop - safeBottom
+                let isiPad = UIDevice.current.userInterfaceIdiom == .pad
+                let capW: CGFloat = isiPad ? min(w, 600) : w
+                let imgW = min(capW, maxH / aspect)
+                let imgH = imgW * aspect
+                let xCenter = w / 2
+                let yTop = safeTop + topPad
+
+                Image("shopDlg")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: imgW)
+                    .position(x: xCenter, y: yTop + imgH / 2)
+                    .contentShape(Rectangle())
+                    .onTapGesture { }
+
+                Button { withAnimation(dialogSpring) { isShopDialogVisible = false } } label: {
+                    Rectangle().fill(Color.white.opacity(0.0015))
+                }
+                .frame(width: imgW * 0.30, height: imgH * 0.15)
+                .position(x: (xCenter - imgW / 2) + imgW * 0.84, y: yTop + imgH * 0.26)
+
+                Button {
+                    withAnimation(dialogSpring) { isShopDialogVisible = false }
+                    isShopWebviewVisible = true
+                } label: {
+                    Rectangle().fill(Color.white.opacity(0.0015))
+                }
+                .frame(width: imgW * 0.64, height: imgH * 0.12)
+                .position(x: (xCenter - imgW / 2) + imgW * 0.50, y: yTop + imgH * 0.86)
+            }
+        }
+        .zIndex(1500)
+        .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 0.96, anchor: .top)), removal: .opacity.combined(with: .scale(scale: 0.2, anchor: .top))))
+        .animation(dialogSpring, value: isShopDialogVisible)
+    }
+
+    @ViewBuilder
+    private var offlineDialog: some View {
+        ZStack {
+            Color.black.opacity(0.40)
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture { withAnimation(dialogSpring) { isOfflineDialogVisible = false } }
+                .transition(.opacity)
+
+            VStack(spacing: 14) {
+                Image(systemName: "wifi.exclamationmark")
+                    .font(.system(size: 28, weight: .semibold))
+                    .padding(.top, 4)
+                Text("No Internet Connection")
+                    .font(.custom("DINCondensed-Regular", size: 26))
+                    .foregroundColor(.white)
+                Text("This web game needs internet. Connect to Wi-Fi or cellular, then try again.")
+                    .font(.system(size: 15))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.white.opacity(0.9))
+                HStack(spacing: 10) {
+                    Button { withAnimation(dialogSpring) { isOfflineDialogVisible = false } } label: {
+                        Text("Close")
+                            .fontWeight(.semibold)
+                            .padding(.vertical, 10).frame(maxWidth: .infinity)
+                            .background(Color.white.opacity(0.18))
+                            .cornerRadius(12)
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.22), lineWidth: 1))
+                    }
+                    Button {
+                        if network.isConnected, let game = pendingWebGame {
+                            isOfflineDialogVisible = false
+                            pendingWebGame = nil
+                            navigateToWeb(game)
+                        }
+                    } label: {
+                        Text("Try Again")
+                            .fontWeight(.semibold)
+                            .padding(.vertical, 10).frame(maxWidth: .infinity)
+                            .background(Color.white.opacity(0.28))
+                            .cornerRadius(12)
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.30), lineWidth: 1))
+                    }
+                }
+                .padding(.top, 4)
+            }
+            .padding(20)
+            .frame(maxWidth: 360)
+            .background(Color.black.opacity(0.8))
+            .cornerRadius(18)
+            .shadow(radius: 20, y: 8)
+            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10), lineWidth: 1))
+            .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .center)))
+            .animation(dialogSpring, value: isOfflineDialogVisible)
+        }
+        .zIndex(1600)
+    }
+
+    @ViewBuilder
+    private var loadingOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.3).edgesIgnoringSafeArea(.all)
+            VStack(spacing: 15) {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(1.5)
+                Text("Loading...")
+                    .foregroundColor(.white)
+                    .font(.headline)
+            }
+            .padding(30)
+            .background(Color.black.opacity(0.8))
+            .cornerRadius(20)
+            .shadow(radius: 10)
+        }
+        .zIndex(1000)
     }
 
     func rebuildItems() {
@@ -1225,7 +1073,7 @@ struct HomeView: View {
                                 switch manager.authState {
                                 case .authenticated:
                                     Button(action: {
-                                        withAnimation{
+                                        withAnimation {
                                             isProfilePresented = true
                                         }
                                     }) {
@@ -1433,4 +1281,3 @@ final class NetworkMonitor: ObservableObject {
 
     deinit { monitor.cancel() }
 }
-
