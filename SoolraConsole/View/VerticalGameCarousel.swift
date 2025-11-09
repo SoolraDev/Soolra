@@ -215,7 +215,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
     
     // Layout
     private let reveal: CGFloat = 120
-    private let extraGap: CGFloat = -120
+    private let extraGap: CGFloat = -130
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
     
@@ -269,7 +269,9 @@ fileprivate struct VerticalCarousel_iOS17: View {
     
     var body: some View {
         let overlapSpacing = -(cardSizeUnfocused.height - reveal) + extraGap
-        let viewportHeight = cardSizeFocused.height + 2 * reveal
+//        let viewportHeight = cardSizeFocused.height + 2 * reveal
+        let viewportHeight = (UIScreen.main.bounds.height / 2) * 1.2
+
         let verticalMargin = viewportHeight / 2 - cardSizeFocused.height / 2
         let focusedScale: CGFloat = 0.75
         let unfocusedScale: CGFloat = (cardSizeUnfocused.height / cardSizeFocused.height) * 0.75
@@ -311,7 +313,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
             }
             .frame(height: viewportHeight)
             .scrollTargetBehavior(.viewAligned)
-            .contentMargins(.vertical, verticalMargin)
+//            .contentMargins(.vertical, verticalMargin)
             .scrollIndicators(.hidden)
             .clipped()
             .transaction { $0.animation = nil }
@@ -526,20 +528,51 @@ fileprivate struct CarouselCard: View {
         }
     }
 }
-/// Tiny modifier that applies a scroll-driven transform (stateless, buttery smooth)
 @available(iOS 17, *)
 private struct ScaleOnScroll: ViewModifier {
     let focusedScale: CGFloat
     let unfocusedScale: CGFloat
-    
+
     func body(content: Content) -> some View {
-        content.scrollTransition(.interactive, axis: .vertical) { c, phase in
-            c
-                .scaleEffect(phase.isIdentity ? focusedScale : unfocusedScale)
-                .opacity(phase.isIdentity ? 1.0 : 0.95)
-        }
+        content
+            // keep your fade behavior
+            .scrollTransition(.interactive, axis: .vertical) { c, phase in
+                c.opacity(phase.isIdentity ? 1.0 : 0.95)
+            }
+            // EXACT same parabola X offset + distance-based scale
+            .visualEffect { content, proxy in
+                content
+                    .offset(x: Self.horizontalArcOffset(proxy))
+                    .scaleEffect(Self.distanceScale(proxy,
+                                                    focusedScale: focusedScale,
+                                                    unfocusedScale: unfocusedScale))
+            }
+    }
+
+    // unchanged X offset logic
+    private nonisolated static func horizontalArcOffset(_ proxy: GeometryProxy) -> CGFloat {
+        let frame = proxy.frame(in: .scrollView)
+        let scrollViewMidY: CGFloat = 235
+        let cardMidY = frame.midY
+        let distanceFromCenter = cardMidY - scrollViewMidY
+        let progress = distanceFromCenter / 235
+        let arcWidth: CGFloat = 600
+        return progress * progress * arcWidth + 50
+    }
+
+    // scale based on same center/progress
+    private nonisolated static func distanceScale(_ proxy: GeometryProxy,
+                                                  focusedScale: CGFloat,
+                                                  unfocusedScale: CGFloat) -> CGFloat {
+        let frame = proxy.frame(in: .scrollView)
+        let scrollViewMidY: CGFloat = 235
+        let progress = (frame.midY - scrollViewMidY) / 235
+        let t = min(1, max(0, abs(progress))) // 0 at center -> 1 far
+        return focusedScale * (1 - t) + unfocusedScale * t
     }
 }
+
+
 // MARK: - Utilities
 extension Array {
     subscript(safe index: Int) -> Element? {
