@@ -272,7 +272,7 @@ fileprivate struct HorizontalCarousel_iOS17: View {
     
     var body: some View {
         let overlapSpacing = -(cardSizeUnfocused.width - reveal) + extraGap
-        let viewportWidth = cardSizeFocused.width + 2 * reveal
+        let viewportWidth = UIScreen.main.bounds.width
         let horizontalMargin = viewportWidth / 2 - cardSizeFocused.width / 2
         let focusedScale: CGFloat = 0.75
         let unfocusedScale: CGFloat = (cardSizeUnfocused.width / cardSizeFocused.width) * 0.75
@@ -312,16 +312,13 @@ fileprivate struct HorizontalCarousel_iOS17: View {
                 }
                 .scrollTargetLayout()
             }
-//            .frame(width: viewportWidth)
-            
-//            .scrollBounceBehavior(.basedOnSize)
-//            .scrollDismissesKeyboard(.interactively)
-            
+            .frame(width: viewportWidth)
+            .scrollTargetBehavior(.viewAligned)
             
             .contentMargins(.horizontal, horizontalMargin)
             .scrollIndicators(.hidden)
             .clipped()
-//            .transaction { $0.animation = nil }
+            .transaction { $0.animation = nil }
             .opacity(isInitialScrollComplete ? 1 : 0)
         }
         .onPreferenceChange(CardDistanceKey.self) { distances = $0 }
