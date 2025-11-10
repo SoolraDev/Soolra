@@ -1,15 +1,16 @@
-//  VerticalGameCarousel.swift
+//  HorizontalGameCarousel.swift
 //  SOOLRA
 //
 //  Created by Kai Yoshida on 23/10/2025.
 //
 import SwiftUI
+
 // MARK: - Public wrapper
-/// Drop-in vertical game picker with iOS 17+ paging and an iOS 16 fallback.
-/// - Use VerticalGameCarousel(focusedIndex:onOpen:) anywhere in your UI.
+/// Drop-in horizontal game picker with iOS 17+ paging and an iOS 16 fallback.
+/// - Use HorizontalGameCarousel(focusedIndex:onOpen:) anywhere in your UI.
 /// - Bind focusedIndex to your existing viewModel.focusedButtonIndex.
 /// - Supply your items in display order via the items parameter.
-struct VerticalGameCarousel: View {
+struct HorizontalGameCarousel: View {
     @Binding var focusedIndex: Int
     let items: [(LibraryKind, LibraryItem)]
     let onOpen: (LibraryKind, LibraryItem) -> Void
@@ -33,7 +34,7 @@ struct VerticalGameCarousel: View {
     
     var body: some View {
         if #available(iOS 17, *) {
-            VerticalCarousel_iOS17(
+            HorizontalCarousel_iOS17(
                 focusedIndex: $focusedIndex,
                 items: items,
                 indexOffset: indexOffset,
@@ -41,10 +42,10 @@ struct VerticalGameCarousel: View {
                 cardSizeFocused: cardSizeFocused,
                 cardSizeUnfocused: cardSizeUnfocused
             )
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .ignoresSafeArea(edges: .top)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .ignoresSafeArea(edges: .leading)
         } else {
-            VerticalCarousel_iOS16(
+            HorizontalCarousel_iOS16(
                 focusedIndex: $focusedIndex,
                 items: items,
                 indexOffset: indexOffset,
@@ -52,13 +53,14 @@ struct VerticalGameCarousel: View {
                 cardSizeFocused: cardSizeFocused,
                 cardSizeUnfocused: cardSizeUnfocused
             )
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .ignoresSafeArea(edges: .top)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .ignoresSafeArea(edges: .leading)
         }
     }
 }
+
 // MARK: - iOS 16 Fallback
-fileprivate struct VerticalCarousel_iOS16: View {
+fileprivate struct HorizontalCarousel_iOS16: View {
     @Binding var focusedIndex: Int
     let items: [(LibraryKind, LibraryItem)]
     let indexOffset: Int
@@ -72,8 +74,8 @@ fileprivate struct VerticalCarousel_iOS16: View {
     var body: some View {
         GeometryReader { geo in
             ScrollViewReader { scrollProxy in
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: 10) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 10) {
                         ForEach(items.indices, id: \.self) { index in
                             let (kind, item) = items[index]
                             let isFocused = (index == currentCenterIndex)
@@ -157,18 +159,18 @@ fileprivate struct VerticalCarousel_iOS16: View {
                                 GeometryReader { itemGeo in
                                     Color.clear.preference(
                                         key: ScrollOffsetPreferenceKey.self,
-                                        value: [index: itemGeo.frame(in: .named("scroll")).midY]
+                                        value: [index: itemGeo.frame(in: .named("scroll")).midX]
                                     )
                                 }
                             )
                         }
                     }
-                    .padding(.vertical, geo.size.height / 2 - cardSizeFocused.height / 2)
+                    .padding(.horizontal, geo.size.width / 2 - cardSizeFocused.width / 2)
                 }
                 .coordinateSpace(name: "scroll")
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { positions in
                     guard !isScrollingProgrammatically else { return }
-                    let center = geo.size.height / 2
+                    let center = geo.size.width / 2
                     let closest = positions.min(by: { abs($0.value - center) < abs($1.value - center) })
                     if let closestIndex = closest?.key, closestIndex != currentCenterIndex {
                         currentCenterIndex = closestIndex
@@ -199,15 +201,17 @@ fileprivate struct VerticalCarousel_iOS16: View {
         }
     }
 }
+
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: [Int: CGFloat] = [:]
     static func reduce(value: inout [Int: CGFloat], nextValue: () -> [Int: CGFloat]) {
         value.merge(nextValue(), uniquingKeysWith: { $1 })
     }
 }
+
 // MARK: - iOS 17 Version
 @available(iOS 17, *)
-fileprivate struct VerticalCarousel_iOS17: View {
+fileprivate struct HorizontalCarousel_iOS17: View {
     @Binding var focusedIndex: Int
     let items: [(LibraryKind, LibraryItem)]
     let indexOffset: Int
@@ -225,7 +229,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
     @State private var pendingScrollTask: Task<Void, Never>?
     @State private var isInitialScrollComplete: Bool = false
     @State private var isChangingBucket: Bool = false
-    // Live depth ordering: distance of each card's midY from viewport center
+    // Live depth ordering: distance of each card's midX from viewport center
     @State private var distances: [UUID: CGFloat] = [:]
     @State private var showFocus: Bool = false // Simple on/off switch
     
@@ -242,7 +246,6 @@ fileprivate struct VerticalCarousel_iOS17: View {
         return "\(item.id.uuidString)-\(zBucket)"
     }
     
-    // CHANGE 1: Add custom init to set selectedID to correct position
     init(focusedIndex: Binding<Int>, items: [(LibraryKind, LibraryItem)], indexOffset: Int, onOpen: @escaping (LibraryKind, LibraryItem) -> Void, cardSizeFocused: CGSize, cardSizeUnfocused: CGSize) {
         self._focusedIndex = focusedIndex
         self.items = items
@@ -255,7 +258,7 @@ fileprivate struct VerticalCarousel_iOS17: View {
         let carouselIndex = max(0, focusedIndex.wrappedValue - indexOffset)
         self._currentSelectedIndex = State(initialValue: carouselIndex)
         
-        // Set selectedID to the correct position (not item 0)
+        // Set selectedID to the correct position
         if !items.isEmpty, carouselIndex < items.count {
             let item = items[carouselIndex].1
             let defaultZIndex = 10000.0
@@ -268,26 +271,26 @@ fileprivate struct VerticalCarousel_iOS17: View {
     }
     
     var body: some View {
-        let overlapSpacing = -(cardSizeUnfocused.height - reveal) + extraGap
-        let viewportHeight = cardSizeFocused.height + 2 * reveal
-        let verticalMargin = viewportHeight / 2 - cardSizeFocused.height / 2
+        let overlapSpacing = -(cardSizeUnfocused.width - reveal) + extraGap
+        let viewportWidth = cardSizeFocused.width + 2 * reveal
+        let horizontalMargin = viewportWidth / 2 - cardSizeFocused.width / 2
         let focusedScale: CGFloat = 0.75
-        let unfocusedScale: CGFloat = (cardSizeUnfocused.height / cardSizeFocused.height) * 0.75
-        
+        let unfocusedScale: CGFloat = (cardSizeUnfocused.width / cardSizeFocused.width) * 0.75
         GeometryReader { outer in
-            ScrollView(.vertical) {
-                LazyVStack(spacing: overlapSpacing) {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: overlapSpacing) {
                     ForEach(items.indices, id: \.self) { index in
                         let (kind, item) = items[index]
                         let isFocused = (index == currentSelectedIndex)
                         let zIndex = zFor(item.id)
                         let itemID = compoundID(for: item, zIndex: zIndex)
                         
+
                         CarouselCard(
                             kind: kind,
                             item: item,
                             isFocused: isFocused,
-                            showFocus: isFocused && showFocus, // Show if focused AND flag is on
+                            showFocus: isFocused && showFocus,
                             cardSizeFocused: cardSizeFocused,
                             cardSizeUnfocused: cardSizeUnfocused
                         )
@@ -296,11 +299,11 @@ fileprivate struct VerticalCarousel_iOS17: View {
                         .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))
                         .background(
                             GeometryReader { cardGeo in
-                                let cardMidY = cardGeo.frame(in: .global).midY
-                                let viewportMid = outer.frame(in: .global).midY
+                                let cardMidX = cardGeo.frame(in: .global).midX
+                                let viewportMid = outer.frame(in: .global).midX
                                 Color.clear
                                     .preference(key: CardDistanceKey.self,
-                                                value: [item.id: cardMidY - viewportMid])
+                                                value: [item.id: cardMidX - viewportMid])
                             }
                         )
                         .zIndex(zIndex)
@@ -309,19 +312,22 @@ fileprivate struct VerticalCarousel_iOS17: View {
                 }
                 .scrollTargetLayout()
             }
-            .frame(height: viewportHeight)
-            .scrollTargetBehavior(.viewAligned)
-            .contentMargins(.vertical, verticalMargin)
+//            .frame(width: viewportWidth)
+            
+//            .scrollBounceBehavior(.basedOnSize)
+//            .scrollDismissesKeyboard(.interactively)
+            
+            
+            .contentMargins(.horizontal, horizontalMargin)
             .scrollIndicators(.hidden)
             .clipped()
-            .transaction { $0.animation = nil }
+//            .transaction { $0.animation = nil }
             .opacity(isInitialScrollComplete ? 1 : 0)
         }
         .onPreferenceChange(CardDistanceKey.self) { distances = $0 }
         .onAppear {
             let carouselIndex = max(0, focusedIndex - indexOffset)
             currentSelectedIndex = carouselIndex
-            // CHANGE 2: Only set if nil, and use carouselIndex not 0
             if selectedID == nil && !items.isEmpty {
                 let safeIndex = min(carouselIndex, items.count - 1)
                 let item = items[safeIndex].1
@@ -412,10 +418,9 @@ fileprivate struct VerticalCarousel_iOS17: View {
                 currentSelectedIndex = i
                 focusedIndex = i + indexOffset
                 
-                // Turn focus back on after scroll settles (fallback if distances doesn't fire)
-                // Longer delay so cards swiped past don't show focus
+                // Turn focus back on after scroll settles
                 Task { @MainActor in
-                    try? await Task.sleep(nanoseconds: 385_000_000) // 300ms
+                    try? await Task.sleep(nanoseconds: 385_000_000) // 385ms
                     if selectedID == newID {
                         showFocus = true
                         print("✅ Focus re-enabled after scroll (fallback)")
@@ -434,13 +439,14 @@ fileprivate struct VerticalCarousel_iOS17: View {
         return Double(10_000) - clampedDistance
     }
 }
+
 // MARK: - Card (shared)
 @available(iOS 17, *)
 fileprivate struct CarouselCard: View {
     let kind: LibraryKind
     let item: LibraryItem
     let isFocused: Bool
-    let showFocus: Bool // NEW: Control visibility of focus effects
+    let showFocus: Bool
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
     
@@ -477,7 +483,7 @@ fileprivate struct CarouselCard: View {
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
         .overlay(alignment: .bottom) {
-            if isFocused && showFocus { // Only show when focused AND showFocus is true
+            if isFocused && showFocus {
                 Text(item.displayName)
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(.white)
@@ -505,7 +511,7 @@ fileprivate struct CarouselCard: View {
                         )
                     )
                     .offset(y: 56)
-                    }
+            }
         }
         .frame(width: cardSizeFocused.width, height: cardSizeFocused.height)
     }
@@ -526,6 +532,7 @@ fileprivate struct CarouselCard: View {
         }
     }
 }
+
 /// Tiny modifier that applies a scroll-driven transform (stateless, buttery smooth)
 @available(iOS 17, *)
 private struct ScaleOnScroll: ViewModifier {
@@ -533,13 +540,14 @@ private struct ScaleOnScroll: ViewModifier {
     let unfocusedScale: CGFloat
     
     func body(content: Content) -> some View {
-        content.scrollTransition(.interactive, axis: .vertical) { c, phase in
+        content.scrollTransition(.interactive, axis: .horizontal) { c, phase in
             c
                 .scaleEffect(phase.isIdentity ? focusedScale : unfocusedScale)
                 .opacity(phase.isIdentity ? 1.0 : 0.95)
         }
     }
 }
+
 // MARK: - Utilities
 extension Array {
     subscript(safe index: Int) -> Element? {

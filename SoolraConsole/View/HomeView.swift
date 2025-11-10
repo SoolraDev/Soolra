@@ -118,7 +118,7 @@ struct HomeView: View {
                             // Top area: carousel pinned to screen y=0, nav overlaid (does not push it down)
                             ZStack(alignment: .top) {
                                 // Carousel at the very top
-                                VerticalGameCarousel(
+                                HorizontalGameCarousel(
                                     focusedIndex: $viewModel.focusedButtonIndex,
                                     items: visibleItems().map { $0.element }
                                 ) { kind, item in
