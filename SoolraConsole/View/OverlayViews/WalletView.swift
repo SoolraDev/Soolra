@@ -9,11 +9,12 @@ import SwiftUI
 struct WalletView: View {
     @Binding var isPresented: Bool
     @StateObject var walletmanager = walletManager
-    @State var usdcBalance: String = "0.00"
-    @State var usdtBalance: String = "0.00"
+    //    @State var usdcBalance: String = "0.00"
+    //    @State var usdtBalance: String = "0.00"
     @State var soolBalance: String = "0.00"
     @State private var notificationsEnabled: Bool = false
     @State private var isWebviewPresented: Bool = false
+    @State private var overlaystate = overlayState
 
     var body: some View {
         VStack(spacing: 16) {
@@ -28,7 +29,7 @@ struct WalletView: View {
                 Text("USDT").foregroundStyle(.white).fontWeight(.semibold)
                 Spacer()
                 AngledBanner {
-                    Text(usdtBalance)
+                    Text(walletmanager.balances["usdt"] ?? "0.0")
                 }
             }
             .padding(.horizontal)
@@ -38,7 +39,7 @@ struct WalletView: View {
                 Text("USDC").foregroundStyle(.white).fontWeight(.semibold)
                 Spacer()
                 AngledBanner {
-                    Text(usdcBalance)
+                    Text(walletmanager.balances["usdc"] ?? "0.0")
                 }
             }
             .padding(.horizontal)
@@ -78,17 +79,13 @@ struct WalletView: View {
                     .menuStyle(.automatic)
 
                     HStack {
-                        Link("Privacy policy", destination: URL(string: "https://shop.soolra.com/policies/privacy-policy")!)
-//                        Button("Privacy policy") {
-//                            isWebviewPresented = true
-//                        }.sheet(isPresented: $isWebviewPresented) {
-//                            WebView(
-//                                url: URL(
-//                                    string:
-//                                        "https://shop.soolra.com/policies/privacy-policy"
-//                                )!
-//                            )
-//                        }
+                        Link(
+                            "Privacy policy",
+                            destination: URL(
+                                string:
+                                    "https://shop.soolra.com/policies/privacy-policy"
+                            )!
+                        )
                     }
 
                 } label: {
@@ -106,7 +103,11 @@ struct WalletView: View {
             }
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .padding()
+            .padding(.horizontal)
+
+            Button("Close") {
+                overlaystate.isWalletOverlayVisible.wrappedValue = false
+            }.padding().foregroundStyle(.white)
         }
         .purpleGradientBackground()
         .background(.ultraThinMaterial)
@@ -115,6 +116,9 @@ struct WalletView: View {
         .padding()
         .edgesIgnoringSafeArea(.all)
         .background(.gray.opacity(0.5))
+        .task {
+            await walletmanager.getBalances()
+        }
     }
 }
 

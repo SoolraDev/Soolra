@@ -84,7 +84,11 @@ struct HomeView: View {
     )
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
 
-    private let brandBackground = Color(red: 41.0/255.0, green: 3.0/255.0, blue: 135.0/255.0)
+    private let brandBackground = Color(
+        red: 41.0 / 255.0,
+        green: 3.0 / 255.0,
+        blue: 135.0 / 255.0
+    )
 
     var backgroundImage: UIImage? {
         guard let (kind, item) = focusedLibraryTuple() else { return nil }
@@ -265,7 +269,8 @@ struct HomeView: View {
         GeometryReader { geometry in
             let safeAreaBottom = geometry.safeAreaInsets.bottom
             let safeAreaTop = geometry.safeAreaInsets.top
-            let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
+            let totalHeight =
+                geometry.size.height + safeAreaTop + safeAreaBottom
 
             ZStack {
                 backgroundView(geometry: geometry, totalHeight: totalHeight)
@@ -278,7 +283,8 @@ struct HomeView: View {
                     dataController: dataController,
                     viewModel: viewModel,
                     searchQuery: $viewModel.searchQuery,
-                    isProfilePresented: overlaystate.isProfileOverlayVisible
+                    isProfilePresented: overlaystate.isProfileOverlayVisible,
+                    isWalletPresented: overlaystate.isWalletOverlayVisible
                 )
                 .fullScreenCover(isPresented: $viewModel.isPresented) {
                     addRomSheet
@@ -327,7 +333,10 @@ struct HomeView: View {
                     controllerViewModel: controllerViewModel,
                     currentView: $currentView,
                     onButton: { action, pressed in
-                        viewModel.controllerDidPress(action: action, pressed: pressed)
+                        viewModel.controllerDidPress(
+                            action: action,
+                            pressed: pressed
+                        )
                     }
                 )
                 .frame(width: geometry.size.width, height: totalHeight * 0.48)
@@ -344,18 +353,26 @@ struct HomeView: View {
         GeometryReader { geometry in
             let safeAreaBottom = geometry.safeAreaInsets.bottom
             let safeAreaTop = geometry.safeAreaInsets.top
-            let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
+            let totalHeight =
+                geometry.size.height + safeAreaTop + safeAreaBottom
 
             ZStack(alignment: .bottom) {
                 WebGameContainerView(game: webGame) { currentView = .grid }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .frame(
+                        width: geometry.size.width,
+                        height: geometry.size.height
+                    )
                     .edgesIgnoringSafeArea(.all)
 
                 SoolraControllerView(
                     controllerViewModel: controllerViewModel,
                     currentView: $currentView,
                     onButton: { action, pressed in
-                        BluetoothControllerService.shared.delegate?.controllerDidPress(action: action, pressed: pressed)
+                        BluetoothControllerService.shared.delegate?
+                            .controllerDidPress(
+                                action: action,
+                                pressed: pressed
+                            )
                     }
                 )
                 .frame(width: geometry.size.width, height: totalHeight * 0.46)
@@ -366,7 +383,9 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private func backgroundView(geometry: GeometryProxy, totalHeight: CGFloat) -> some View {
+    private func backgroundView(geometry: GeometryProxy, totalHeight: CGFloat)
+        -> some View
+    {
         if let bgImage = backgroundImage {
             Image(uiImage: bgImage)
                 .resizable()
@@ -378,9 +397,18 @@ struct HomeView: View {
                     LinearGradient(
                         gradient: Gradient(stops: [
                             .init(color: Color.black.opacity(0.7), location: 0),
-                            .init(color: Color.black.opacity(0.7), location: 0.3),
-                            .init(color: Color.black.opacity(0.8), location: 0.7),
-                            .init(color: Color.black.opacity(0.95), location: 1.0),
+                            .init(
+                                color: Color.black.opacity(0.7),
+                                location: 0.3
+                            ),
+                            .init(
+                                color: Color.black.opacity(0.8),
+                                location: 0.7
+                            ),
+                            .init(
+                                color: Color.black.opacity(0.95),
+                                location: 1.0
+                            ),
                         ]),
                         startPoint: .top,
                         endPoint: .bottom
@@ -441,9 +469,14 @@ struct HomeView: View {
             ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
                 .navigationTitle("Shop")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarItems(leading: Button(action: { isShopWebviewVisible = false }) {
-                    HStack { Image(systemName: "chevron.left"); Text("Back") }
-                })
+                .navigationBarItems(
+                    leading: Button(action: { isShopWebviewVisible = false }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                    }
+                )
         }
         .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
     }
@@ -454,7 +487,9 @@ struct HomeView: View {
             Color.black.opacity(0.60)
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
-                .onTapGesture { withAnimation(dialogSpring) { isShopDialogVisible = false } }
+                .onTapGesture {
+                    withAnimation(dialogSpring) { isShopDialogVisible = false }
+                }
                 .transition(.opacity)
 
             GeometryReader { g in
@@ -478,13 +513,18 @@ struct HomeView: View {
                     .frame(width: imgW)
                     .position(x: xCenter, y: yTop + imgH / 2)
                     .contentShape(Rectangle())
-                    .onTapGesture { }
+                    .onTapGesture {}
 
-                Button { withAnimation(dialogSpring) { isShopDialogVisible = false } } label: {
+                Button {
+                    withAnimation(dialogSpring) { isShopDialogVisible = false }
+                } label: {
                     Rectangle().fill(Color.white.opacity(0.0015))
                 }
                 .frame(width: imgW * 0.30, height: imgH * 0.15)
-                .position(x: (xCenter - imgW / 2) + imgW * 0.84, y: yTop + imgH * 0.26)
+                .position(
+                    x: (xCenter - imgW / 2) + imgW * 0.84,
+                    y: yTop + imgH * 0.26
+                )
 
                 Button {
                     withAnimation(dialogSpring) { isShopDialogVisible = false }
@@ -493,11 +533,23 @@ struct HomeView: View {
                     Rectangle().fill(Color.white.opacity(0.0015))
                 }
                 .frame(width: imgW * 0.64, height: imgH * 0.12)
-                .position(x: (xCenter - imgW / 2) + imgW * 0.50, y: yTop + imgH * 0.86)
+                .position(
+                    x: (xCenter - imgW / 2) + imgW * 0.50,
+                    y: yTop + imgH * 0.86
+                )
             }
         }
         .zIndex(1500)
-        .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 0.96, anchor: .top)), removal: .opacity.combined(with: .scale(scale: 0.2, anchor: .top))))
+        .transition(
+            .asymmetric(
+                insertion: .opacity.combined(
+                    with: .scale(scale: 0.96, anchor: .top)
+                ),
+                removal: .opacity.combined(
+                    with: .scale(scale: 0.2, anchor: .top)
+                )
+            )
+        )
         .animation(dialogSpring, value: isShopDialogVisible)
     }
 
@@ -507,7 +559,11 @@ struct HomeView: View {
             Color.black.opacity(0.40)
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
-                .onTapGesture { withAnimation(dialogSpring) { isOfflineDialogVisible = false } }
+                .onTapGesture {
+                    withAnimation(dialogSpring) {
+                        isOfflineDialogVisible = false
+                    }
+                }
                 .transition(.opacity)
 
             VStack(spacing: 14) {
@@ -517,18 +573,29 @@ struct HomeView: View {
                 Text("No Internet Connection")
                     .font(.custom("DINCondensed-Regular", size: 26))
                     .foregroundColor(.white)
-                Text("This web game needs internet. Connect to Wi-Fi or cellular, then try again.")
-                    .font(.system(size: 15))
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.white.opacity(0.9))
+                Text(
+                    "This web game needs internet. Connect to Wi-Fi or cellular, then try again."
+                )
+                .font(.system(size: 15))
+                .multilineTextAlignment(.center)
+                .foregroundColor(.white.opacity(0.9))
                 HStack(spacing: 10) {
-                    Button { withAnimation(dialogSpring) { isOfflineDialogVisible = false } } label: {
+                    Button {
+                        withAnimation(dialogSpring) {
+                            isOfflineDialogVisible = false
+                        }
+                    } label: {
                         Text("Close")
                             .fontWeight(.semibold)
                             .padding(.vertical, 10).frame(maxWidth: .infinity)
                             .background(Color.white.opacity(0.18))
                             .cornerRadius(12)
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.22), lineWidth: 1))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12).stroke(
+                                    Color.white.opacity(0.22),
+                                    lineWidth: 1
+                                )
+                            )
                     }
                     Button {
                         if network.isConnected, let game = pendingWebGame {
@@ -542,7 +609,12 @@ struct HomeView: View {
                             .padding(.vertical, 10).frame(maxWidth: .infinity)
                             .background(Color.white.opacity(0.28))
                             .cornerRadius(12)
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.30), lineWidth: 1))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12).stroke(
+                                    Color.white.opacity(0.30),
+                                    lineWidth: 1
+                                )
+                            )
                     }
                 }
                 .padding(.top, 4)
@@ -552,8 +624,15 @@ struct HomeView: View {
             .background(Color.black.opacity(0.8))
             .cornerRadius(18)
             .shadow(radius: 20, y: 8)
-            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10), lineWidth: 1))
-            .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .center)))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18).stroke(
+                    Color.white.opacity(0.10),
+                    lineWidth: 1
+                )
+            )
+            .transition(
+                .opacity.combined(with: .scale(scale: 0.96, anchor: .center))
+            )
             .animation(dialogSpring, value: isOfflineDialogVisible)
         }
         .zIndex(1600)
@@ -1029,6 +1108,7 @@ struct HomeView: View {
         let viewModel: HomeViewModel
         @Binding var searchQuery: String  // 👈 Add this
         @Binding var isProfilePresented: Bool
+        @Binding var isWalletPresented: Bool
         @StateObject private var manager = walletManager
 
         var body: some View {
@@ -1041,13 +1121,27 @@ struct HomeView: View {
                         index: 0,
                         action: {},
                         content: {
-                            Image("home-logo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 27, height: 27)
-                                .padding()
+                            Group {
+                                switch manager.authState {
+                                case .authenticated:
+                                    Button(action: {
+                                        withAnimation {
+                                            isProfilePresented = true
+                                        }
+                                    }) {
+                                        Image("home-logo")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 40, height: 40)
+                                            .padding()
+                                    }
+                                default:
+                                    AuthButton()
+                                }
+                            }
                         }
                     )
+
                     Spacer(minLength: 10)
                     //                    TextField("Search games...", text: $searchQuery)                        .padding(8)
                     //                        .background(Color.white.opacity(0.15))
@@ -1063,54 +1157,75 @@ struct HomeView: View {
                     //                                    .padding(.trailing, 10)
                     //                            }
                     //                        )
+                    Group {
+                        let base = BlinkingFocusedButton(
+                            selectedIndex: $focusedButtonIndex,
+                            index: 1,
+                            action: {
+                                onSettingsButtonTap()
 
-                    BlinkingFocusedButton(
-                        selectedIndex: $focusedButtonIndex,
-                        index: 1,
-                        action: {},
-                        content: {
-                            Group {
-                                switch manager.authState {
-                                case .authenticated:
-                                    Button(action: {
-                                        withAnimation {
-                                            isProfilePresented = true
+                            },
+                            content: {
+                                Group {
+                                    switch manager.authState {
+                                    case .authenticated:
+                                        Button(action: {
+                                            withAnimation {
+                                                isWalletPresented = true
+                                            }
+                                        }) {
+                                            Image(systemName: "wallet.bifold")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 30, height: 30)
+                                                .padding()
+                                                .foregroundStyle(.white)
                                         }
-                                    }) {
-                                        Image(systemName: "person.circle")
-                                            .font(.title)
-                                            .foregroundStyle(Color.white)
+                                    default:
+                                        EmptyView()
                                     }
-                                default:
-                                    AuthButton()
                                 }
                             }
-                        }
-                    )
+                        )
 
-                    BlinkingFocusedButton(
-                        selectedIndex: $focusedButtonIndex,
-                        index: 2,
-                        action: {
-                            onSettingsButtonTap()
+                        if #available(iOS 26.0, *) {
+                            base.glassEffect()
+                        } else {
+                            base
+                        }
+                    }
 
-                        },
-                        content: {
-                            Image("home-settings-icon")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .scaledToFit()
-                                .padding()
+                    Group {
+                        let base = BlinkingFocusedButton(
+                            selectedIndex: $focusedButtonIndex,
+                            index: 2,
+                            action: {
+                                onSettingsButtonTap()
+
+                            },
+                            content: {
+                                Image("home-settings-icon")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .scaledToFit()
+                                    .padding()
+                            }
+                        )
+                        .sheet(
+                            isPresented: $isSettingsPresented,
+                            onDismiss: {
+                                // When settings is dismissed, ensure we get the delegate back
+                                viewModel.setAsDelegate()
+                            }
+                        ) {
+                            SettingsView().environmentObject(dataController)
                         }
-                    )
-                    .sheet(
-                        isPresented: $isSettingsPresented,
-                        onDismiss: {
-                            // When settings is dismissed, ensure we get the delegate back
-                            viewModel.setAsDelegate()
+                        
+                        if #available(iOS 26.0, *) {
+                            base.glassEffect()
+                        } else {
+                            base
                         }
-                    ) {
-                        SettingsView().environmentObject(dataController)
                     }
 
                 }
