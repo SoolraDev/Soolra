@@ -34,8 +34,6 @@ let USDTAddress = "0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2"
 let USDCAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
 let SOOLAddress = ""  // TODO: update contract
 let chainId = 8453
-public let soolraBackendURL =
-    "https://elysia-backend-aa99026e9094.herokuapp.com"
 
 @MainActor
 public class WalletManager: ObservableObject {

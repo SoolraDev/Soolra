@@ -6,11 +6,13 @@
 //
 import SwiftUI
 
-public struct AngledBannerShape: Shape {
+public struct AngledBannerShape: InsettableShape {
     /// The width of the chevron notch on the right side.
     var notchWidth: CGFloat = 20
+    var insetAmount: CGFloat = 0
 
     public func path(in rect: CGRect) -> Path {
+        let rect = rect.insetBy(dx: insetAmount, dy: insetAmount)
         var path = Path()
 
         // Start at the top-left, inset from the corner
@@ -35,6 +37,12 @@ public struct AngledBannerShape: Shape {
         path.closeSubpath()
 
         return path
+    }
+
+    public func inset(by amount: CGFloat) -> AngledBannerShape {
+        var copy = self
+        copy.insetAmount += amount
+        return copy
     }
 }
 
@@ -100,3 +108,4 @@ public struct AngledBanner<Content: View>: View {
         }
     }
 }
+

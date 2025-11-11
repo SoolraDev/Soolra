@@ -262,6 +262,7 @@ struct HomeView: View {
         .environmentObject(controllerViewModel)
         .profileOverlay(isPresented: overlaystate.isProfileOverlayVisible)
         .walletOverlay(isPresented: overlaystate.isWalletOverlayVisible)
+        .marketOverlay(isPresented: overlaystate.isMarketOverlayVisible)
     }
 
     @ViewBuilder
@@ -284,7 +285,8 @@ struct HomeView: View {
                     viewModel: viewModel,
                     searchQuery: $viewModel.searchQuery,
                     isProfilePresented: overlaystate.isProfileOverlayVisible,
-                    isWalletPresented: overlaystate.isWalletOverlayVisible
+                    isWalletPresented: overlaystate.isWalletOverlayVisible,
+                    isMarketplacePresented: overlaystate.isMarketOverlayVisible
                 )
                 .fullScreenCover(isPresented: $viewModel.isPresented) {
                     addRomSheet
@@ -1109,6 +1111,7 @@ struct HomeView: View {
         @Binding var searchQuery: String  // 👈 Add this
         @Binding var isProfilePresented: Bool
         @Binding var isWalletPresented: Bool
+        @Binding var isMarketplacePresented: Bool
         @StateObject private var manager = walletManager
 
         var body: some View {
@@ -1162,8 +1165,47 @@ struct HomeView: View {
                             selectedIndex: $focusedButtonIndex,
                             index: 1,
                             action: {
-                                onSettingsButtonTap()
+                                withAnimation {
+                                    isMarketplacePresented = true
+                                }
+                            },
+                            content: {
+                                Group {
+                                    switch manager.authState {
+                                    case .authenticated:
+                                        Button(action: {
+                                            withAnimation {
+                                                isMarketplacePresented = true
+                                            }
+                                        }) {
+                                            Image(systemName: "storefront.fill")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 30, height: 30)
+                                                .padding()
+                                                .foregroundStyle(.white)
+                                        }
+                                    default:
+                                        EmptyView()
+                                    }
+                                }
+                            }
+                        )
 
+                        if #available(iOS 26.0, *) {
+                            base.glassEffect()
+                        } else {
+                            base
+                        }
+                    }.hidden() // TODO: unhide this when fully implemented.
+                    Group {
+                        let base = BlinkingFocusedButton(
+                            selectedIndex: $focusedButtonIndex,
+                            index: 1,
+                            action: {
+                                withAnimation {
+                                    isWalletPresented = true
+                                }
                             },
                             content: {
                                 Group {
@@ -1220,7 +1262,7 @@ struct HomeView: View {
                         ) {
                             SettingsView().environmentObject(dataController)
                         }
-                        
+
                         if #available(iOS 26.0, *) {
                             base.glassEffect()
                         } else {

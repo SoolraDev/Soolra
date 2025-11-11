@@ -8,6 +8,7 @@ import SwiftUI
 
 struct MarketView: View {
     @Binding var isPresented: Bool
+    @State private var selectedTab: Int = 0
 
     var body: some View {
         VStack(spacing: 16) {
@@ -25,102 +26,41 @@ struct MarketView: View {
             .fontWeight(.semibold)
             .foregroundStyle(.white)
 
-            Grid {
-                GridRow {
-                    ForEach(0..<2) { index in
-                        AsyncImage(
-                            url: URL(
-                                string:
-                                    "https://random.danielpetrica.com/api/random?format=thumb"
-                            )
-                        ) { image in
-                            image.resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 165, height: 100)
-                                .cornerRadius(10)
-                                .gradientBorder(
-                                    RoundedRectangle(cornerRadius: 10),
-                                    colors: [
-                                        Color(hex: "#FF00E1"),
-                                        Color(hex: "#FCC4FF"),
-                                    ]
-                                )
-                        } placeholder: {
-                            ProgressView()
-                        }
+            HStack (spacing: 0) {
+                Button("PFP") {
+                    withAnimation{
+                        selectedTab = 0
                     }
                 }
-                GridRow {
-                    ForEach(0..<2) { index in
-                        AsyncImage(
-                            url: URL(
-                                string:
-                                    "https://random.danielpetrica.com/api/random?format=thumb"
-                            )
-                        ) { image in
-                            image.resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 165, height: 100)
-                                .cornerRadius(10)
-                                .gradientBorder(
-                                    RoundedRectangle(cornerRadius: 10),
-                                    colors: [
-                                        Color(hex: "#FF00E1"),
-                                        Color(hex: "#FCC4FF"),
-                                    ]
-                                )
-                        } placeholder: {
-                            ProgressView()
-                        }
+                .padding(.horizontal)
+                .padding(.vertical, 7)
+                .foregroundStyle(selectedTab == 0 ? Color.white : Color.black)
+                .background(selectedTab == 0 ? Color.purple : Color.clear)
+                Button("BANNER") {
+                    withAnimation{
+                        selectedTab = 1
                     }
                 }
-                GridRow {
-                    ForEach(0..<2) { index in
-                        AsyncImage(
-                            url: URL(
-                                string:
-                                    "https://random.danielpetrica.com/api/random?format=thumb"
-                            )
-                        ) { image in
-                            image.resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 165, height: 100)
-                                .cornerRadius(10)
-                                .gradientBorder(
-                                    RoundedRectangle(cornerRadius: 10),
-                                    colors: [
-                                        Color(hex: "#FF00E1"),
-                                        Color(hex: "#FCC4FF"),
-                                    ]
-                                )
-                        } placeholder: {
-                            ProgressView()
-                        }
-                    }
-                }
-                GridRow {
-                    ForEach(0..<2) { index in
-                        AsyncImage(
-                            url: URL(
-                                string:
-                                    "https://random.danielpetrica.com/api/random?format=thumb"
-                            )
-                        ) { image in
-                            image.resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 165, height: 100)
-                                .cornerRadius(10)
-                                .gradientBorder(
-                                    RoundedRectangle(cornerRadius: 10),
-                                    colors: [
-                                        Color(hex: "#FF00E1"),
-                                        Color(hex: "#FCC4FF"),
-                                    ]
-                                )
-                        } placeholder: {
-                            ProgressView()
-                        }
-                    }
+                .padding(.horizontal)
+                .padding(.vertical, 7)
+                .foregroundStyle(selectedTab == 1 ? Color.white : Color.black)
+                .background(selectedTab == 1 ? Color.purple : Color.clear)
+            }
+            .clipShape(AngledBannerShape())
+            .gradientBorder(
+                AngledBannerShape(),
+                colors: [
+                    Color(hex: "#FF00E1"),
+                    Color(hex: "#FCC4FF"),
+                ]
+            )
+            .zIndex(1)
+
+            Group {
+                if selectedTab == 0 {
+                    ImageGridView()
+                } else {
+                    ImageGridView()
                 }
             }
 

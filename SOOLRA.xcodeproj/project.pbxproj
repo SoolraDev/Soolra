@@ -15,6 +15,7 @@
 		185B91812869EE8C003F88F5 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 185B917F2869EE8C003F88F5 /* Model.xcdatamodeld */; };
 		186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */; };
 		18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EBB74A2864A13A00903F43 /* HomeView.swift */; };
+		2F37A8922EC2991400273992 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F37A8912EC2991100273992 /* Constants.swift */; };
 		2F50B7D22EB2A5A900E250EA /* WalletManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F50B7D12EB2A59C00E250EA /* WalletManager.swift */; };
 		2F50B7D52EB2A5E000E250EA /* Privy in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7D42EB2A5E000E250EA /* Privy */; };
 		2F50B7DC2EB2B22F00E250EA /* Web3 in Frameworks */ = {isa = PBXBuildFile; productRef = 2F50B7DB2EB2B22F00E250EA /* Web3 */; };
@@ -228,6 +229,7 @@
 		185B91802869EE8C003F88F5 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		186B04AC28661B940013EFDC /* CGPoint+distanceTo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+distanceTo.swift"; sourceTree = "<group>"; };
 		18EBB74A2864A13A00903F43 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		2F37A8912EC2991100273992 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		2F50B7D12EB2A59C00E250EA /* WalletManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletManager.swift; sourceTree = "<group>"; };
 		2F50B7E12EB3FB3800E250EA /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		2FA242AD2EB77C900073C2BF /* TimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeInterval.swift; sourceTree = "<group>"; };
@@ -583,6 +585,7 @@
 				2FA242B62EBEA1040073C2BF /* OverlayState.swift */,
 				2F50B7E12EB3FB3800E250EA /* DataManager.swift */,
 				2F50B7D12EB2A59C00E250EA /* WalletManager.swift */,
+				2F37A8912EC2991100273992 /* Constants.swift */,
 				928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */,
 				4CEF41C72D21A4670068BC5B /* RomManager.swift */,
 				92678D802DAA76F5001CEDD6 /* Cheat.swift */,
@@ -1208,6 +1211,7 @@
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
 				928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */,
+				2F37A8922EC2991400273992 /* Constants.swift in Sources */,
 				2F50B7D22EB2A5A900E250EA /* WalletManager.swift in Sources */,
 				2F50B7E22EB3FB5F00E250EA /* DataManager.swift in Sources */,
 				183DF16E2862C99E0088FE1C /* SoolraApp.swift in Sources */,
