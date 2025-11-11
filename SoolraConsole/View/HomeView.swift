@@ -1000,7 +1000,7 @@ struct HomeView: View {
                             .padding()
                     }
                 )
-                .offset(x: 8, y: UIScreen.main.bounds.height * 0.245)
+                .offset(x: UIScreen.main.bounds.width * 0.68    , y: -50)
 
                 
                 // Settings button - lower, roughly halfway down the screen
@@ -1013,13 +1013,12 @@ struct HomeView: View {
                         .frame(width: 40, height: 40)
                         .padding()
                 })
-                .offset(x: 0, y: -10)
                 .sheet(isPresented: $isSettingsPresented, onDismiss: {
                     viewModel.setAsDelegate()
                 }) {
                     SettingsView().environmentObject(dataController)
                 }
-                .offset(x: 8, y: UIScreen.main.bounds.height * 0.318)
+                .offset(x: UIScreen.main.bounds.width * 0.8, y: -50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.clear)
