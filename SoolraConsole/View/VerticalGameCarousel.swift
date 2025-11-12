@@ -358,7 +358,25 @@ fileprivate struct HorizontalCarousel_iOS17: View {
     }
     
     private func handleFocusedIndexChange(oldValue: Int, newValue: Int) {
-        let carouselIndex = max(0, newValue - indexOffset)
+        // Prevent focusedIndex from going below indexOffset
+        guard newValue >= indexOffset else {
+            // Reset to minimum valid value
+            DispatchQueue.main.async {
+                focusedIndex = indexOffset
+            }
+            return
+        }
+        
+        let carouselIndex = newValue - indexOffset
+        
+        // Also check upper bound
+        guard carouselIndex < items.count else {
+            DispatchQueue.main.async {
+                focusedIndex = items.count - 1 + indexOffset
+            }
+            return
+        }
+        
         currentSelectedIndex = carouselIndex
         
         pendingScrollTask?.cancel()
