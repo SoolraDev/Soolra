@@ -32,19 +32,20 @@ struct HorizontalGameCarousel: View {
     }
     
     var body: some View {
-        if #available(iOS 17, *) {
-            HorizontalCarousel_iOS17(
-                focusedIndex: $focusedIndex,
-                items: items,
-                indexOffset: indexOffset,
-                onOpen: onOpen,
-                cardSizeFocused: cardSizeFocused,
-                cardSizeUnfocused: cardSizeUnfocused
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .ignoresSafeArea(edges: .leading)
-
-        } else {
+//        if #available(iOS 17, *) {
+//            HorizontalCarousel_iOS17(
+//                focusedIndex: $focusedIndex,
+//                items: items,
+//                indexOffset: indexOffset,
+//                onOpen: onOpen,
+//                cardSizeFocused: cardSizeFocused,
+//                cardSizeUnfocused: cardSizeUnfocused
+//            )
+//            .offset(y:20)
+//            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+//            .ignoresSafeArea(edges: .leading)
+//
+//        } else {
             HorizontalCarousel_iOS16(
                 focusedIndex: $focusedIndex,
                 items: items,
@@ -55,7 +56,7 @@ struct HorizontalGameCarousel: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .ignoresSafeArea(edges: .leading)
-        }
+//        }
     }
 }
 
@@ -386,7 +387,7 @@ fileprivate struct HorizontalCarousel_iOS17: View {
             guard let (_, item) = items[safe: carouselIndex] else { return }
             let zIndex = zFor(item.id)
             let targetID = compoundID(for: item, zIndex: zIndex)
-            withAnimation(.easeOut(duration: 0.08)) {
+            withAnimation(.easeOut(duration: 0.06)) {
                 selectedID = targetID
             }
         }
