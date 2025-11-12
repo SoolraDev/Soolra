@@ -43,7 +43,7 @@ struct HorizontalGameCarousel: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .ignoresSafeArea(edges: .leading)
-            .offset(y: 20)
+
         } else {
             HorizontalCarousel_iOS16(
                 focusedIndex: $focusedIndex,

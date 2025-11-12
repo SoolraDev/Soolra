@@ -104,7 +104,7 @@ struct HomeView: View {
 //                            
 //                        }
                         ZStack(alignment: .top) {
-                            Image("new-bg")
+                            Image("horizontal-bg")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: geometry.size.width)
