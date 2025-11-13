@@ -32,20 +32,20 @@ struct HorizontalGameCarousel: View {
     }
     
     var body: some View {
-//        if #available(iOS 17, *) {
-//            HorizontalCarousel_iOS17(
-//                focusedIndex: $focusedIndex,
-//                items: items,
-//                indexOffset: indexOffset,
-//                onOpen: onOpen,
-//                cardSizeFocused: cardSizeFocused,
-//                cardSizeUnfocused: cardSizeUnfocused
-//            )
-//            .offset(y:20)
-//            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-//            .ignoresSafeArea(edges: .leading)
-//
-//        } else {
+        if #available(iOS 17, *) {
+            HorizontalCarousel_iOS17(
+                focusedIndex: $focusedIndex,
+                items: items,
+                indexOffset: indexOffset,
+                onOpen: onOpen,
+                cardSizeFocused: cardSizeFocused,
+                cardSizeUnfocused: cardSizeUnfocused
+            )
+            .offset(y:20)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .ignoresSafeArea(edges: .leading)
+
+        } else {
             HorizontalCarousel_iOS16(
                 focusedIndex: $focusedIndex,
                 items: items,
@@ -56,7 +56,7 @@ struct HorizontalGameCarousel: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .ignoresSafeArea(edges: .leading)
-//        }
+        }
     }
 }
 
@@ -468,8 +468,7 @@ fileprivate struct CarouselCard: View {
         .overlay(alignment: .bottom) {
             if isFocused {
                 Text(item.displayName)
-//                    .font(.system(size: 24, weight: .semibold))
-                    .font(.custom("Shapiro", size: 24))
+                    .font(.custom("ZalandoSansExpanded-SemiBold", size: 24))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .fixedSize(horizontal: true, vertical: false)

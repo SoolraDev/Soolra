@@ -33,6 +33,7 @@
 		70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BD249F2C6BF6F10070B5F9 /* Colors.swift */; };
 		92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 92678D762DAA70E6001CEDD6 /* SQLite */; };
 		92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D802DAA76F5001CEDD6 /* Cheat.swift */; };
+		926B60EB2EC5CDD100543101 /* ZalandoSansExpanded.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */; };
 		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
@@ -241,6 +242,7 @@
 		70838FDB2C6BC96500B7AE46 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		70BD249F2C6BF6F10070B5F9 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		92678D802DAA76F5001CEDD6 /* Cheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheat.swift; sourceTree = "<group>"; };
+		926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ZalandoSansExpanded.ttf; sourceTree = "<group>"; };
 		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -603,6 +605,7 @@
 				705827992C75766300AB8682 /* Orbitron-Medium.ttf */,
 				7058279A2C75766300AB8682 /* Orbitron-Regular.ttf */,
 				705827972C75766200AB8682 /* Orbitron-SemiBold.ttf */,
+				926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -1063,6 +1066,7 @@
 				928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */,
 				4CCFFDB32D4E94D0002B9F4A /* launchvideo.mp4 in Resources */,
 				705827A22C75766300AB8682 /* Orbitron-Black.ttf in Resources */,
+				926B60EB2EC5CDD100543101 /* ZalandoSansExpanded.ttf in Resources */,
 				7058279D2C75766300AB8682 /* Orbitron-SemiBold.ttf in Resources */,
 				9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */,
 				7058279F2C75766300AB8682 /* Orbitron-Medium.ttf in Resources */,
