@@ -89,190 +89,14 @@ struct HomeView: View {
         blue: 135.0 / 255.0
     )
 
-    //    var backgroundImage: UIImage? {
-    //        guard let (kind, item) = focusedLibraryTuple() else { return nil }
-    //        switch kind {
-    //        case .rom(let rom):
-    //            return rom.imageData.flatMap(UIImage.init(data:))
-    //        case .web:
-    //            return item.iconImage
-    //        }
-    //    }
-
     var body: some View {
         ZStack(alignment: .top) {
-            brandBackground
-                .edgesIgnoringSafeArea(.all)
+            brandBackground.edgesIgnoringSafeArea(.all)
+
             Group {
                 switch currentView {
-                case .grid, .gameDetail:  // Handle both grid and gameDetail the same way
-                    GeometryReader { geometry in
-                        let safeAreaBottom = geometry.safeAreaInsets.bottom
-                        let safeAreaTop = geometry.safeAreaInsets.top
-                        let totalHeight =
-                            geometry.size.height + safeAreaTop + safeAreaBottom
-
-                        //
-                        //                        }
-                        ZStack(alignment: .top) {
-                            Image("horizontal-bg")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.width)
-                                .clipped()
-                                .ignoresSafeArea(edges: .all)
-                                .offset(y: -56)  // move just the image
-                        }
-
-                        VStack(spacing: 0) {
-                            // Top area: carousel pinned to screen y=0, nav overlaid (does not push it down)
-                            ZStack(alignment: .top) {
-                                // Carousel at the very top
-                                HorizontalGameCarousel(
-                                    focusedIndex: $viewModel.focusedButtonIndex,
-                                    items: visibleItems().map { $0.element }
-                                ) { kind, item in
-                                    switch kind {
-                                    case .rom(let rom):
-                                        navigateToRom(rom)
-                                    case .web(let game):
-                                        navigateToWeb(game)
-                                    }
-                                }
-                                .frame(
-                                    maxWidth: .infinity,
-                                    maxHeight: .infinity,
-                                    alignment: .top
-                                )
-                                .ignoresSafeArea(edges: .top)
-
-                                // Nav overlaid on top; keep your existing sheets/covers attached here
-                                HomeNavigationView(
-                                    isSettingsPresented: $isSettingsPresented,
-                                    onSettingsButtonTap: {
-                                        isSettingsPresented = true
-                                    },
-                                    focusedButtonIndex: $viewModel
-                                        .focusedButtonIndex,
-                                    dataController: dataController,
-                                    viewModel: viewModel,
-                                    searchQuery: $viewModel.searchQuery
-                                )
-                                .padding(.top, geometry.safeAreaInsets.top)  // keep under status bar
-                                .padding(.horizontal, 8)
-                                .fullScreenCover(
-                                    isPresented: $viewModel.isPresented
-                                ) {
-                                    ZStack(alignment: .top) {
-                                        Color.black.opacity(0.6)
-
-                                        VStack(spacing: 0) {
-                                            if BluetoothControllerService.shared
-                                                .isControllerConnected
-                                            {
-                                                // Half-height version
-                                                HalfScreenDocumentPicker {
-                                                    url in
-                                                    Task {
-                                                        isLoading = true
-                                                        await dataController
-                                                            .romManager.addRom(
-                                                                url: url
-                                                            )
-                                                        withAnimation {
-                                                            roms =
-                                                                dataController
-                                                                .romManager
-                                                                .fetchRoms()
-                                                            isLoading = false
-                                                        }
-                                                        viewModel.isPresented =
-                                                            false
-                                                    }
-                                                }
-                                                .background(
-                                                    Color(.systemBackground)
-                                                )
-                                                .cornerRadius(16)
-                                                .shadow(radius: 10)
-
-                                                Spacer()
-                                            } else {
-                                                // Full-height version
-                                                DocumentPicker { url in
-                                                    Task {
-                                                        isLoading = true
-                                                        await dataController
-                                                            .romManager.addRom(
-                                                                url: url
-                                                            )
-                                                        withAnimation {
-                                                            roms =
-                                                                dataController
-                                                                .romManager
-                                                                .fetchRoms()
-                                                            isLoading = false
-                                                        }
-                                                        viewModel.isPresented =
-                                                            false
-                                                    }
-                                                }
-                                                .ignoresSafeArea()  // Let it take over the screen
-                                            }
-                                        }
-                                    }
-                                }
-                                .sheet(isPresented: $isShopWebviewVisible) {
-                                    NavigationView {
-                                        ShopWebView(
-                                            url: URL(
-                                                string:
-                                                    "https://shop.soolra.com/"
-                                            )!
-                                        )
-                                        .navigationTitle("Shop")
-                                        .navigationBarTitleDisplayMode(.inline)
-                                        .navigationBarItems(
-                                            leading:
-                                                Button(action: {
-                                                    isShopWebviewVisible = false
-                                                }) {
-                                                    HStack {
-                                                        Image(
-                                                            systemName:
-                                                                "chevron.left"
-                                                        )
-                                                        Text("Back")
-                                                    }
-                                                }
-                                        )
-                                    }
-                                    .preferredColorScheme(
-                                        themeManager.isDarkMode ? .dark : .light
-                                    )
-                                }
-                            }
-                            // Bottom area: controller bar
-                            SoolraControllerView(
-                                controllerViewModel: controllerViewModel,
-                                currentView: $currentView,
-                                onButton: { action, pressed in
-                                    viewModel.controllerDidPress(
-                                        action: action,
-                                        pressed: pressed
-                                    )
-                                }
-                            )
-                            .frame(
-                                width: geometry.size.width,
-                                height: totalHeight * 0.45
-                            )
-                            .edgesIgnoringSafeArea(.bottom)
-                        }
-                        .preferredColorScheme(.dark)
-                        // (intentionally no .edgesIgnoringSafeArea(.all) and no .padding(.top, 5))
-
-                    }
+                case .grid, .gameDetail:
+                    gridAndDetailView
                 case .game(let gameData):
                     GameView(
                         data: gameData,
@@ -302,10 +126,8 @@ struct HomeView: View {
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                //                withAnimation(dialogSpring) {
                 isShopDialogVisible = !BluetoothControllerService.shared
                     .isControllerConnected
-                //                }
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
@@ -314,7 +136,6 @@ struct HomeView: View {
                 }
             }
         }
-
         .onOpenURL { url in
             guard
                 ["nes", "gba", "zip"].contains(url.pathExtension.lowercased())
@@ -329,7 +150,7 @@ struct HomeView: View {
                     updatedRoms.first(where: {
                         $0.url?.lastPathComponent == url.lastPathComponent
                     }) ?? updatedRoms.first
-                // Navigate to game screen on main actor
+
                 if let rom = newRom {
                     NotificationCenter.default.post(
                         name: .launchRomFromExternalSource,
@@ -352,12 +173,10 @@ struct HomeView: View {
                 isLoading = false
             }
         }
-
         .onChange(of: roms.count) { newCount in
             rebuildItems()
             viewModel.updateItemsCount(newCount + webGames.count)
         }
-
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
                 let idx = index - 4
@@ -377,9 +196,7 @@ struct HomeView: View {
                 }
             }
             viewModel.selectedGameIndex = nil
-            viewModel.selectedGameIndex = nil
         }
-
         .onChange(of: controllerViewModel.lastAction) { evt in
             guard let evt = evt else { return }
 
@@ -399,26 +216,21 @@ struct HomeView: View {
 
             switch currentView {
             case .grid:
-                // forward BOTH press and release to your viewModel
                 viewModel.controllerDidPress(
                     action: evt.action,
                     pressed: evt.pressed
                 )
-
             case .web:
-                // forward BOTH press and release to the BT delegate
                 BluetoothControllerService.shared.delegate?.controllerDidPress(
                     action: evt.action,
                     pressed: evt.pressed
                 )
-
             default:
                 break
             }
         }
-
         .onChange(of: isSettingsPresented) { newValue in
-            if !isSettingsPresented {
+            if !newValue {
                 roms = dataController.romManager.fetchRoms()
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
@@ -426,7 +238,7 @@ struct HomeView: View {
             }
         }
         .onChange(of: viewModel.isPresented) { newValue in
-            if !viewModel.isPresented {
+            if !newValue {
                 viewModel.onAppear()
             }
         }
@@ -436,6 +248,8 @@ struct HomeView: View {
         .marketOverlay(isPresented: overlaystate.isMarketOverlayVisible)
     }
 
+    // MARK: - Refactored Main Views
+
     @ViewBuilder
     private var gridAndDetailView: some View {
         GeometryReader { geometry in
@@ -444,62 +258,58 @@ struct HomeView: View {
             let totalHeight =
                 geometry.size.height + safeAreaTop + safeAreaBottom
 
-            ZStack {
-                backgroundView(geometry: geometry, totalHeight: totalHeight)
+            ZStack(alignment: .top) {
+                Image("horizontal-bg")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: geometry.size.width)
+                    .clipped()
+                    .ignoresSafeArea(edges: .all)
+                    .offset(y: -56)
             }
-            VStack {
-                HomeNavigationView(
-                    isSettingsPresented: $isSettingsPresented,
-                    onSettingsButtonTap: { isSettingsPresented = true },
-                    focusedButtonIndex: $viewModel.focusedButtonIndex,
-                    dataController: dataController,
-                    viewModel: viewModel,
-                    searchQuery: $viewModel.searchQuery,
-                    isProfilePresented: overlaystate.isProfileOverlayVisible,
-                    isWalletPresented: overlaystate.isWalletOverlayVisible,
-                    isMarketplacePresented: overlaystate.isMarketOverlayVisible
-                )
-                .fullScreenCover(isPresented: $viewModel.isPresented) {
-                    addRomSheet
-                }
-                .sheet(isPresented: $isShopWebviewVisible) {
-                    shopWebSheet
-                }
 
-                if let (kind, item) = focusedLibraryTuple() {
-                    switch kind {
-                    case .rom(let rom):
-                        CurrentItemView(
-                            currentRom: rom,
-                            currentView: $currentView,
-                            focusedButtonIndex: $viewModel.focusedButtonIndex
-                        )
-                    case .web:
-                        CurrentItemView(
-                            currentRom: nil,
-                            currentView: $currentView,
-                            focusedButtonIndex: $viewModel.focusedButtonIndex,
-                            addRomAction: nil,
-                            overrideImage: item.iconImage,
-                            overrideTitle: item.displayName
-                        )
+            VStack(spacing: 0) {
+                ZStack(alignment: .top) {
+                    HorizontalGameCarousel(
+                        focusedIndex: $viewModel.focusedButtonIndex,
+                        items: visibleItems().map { $0.element }
+                    ) { kind, item in
+                        switch kind {
+                        case .rom(let rom):
+                            navigateToRom(rom)
+                        case .web(let game):
+                            navigateToWeb(game)
+                        }
                     }
-                } else {
-                    CurrentItemView(
-                        currentRom: nil,
-                        currentView: $currentView,
-                        focusedButtonIndex: $viewModel.focusedButtonIndex,
-                        addRomAction: { viewModel.isPresented = true }
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .top
                     )
-                }
+                    .ignoresSafeArea(edges: .top)
 
-                TitleSortingView(titleText: "All Games", sortingText: "A-Z")
-                    .padding(.top, 10)
-
-                if items.isEmpty && !isLoading {
-                    emptyView
-                } else {
-                    romGridView
+                    HomeNavigationView(
+                        isSettingsPresented: $isSettingsPresented,
+                        onSettingsButtonTap: { isSettingsPresented = true },
+                        focusedButtonIndex: $viewModel.focusedButtonIndex,
+                        dataController: dataController,
+                        viewModel: viewModel,
+                        searchQuery: $viewModel.searchQuery,
+                        isProfilePresented: overlaystate
+                            .isProfileOverlayVisible,
+                        isWalletPresented: overlaystate
+                            .isWalletOverlayVisible,
+                        isMarketplacePresented: overlaystate
+                            .isMarketOverlayVisible
+                    )
+                    .padding(.top, geometry.safeAreaInsets.top)
+                    .padding(.horizontal, 8)
+                    .fullScreenCover(isPresented: $viewModel.isPresented) {
+                        addRomSheet
+                    }
+                    .sheet(isPresented: $isShopWebviewVisible) {
+                        shopWebSheet
+                    }
                 }
 
                 SoolraControllerView(
@@ -512,12 +322,13 @@ struct HomeView: View {
                         )
                     }
                 )
-                .frame(width: geometry.size.width, height: totalHeight * 0.48)
+                .frame(
+                    width: geometry.size.width,
+                    height: totalHeight * 0.45
+                )
                 .edgesIgnoringSafeArea(.bottom)
             }
-            .edgesIgnoringSafeArea(.all)
             .preferredColorScheme(.dark)
-            .padding(.top, 5)
         }
     }
 
@@ -555,47 +366,7 @@ struct HomeView: View {
         }
     }
 
-    @ViewBuilder
-    private func backgroundView(geometry: GeometryProxy, totalHeight: CGFloat)
-        -> some View
-    {
-        if let bgImage = backgroundImage {
-            Image(uiImage: bgImage)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: geometry.size.width, height: totalHeight)
-                .clipped()
-                .edgesIgnoringSafeArea(.all)
-                .overlay(
-                    LinearGradient(
-                        gradient: Gradient(stops: [
-                            .init(color: Color.black.opacity(0.7), location: 0),
-                            .init(
-                                color: Color.black.opacity(0.7),
-                                location: 0.3
-                            ),
-                            .init(
-                                color: Color.black.opacity(0.8),
-                                location: 0.7
-                            ),
-                            .init(
-                                color: Color.black.opacity(0.95),
-                                location: 1.0
-                            ),
-                        ]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-        } else {
-            Image("home-background")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: geometry.size.width, height: totalHeight)
-                .clipped()
-                .edgesIgnoringSafeArea(.all)
-        }
-    }
+    // MARK: - Refactored Sheets and Overlays
 
     @ViewBuilder
     private var addRomSheet: some View {
@@ -831,25 +602,18 @@ struct HomeView: View {
         .zIndex(1000)
     }
 
+    // MARK: - Logic and Helper Functions
+
     func rebuildItems() {
         let priorityNames = [
-            "Arcade Mania",
-            "Astrohawk",
-            "Attack on Voxelburg",
-            "Battleship",
-            "Blast Arena",
-            "Blind Jump",
-            "Blowhole",
-            "Cats Curse",
-            "Chase",
+            "Arcade Mania", "Astrohawk", "Attack on Voxelburg", "Battleship",
+            "Blast Arena", "Blind Jump", "Blowhole", "Cats Curse", "Chase",
         ]
 
-        // Create a lookup so sorting is O(1)
         let priorityIndex: [String: Int] = Dictionary(
             uniqueKeysWithValues: priorityNames.enumerated().map { ($1, $0) }
         )
 
-        // Sort ROMs by priority first, then alphabetically for the rest
         let sortedRoms = roms.sorted { a, b in
             let aKey = priorityIndex[a.displayName] ?? Int.max
             let bKey = priorityIndex[b.displayName] ?? Int.max
@@ -867,157 +631,20 @@ struct HomeView: View {
         let webItems: [(LibraryKind, LibraryItem)] = webGames.map {
             (.web($0), $0 as LibraryItem)
         }
-
-        // Your current rule: web games first, then ROMs
         items = webItems + romItems
     }
 
-    //    func rebuildItems() {
-    //        let romItems: [(LibraryKind, LibraryItem)] = roms.map { (.rom($0), $0 as LibraryItem) }
-    //        let webItems: [(LibraryKind, LibraryItem)] = webGames.map { (.web($0), $0 as LibraryItem) }
-    //        // Decide ordering rules; here we interleave after the upload tile or simply append:
-    //        items =  webItems + romItems
-    //    }
-
-    private func focusedLibraryTuple() -> (LibraryKind, LibraryItem)? {
-        let idx = viewModel.focusedButtonIndex - 4
-        let vis = visibleItems()
-        guard idx >= 0, idx < vis.count else { return nil }
-        return vis[idx].element
-    }
-
-    private func loadDefaultRoms() {
-        Task {
-            isLoading = true
-            dataController.romManager.resetDeletedDefaultRoms()
-            await dataController.romManager.initDefaultRoms()
-            await MainActor.run {
-                roms = dataController.romManager.fetchRoms()
-                rebuildItems()
-                viewModel.updateItemsCount(items.count)
-                isLoading = false
+    private func visibleItems() -> [(
+        offset: Int, element: (LibraryKind, LibraryItem)
+    )] {
+        Array(items.enumerated())
+            .filter { pair in
+                let (_, item) = pair.element
+                return viewModel.searchQuery.isEmpty
+                    || item.searchKey.localizedCaseInsensitiveContains(
+                        viewModel.searchQuery
+                    )
             }
-        }
-    }
-
-    private func controllerActionButtonPressed() {
-        let i = viewModel.focusedButtonIndex
-        switch i {
-        case 1:
-            isSettingsPresented = true
-        case 2:
-            viewModel.isPresented = true
-        case 3:
-            viewModel.isPresented.toggle()
-        default:
-            let idx = i - 4
-            let vis = visibleItems()
-            guard idx >= 0, idx < vis.count else { return }
-            let (kind, _) = vis[idx].element
-            switch kind {
-            case .rom(let rom):
-                navigateToRom(rom)
-            case .web(let game):
-                navigateToWeb(game)
-            }
-        }
-    }
-
-    // MARK: - Subviews
-
-    private var emptyView: some View {
-        VStack {
-            Spacer()
-            Text("There are no games")
-                .font(.custom("Orbitron-Black", size: 24))
-            Button("Load default games") {
-                loadDefaultRoms()
-            }
-            .font(.custom("Orbitron-SemiBold", size: 24))
-            .buttonStyle(.borderedProminent)
-            .foregroundColor(.white)
-            .background(Color.purple)
-            Spacer()
-            Spacer()
-            Spacer()
-
-            Button("Upload games") {
-                viewModel.isPresented.toggle()
-            }
-            .font(.custom("Orbitron-SemiBold", size: 24))
-            .buttonStyle(.borderedProminent)
-            .foregroundColor(.white)
-            .background(Color.purple)
-            Spacer()
-        }
-        .padding()
-        .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-    }
-
-    private var romGridView: some View {
-        ScrollViewReader { scrollProxy in
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 20) {
-
-                    // Upload button
-                    Button(action: {
-                        viewModel.isPresented.toggle()
-                    }) {
-                        addRomIcon()
-                    }
-                    .id(3)
-
-                    ForEach(visibleItems(), id: \.element.1.id) { pair in
-                        let index = pair.offset
-                        let kind = pair.element.0
-                        let item = pair.element.1
-
-                        VStack(spacing: 4) {
-                            Button {
-                                if case .rom(let rom) = kind {
-                                    navigateToRom(rom)
-                                } else if case .web(let webGame) = kind {
-                                    navigateToWeb(webGame)
-                                }
-                            } label: {
-                                libraryIcon(
-                                    for: kind,
-                                    item: item,
-                                    index: index + 4
-                                )
-                            }
-                            .id(index + 4)
-
-                            if isEditMode == .active, case .rom(let rom) = kind
-                            {
-                                Button {
-                                    withAnimation {
-                                        dataController.romManager.deleteRom(
-                                            rom: rom
-                                        )
-                                        roms = dataController.romManager
-                                            .fetchRoms()
-                                        rebuildItems()
-                                    }
-                                } label: {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                        .padding(.top, 4)
-                                }
-                            }
-                        }
-                    }
-
-                }
-                .padding(.horizontal)
-                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-            }
-            .onChange(of: viewModel.focusedButtonIndex) { newIndex in
-                if newIndex >= 3 {
-                    scrollProxy.scrollTo(newIndex, anchor: .center)
-                }
-            }
-        }
     }
 
     private func navigateToWeb(_ game: WebGame) {
@@ -1038,13 +665,11 @@ struct HomeView: View {
     private func navigateToRom(_ rom: Rom) {
         Task {
             do {
-                // Create console manager and load ROM and init cheat manager
                 let consoleManager = try ConsoleCoreManager(
                     metalManager: metalManager,
                     gameName: rom.name ?? "none"
                 )
 
-                // Load everything before transitioning view
                 let gameData = try await loadRom(
                     rom: rom,
                     consoleManager: consoleManager
@@ -1065,167 +690,6 @@ struct HomeView: View {
         }
     }
 
-    private func romIcon(for rom: Rom, index: Int) -> some View {
-        VStack {
-            if let imageData = rom.imageData,
-                let uiImage = UIImage(data: imageData)
-            {
-                VStack(spacing: 3) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 88, height: 70)
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(
-                                    viewModel.focusedButtonIndex == index
-                                        ? Color.white : SwiftUI.Color.clear,
-                                    lineWidth: 4
-                                )
-                                .padding(1)
-                        )
-
-                    Text(rom.name ?? "Unknown")
-                        .font(.custom("Ebrima", size: 13))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                }
-                .frame(width: 88)
-
-            } else {
-                VStack(spacing: 3) {
-                    Image(systemName: "gamecontroller.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 88, height: 70)
-                        .foregroundColor(.purple)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.white, lineWidth: 1)
-                        )
-
-                    Text(rom.name ?? "Unknown")
-                        .font(.custom("Ebrima", size: 13))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                }
-                .frame(width: 88)
-
-            }
-        }
-        .cornerRadius(8)
-        .shadow(radius: 4)
-        .contentShape(Rectangle())
-    }
-
-    @ViewBuilder
-    private func libraryIcon(
-        for kind: LibraryKind,
-        item: LibraryItem,
-        index: Int
-    ) -> some View {
-        switch kind {
-        case .rom(let rom):
-            romIcon(for: rom, index: index)  // existing UI
-
-        case .web:
-            VStack(spacing: 3) {
-                ZStack(alignment: .bottomTrailing) {
-                    if let uiImage = item.iconImage {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 88, height: 70)
-                            .cornerRadius(8)
-                            // keep focus ring
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(
-                                        viewModel.focusedButtonIndex == index
-                                            ? .white : SwiftUI.Color.clear,
-                                        lineWidth: 4
-                                    )
-                                    .padding(1)
-                            )
-                    } else {
-                        Image(systemName: "globe")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 88, height: 70)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(.white, lineWidth: 1)
-                            )
-                            .cornerRadius(8)
-                    }
-
-                    // ⬅︎ Internet-required badge for all web games
-                    onlineBadge()
-                }
-
-                Text(item.displayName)
-                    .font(.custom("Ebrima", size: 13))
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
-            }
-            .frame(width: 88)
-            .cornerRadius(8)
-            .shadow(radius: 4)
-            .contentShape(Rectangle())
-
-        }
-    }
-
-    private func visibleItems() -> [(
-        offset: Int, element: (LibraryKind, LibraryItem)
-    )] {
-        Array(items.enumerated())
-            .filter { pair in
-                let (_, item) = pair.element
-                return viewModel.searchQuery.isEmpty
-                    || item.searchKey.localizedCaseInsensitiveContains(
-                        viewModel.searchQuery
-                    )
-            }
-    }
-
-    @ViewBuilder
-    private func onlineBadge() -> some View {
-        Image(systemName: "wifi")
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundColor(.white)
-            .padding(2)
-            .background(Color.black.opacity(0.70), in: Circle())
-            .padding([.trailing, .bottom], 2)
-    }
-
-    private func addRomIcon() -> some View {
-        VStack(spacing: 3) {
-            Image("home-new-item-big")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 88, height: 70)
-                .cornerRadius(8)
-                .clipped()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(
-                            viewModel.focusedButtonIndex == 3
-                                ? Color.white : SwiftUI.Color.clear,
-                            lineWidth: 4
-                        )
-                        .padding(1)
-                )
-
-            Text("Upload games")
-                .font(.custom("Ebrima", size: 13))
-                .foregroundColor(.primary)
-                .lineLimit(1)
-        }
-        .frame(width: 88)
-    }
-
     private func loadRom(rom: Rom, consoleManager: ConsoleCoreManager)
         async throws -> GameViewData
     {
@@ -1233,7 +697,6 @@ struct HomeView: View {
             throw NSError(domain: "Invalid URL", code: -1, userInfo: nil)
         }
 
-        // Determine console type based on file extension
         let consoleType: ConsoleCoreManager.ConsoleType
         switch url.pathExtension.lowercased() {
         case "nes":
@@ -1244,36 +707,20 @@ struct HomeView: View {
             throw ConsoleCoreManagerError.invalidCoreType
         }
 
-        // Load console asynchronously
         try await consoleManager.loadConsole(type: consoleType, romPath: url)
 
-        // Create pause view model with console manager
         let pauseViewModel = PauseGameViewModel(
             consoleManager: consoleManager,
             currentRom: rom
         )
 
-        // Set up exit action after view is fully initialized
         pauseViewModel.setExitAction {
-            // Return the task so we can await it
             return Task { @MainActor in
-                do {
-                    // First stop accepting new frames
-                    await consoleManager.shutdown()
-
-                    // Wait a bit for any in-flight frames to complete
-                    // try await Task.sleep(nanoseconds: 1_000_000_000) // 1second
-
-                    // Then navigate away
-                    roms = dataController.romManager.fetchRoms()
-                    rebuildItems()
-                    viewModel.updateItemsCount(items.count)
-                    currentView = .grid
-                } catch {
-                    print("Error during shutdown: \(error)")
-                    // Still navigate away even if there was an error
-                    currentView = .grid
-                }
+                await consoleManager.shutdown()
+                roms = dataController.romManager.fetchRoms()
+                rebuildItems()
+                viewModel.updateItemsCount(items.count)
+                currentView = .grid
             }
         }
 
@@ -1284,263 +731,258 @@ struct HomeView: View {
             pauseViewModel: pauseViewModel
         )
     }
+}
 
-    struct BlinkingFocusedButton<Content: View>: View {
-        @Binding var selectedIndex: Int
-        let index: Int
-        let action: () -> Void
-        let content: () -> Content
+// MARK: - Sub-views
 
-        var body: some View {
-            Button(action: {
-                action()
-            }) {
-                content()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(
-                                selectedIndex == index
-                                    ? Color.white : SwiftUI.Color.clear,
-                                lineWidth: 2
-                            )
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 10)
-                    )
-            }
-            .buttonStyle(PlainButtonStyle())
+struct BlinkingFocusedButton<Content: View>: View {
+    @Binding var selectedIndex: Int
+    let index: Int
+    let action: () -> Void
+    let content: () -> Content
+
+    var body: some View {
+        Button(action: action) {
+            content()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(
+                            selectedIndex == index ? Color.white : Color.clear,
+                            lineWidth: 2
+                        )
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 10)
+                )
         }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct HomeNavigationView: View {
+    @Binding var isSettingsPresented: Bool
+    var onSettingsButtonTap: () -> Void
+    @Binding var focusedButtonIndex: Int
+    let dataController: CoreDataController
+    let viewModel: HomeViewModel
+    @Binding var searchQuery: String
+    @Binding var isProfilePresented: Bool
+    @Binding var isWalletPresented: Bool
+    @Binding var isMarketplacePresented: Bool
+    @StateObject private var manager = walletManager
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            logoButton
+                .offset(x: 8, y: -50)
+
+            actionButtons
+                .offset(x: UIScreen.main.bounds.width * 0.45, y: -50)
+
+            settingsButton
+                .offset(x: UIScreen.main.bounds.width * 0.8, y: -50)
+        }
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .topLeading
+        )
+        .background(Color.clear)
     }
 
-    struct HomeNavigationView: View {
-        @Binding var isSettingsPresented: Bool
-        var onSettingsButtonTap: () -> Void
-        @Binding var focusedButtonIndex: Int
-        let dataController: CoreDataController
-        let viewModel: HomeViewModel
-        @Binding var searchQuery: String  // 👈 Add this
-        @Binding var isProfilePresented: Bool
-        @Binding var isWalletPresented: Bool
-        @Binding var isMarketplacePresented: Bool
-        @StateObject private var manager = walletManager
+    @ViewBuilder
+    private var logoButton: some View {
+        BlinkingFocusedButton(
+            selectedIndex: .constant(-1),
+            index: 0,
+            action: {},
+            content: {
+                Group {
+                    switch manager.authState {
+                    case .authenticated:
+                        Button(action: {
+                            withAnimation { isProfilePresented = true }
+                        }) {
+                            Image("home-logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40, height: 40)
+                                .padding()
+                        }
+                    default:
+                        AuthButton()
+                    }
+                }
+            }
+        )
+    }
 
-        var body: some View {
-            ZStack(alignment: .topLeading) {
-                // Logo button - top left, slightly higher
-                BlinkingFocusedButton(
-                    selectedIndex: .constant(-1),
-                    index: 0,
-                    action: {},
+    @ViewBuilder
+    private var actionButtons: some View {
+        HStack {
+            Group {
+                let base = BlinkingFocusedButton(
+                    selectedIndex: $focusedButtonIndex,
+                    index: 1,
+                    action: {
+                        withAnimation { isMarketplacePresented = true }
+                    },
                     content: {
                         Group {
                             switch manager.authState {
                             case .authenticated:
                                 Button(action: {
                                     withAnimation {
-                                        isProfilePresented = true
+                                        isMarketplacePresented = true
                                     }
                                 }) {
-                                    Image("home-logo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 40, height: 40)
-                                        .padding()
+                                    Image(systemName: "storefront.fill")
+                                        .resizable().scaledToFit()
+                                        .frame(width: 25, height: 25)
+                                        .padding().foregroundStyle(.white)
                                 }
                             default:
-                                AuthButton()
+                                EmptyView()
                             }
                         }
                     }
                 )
-                .offset(x: 8, y: -50)
-
-                HStack {
-                    Group {
-                        let base = BlinkingFocusedButton(
-                            selectedIndex: $focusedButtonIndex,
-                            index: 1,
-                            action: {
-                                withAnimation {
-                                    isMarketplacePresented = true
-                                }
-                            },
-                            content: {
-                                Group {
-                                    switch manager.authState {
-                                    case .authenticated:
-                                        Button(action: {
-                                            withAnimation {
-                                                isMarketplacePresented = true
-                                            }
-                                        }) {
-                                            Image(systemName: "storefront.fill")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 30, height: 30)
-                                                .padding()
-                                                .foregroundStyle(.white)
-                                        }
-                                    default:
-                                        EmptyView()
-                                    }
-                                }
-                            }
-                        )
-
-                        if #available(iOS 26.0, *) {
-                            base.glassEffect()
-                        } else {
-                            base
-                        }
-                    }.hidden()  // TODO: unhide this when fully implemented.
-                    Group {
-                        let base = BlinkingFocusedButton(
-                            selectedIndex: $focusedButtonIndex,
-                            index: 1,
-                            action: {
-                                withAnimation {
-                                    isWalletPresented = true
-                                }
-                            },
-                            content: {
-                                Group {
-                                    switch manager.authState {
-                                    case .authenticated:
-                                        Button(action: {
-                                            withAnimation {
-                                                isWalletPresented = true
-                                            }
-                                        }) {
-                                            Image(systemName: "wallet.bifold")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 30, height: 30)
-                                                .padding()
-                                                .foregroundStyle(.white)
-                                        }
-                                    default:
-                                        EmptyView()
-                                    }
-                                }
-                            }
-                        )
-
-                        if #available(iOS 26.0, *) {
-                            base.glassEffect()
-                        } else {
-                            base
-                        }
-                    }
+                if #available(iOS 26.0, *) {
+                    base.glassEffect()
+                } else {
+                    base
                 }
+            }.hidden()
 
-                .offset(x: UIScreen.main.bounds.width * 0.68, y: -50)
-
-                // Settings button - lower, roughly halfway down the screen
-                BlinkingFocusedButton(
-                    selectedIndex: .constant(-1),
+            Group {
+                let base = BlinkingFocusedButton(
+                    selectedIndex: $focusedButtonIndex,
                     index: 1,
-                    action: {
-                        onSettingsButtonTap()
-                    },
+                    action: { withAnimation { isWalletPresented = true } },
                     content: {
-                        Image("home-settings-icon")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 40, height: 40)
-                            .padding()
-                    }
-                )
-                .sheet(
-                    isPresented: $isSettingsPresented,
-                    onDismiss: {
-                        viewModel.setAsDelegate()
-                    }
-                ) {
-                    SettingsView().environmentObject(dataController)
-                }
-                .offset(x: UIScreen.main.bounds.width * 0.8, y: -50)
-            }
-            .frame(
-                maxWidth: .infinity,
-                maxHeight: .infinity,
-                alignment: .topLeading
-            )
-            .background(Color.clear)
+                        Group {
+                            switch manager.authState {
+                            case .authenticated:
 
-        }
-    }
+                                Button(action: {
+                                    withAnimation { isWalletPresented = true }
+                                }) {
+                                    Image(systemName: "wallet.bifold")
+                                        .resizable().scaledToFit()
+                                        .frame(width: 25, height: 25)
+                                        .padding().foregroundStyle(.white)
+                                }
+                            default:
+                                EmptyView()
 
-    struct CurrentItemView: View {
-        var currentRom: Rom?
-        @Binding var currentView: CurrentView
-        @Binding var focusedButtonIndex: Int
-        var addRomAction: (() -> Void)? = nil
-
-        // NEW:
-        var overrideImage: UIImage? = nil
-        var overrideTitle: String? = nil
-
-        var body: some View {
-            HStack(alignment: .top, spacing: 16) {
-                Button(action: {
-                    if let currentRom {
-                        self.currentView = .gameDetail(currentRom)
-                    } else {
-                        addRomAction?()
-                    }
-                }) {
-                    Group {
-                        if let img = overrideImage {
-                            // show web‑game icon (or any custom image)
-                            CustomImageView(
-                                image: Image(uiImage: img),
-                                width: 118,
-                                height: 105
-                            )
-                            .frame(width: 134, height: 120)
-                        } else if let data = currentRom?.imageData,
-                            let uiImage = UIImage(data: data)
-                        {
-                            CustomImageView(
-                                image: Image(uiImage: uiImage),
-                                width: 118,
-                                height: 105
-                            )
-                            .frame(width: 134, height: 120)
-                        } else if let image = UIImage(named: "home-new-item") {
-                            CustomImageView(
-                                image: Image(uiImage: image),
-                                width: 118,
-                                height: 105
-                            )
-                            .frame(width: 134, height: 120)
+                            }
                         }
                     }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(
-                                focusedButtonIndex == 2
-                                    ? Color.white : SwiftUI.Color.clear,
-                                lineWidth: 3
-                            )
-                            .padding(1)
-                    )
+                )
+                if #available(iOS 26.0, *) {
+                    base.glassEffect()
+                } else {
+                    base
                 }
-
-                Text(overrideTitle ?? currentRom?.name ?? "Add Game")
-                    .multilineTextAlignment(.leading)
-                    .foregroundColor(.white)
-                    .font(.custom("DINCondensed-Regular", size: 28))
-                    .lineLimit(nil)
-                    .padding(.top, 10)
-                Spacer()
             }
-            .frame(alignment: .leading)
-            .padding(.top, 10)
-            .padding(.leading)
-            .padding(.trailing, 16)
         }
     }
 
+    @ViewBuilder
+    private var settingsButton: some View {
+        let base = BlinkingFocusedButton(
+            selectedIndex: .constant(-1),
+            index: 1,
+            action: onSettingsButtonTap,
+            content: {
+                Image(systemName: "gear")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 25, height: 25)
+                    .padding()
+                    .foregroundStyle(.white)
+            }
+        )
+        .sheet(
+            isPresented: $isSettingsPresented,
+            onDismiss: { viewModel.setAsDelegate() }
+        ) {
+            SettingsView().environmentObject(dataController)
+        }
+        if #available(iOS 26.0, *) {
+            base.glassEffect()
+        } else {
+            base
+        }
+    }
+}
+
+struct CurrentItemView: View {
+    var currentRom: Rom?
+    @Binding var currentView: CurrentView
+    @Binding var focusedButtonIndex: Int
+    var addRomAction: (() -> Void)? = nil
+
+    var overrideImage: UIImage? = nil
+    var overrideTitle: String? = nil
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 16) {
+            Button(action: {
+                if let currentRom {
+                    self.currentView = .gameDetail(currentRom)
+                } else {
+                    addRomAction?()
+                }
+            }) {
+                Group {
+                    if let img = overrideImage {
+                        CustomImageView(
+                            image: Image(uiImage: img),
+                            width: 118,
+                            height: 105
+                        )
+                        .frame(width: 134, height: 120)
+                    } else if let data = currentRom?.imageData,
+                        let uiImage = UIImage(data: data)
+                    {
+                        CustomImageView(
+                            image: Image(uiImage: uiImage),
+                            width: 118,
+                            height: 105
+                        )
+                        .frame(width: 134, height: 120)
+                    } else if let image = UIImage(named: "home-new-item") {
+                        CustomImageView(
+                            image: Image(uiImage: image),
+                            width: 118,
+                            height: 105
+                        )
+                        .frame(width: 134, height: 120)
+                    }
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(
+                            focusedButtonIndex == 2 ? Color.white : Color.clear,
+                            lineWidth: 3
+                        )
+                        .padding(1)
+                )
+            }
+
+            Text(overrideTitle ?? currentRom?.name ?? "Add Game")
+                .multilineTextAlignment(.leading)
+                .foregroundColor(.white)
+                .font(.custom("DINCondensed-Regular", size: 28))
+                .lineLimit(nil)
+                .padding(.top, 10)
+            Spacer()
+        }
+        .frame(alignment: .leading)
+        .padding(.top, 10)
+        .padding(.leading)
+        .padding(.trailing, 16)
+    }
 }
 
 struct TitleSortingView: View {
