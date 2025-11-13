@@ -13,11 +13,18 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     @Published var isPresented = false
     @Published var selectedGameIndex: Int?
     @Published var focusedButtonIndex: Int = 0
-//    @Published var romCount: Int = 0
     @Published var itemsCount: Int = 0
     @Published var searchQuery: String = ""
-
+    @Published var isCarouselMode: Bool = true
+    
     let controllerService = BluetoothControllerService.shared
+    
+    // Repeat timer for held buttons
+    private var repeatTimer: Timer?
+    private var currentHeldAction: SoolraControllerAction?
+    private var isProcessingScroll: Bool = false
+    private var lastPressTimestamp: Date = Date()
+    private var pendingTimerTask: DispatchWorkItem?  // Track the delayed timer creation
 
     private init() {
         controllerService.delegate = self
@@ -26,61 +33,144 @@ public class HomeViewModel: ObservableObject, ControllerServiceDelegate {
     func setAsDelegate() {
         print("HomeView: Explicitly setting controller delegate")
         controllerService.delegate = self
-        // Ensure we maintain the last known state
         objectWillChange.send()
     }
 
     func onAppear() {
-        // Only set delegate if there isn't one already
         if BluetoothControllerService.shared.delegate == nil {
             print("HomeView: Setting controller delegate")
             controllerService.delegate = self
-            // Ensure we maintain the last known state
             objectWillChange.send()
         }
     }
 
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {
+        print("🎮 EVENT: \(action.rawValue) pressed=\(pressed)")
+        let isInGameArea = focusedButtonIndex >= 4
+        let isNavigationAction = [.up, .down, .left, .right].contains(action)
+        
         if !pressed {
+            print("🛑 RELEASE detected for \(action.rawValue) - STOPPING ALL TIMERS")
+            // ANY button release stops ALL timers AND pending timer creation
+            stopRepeating()
             return
         }
-        print("homeview+viewmodel Controller pressed - \(pressed), action: \(action.rawValue)")
+        
+        // If already holding this button, ignore duplicate press events
+        if currentHeldAction == action && repeatTimer != nil {
+            return
+        }
+        
+        // Execute single move immediately
+        executeAction(action, isInGameArea: isInGameArea)
+        
+        // Start repeat timer for navigation in carousel mode
+        if isCarouselMode && isInGameArea && isNavigationAction {
+            // ALWAYS stop any existing timer before starting a new one
+            stopRepeating()
+            
+            currentHeldAction = action  // Set BEFORE the delay so release can catch it
+            
+            // After 0.3s, start repeating every 0.1s
+            let task = DispatchWorkItem { [weak self] in
+                guard let self = self, self.currentHeldAction == action else { return }
+                
+                print("⏰ Timer starting for \(action.rawValue)")
+                self.repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.executeAction(action, isInGameArea: isInGameArea)
+                }
+            }
+            
+            pendingTimerTask = task
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: task)
+        }
+    }
+    
+    private func executeAction(_ action: SoolraControllerAction, isInGameArea: Bool) {
+        print("⚡ executeAction called: \(action.rawValue), isInGameArea: \(isInGameArea), isProcessing: \(isProcessingScroll)")
+        
+        // Skip if already processing a scroll (prevents queue buildup)
+        guard !isProcessingScroll else {
+            print("⏭️ Skipped - already processing")
+            return
+        }
+        
         var endIndex = focusedButtonIndex
 
-        switch action {
-        case .up:
-            if (3...6).contains(endIndex) {
-                endIndex = 2
-            } else {
-                endIndex -= 4
+        if isCarouselMode && isInGameArea {
+            // Carousel mode: single-item vertical navigation
+            switch action {
+            case .up:
+                endIndex = max(4, focusedButtonIndex - 1)
+            case .down:
+                endIndex = min(3 + itemsCount, focusedButtonIndex + 1)
+            case .left:
+                endIndex -= 1
+            case .right:
+                endIndex += 1
+            case .a, .b, .x, .y:
+                selectedGameIndex = focusedButtonIndex
+                return
+            default:
+                return
             }
-        case .down:
-            if endIndex == 0 || endIndex == 1 {
-                endIndex = 2
-            } else if endIndex == 2 {
-                endIndex = 3
-            } else {
-                endIndex += 4
+        } else {
+            // Grid mode or nav button area
+            switch action {
+            case .up:
+                if (3...6).contains(endIndex) {
+                    endIndex = 2
+                } else {
+                    endIndex -= 4
+                }
+            case .down:
+                // From any nav button (0-3), jump directly to first carousel item
+                if endIndex < 4 {
+                    endIndex = 4
+                } else {
+                    endIndex += 4
+                }
+            case .left:
+                endIndex -= 1
+            case .right:
+                endIndex += 1
+            case .a, .b, .x, .y:
+                selectedGameIndex = focusedButtonIndex
+                return
+            default:
+                return
             }
-
-        case .left:
-            endIndex -= 1
-        case .right:
-            endIndex += 1
-        case .a, .b, .x, .y:
-            selectedGameIndex = focusedButtonIndex
-            return
-        default:
-            return
         }
 
-        let maximumIndex = 3  + itemsCount
-        focusedButtonIndex = min(max(endIndex, 0), maximumIndex)
+        let maximumIndex = 3 + itemsCount
+        let newIndex = min(max(endIndex, 0), maximumIndex)
+        
+        // Stop repeating if we've hit a boundary
+        if newIndex == focusedButtonIndex {
+            stopRepeating()
+            return
+        }
+        
+        // Mark as processing and update index
+        isProcessingScroll = true
+        focusedButtonIndex = newIndex
+        
+        // Clear processing flag after animation time
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.09) { [weak self] in
+            self?.isProcessingScroll = false
+        }
     }
-
-//    func updateRomCount(_ count: Int) {
-//        romCount = count
-//    }
+    
+    private func stopRepeating() {
+        print("🛑 stopRepeating - cancelling timer and pending task")
+        pendingTimerTask?.cancel()  // Cancel the delayed timer creation
+        pendingTimerTask = nil
+        repeatTimer?.invalidate()
+        repeatTimer = nil
+        currentHeldAction = nil
+        isProcessingScroll = false
+    }
     
     func updateItemsCount(_ count: Int) {
         itemsCount = count

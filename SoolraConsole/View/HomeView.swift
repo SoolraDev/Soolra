@@ -73,18 +73,19 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var hSize
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
+
     private let dialogSpring = Animation.spring(response: 0.32, dampingFraction: 0.86, blendDuration: 0.15)
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
     
-    var backgroundImage: UIImage? {
-        guard let (kind, item) = focusedLibraryTuple() else { return nil }
-        switch kind {
-        case .rom(let rom):
-            return rom.imageData.flatMap(UIImage.init(data:))
-        case .web:
-            return item.iconImage
-        }
-    }
+//    var backgroundImage: UIImage? {
+//        guard let (kind, item) = focusedLibraryTuple() else { return nil }
+//        switch kind {
+//        case .rom(let rom):
+//            return rom.imageData.flatMap(UIImage.init(data:))
+//        case .web:
+//            return item.iconImage
+//        }
+//    }
 
 
     
@@ -100,159 +101,119 @@ struct HomeView: View {
                         let safeAreaTop = geometry.safeAreaInsets.top
                         let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
                         
-                        ZStack {
-                            if let bgImage = backgroundImage {
-                                Image(uiImage: bgImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width, height: totalHeight)
-                                    .clipped()
-                                    .edgesIgnoringSafeArea(.all)
-                                    .overlay(
-                                        LinearGradient(
-                                            gradient: Gradient(stops: [
-                                                .init(color: Color.black.opacity(0.7), location: 0),
-                                                .init(color: Color.black.opacity(0.7), location: 0.3),
-                                                .init(color: Color.black.opacity(0.8), location: 0.7),
-                                                .init(color: Color.black.opacity(0.95), location: 1.0)
-                                            ]),
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                            } else {
-                                Image("home-background")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width, height: totalHeight)
-                                    .clipped()
-                                    .edgesIgnoringSafeArea(.all)
-                            }
-                            
-                            
-                            
-                            
+//                            
+//                        }
+                        ZStack(alignment: .top) {
+                            Image("horizontal-bg")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width)
+                                .clipped()
+                                .ignoresSafeArea(edges: .all)
+                                .offset(y: -56) // move just the image
                         }
-                        VStack {
-                            HomeNavigationView(
-                                isSettingsPresented: $isSettingsPresented,
-                                onSettingsButtonTap: {
-                                    isSettingsPresented = true
-                                },
-                                focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                dataController: dataController, viewModel: viewModel,
-                                searchQuery: $viewModel.searchQuery
-                            )
-                            .fullScreenCover(isPresented: $viewModel.isPresented) {
-                                ZStack(alignment: .top) {
-                                    Color.black.opacity(0.6)
-                                    
-                                    VStack(spacing: 0) {
-                                        if BluetoothControllerService.shared.isControllerConnected {
-                                            // Half-height version
-                                            HalfScreenDocumentPicker { url in
-                                                Task {
-                                                    isLoading = true
-                                                    await dataController.romManager.addRom(url: url)
-                                                    withAnimation {
-                                                        roms = dataController.romManager.fetchRoms()
-                                                        isLoading = false
+
+
+                        VStack(spacing: 0) {
+                            // Top area: carousel pinned to screen y=0, nav overlaid (does not push it down)
+                            ZStack(alignment: .top) {
+                                // Carousel at the very top
+                                HorizontalGameCarousel(
+                                    focusedIndex: $viewModel.focusedButtonIndex,
+                                    items: visibleItems().map { $0.element }
+                                ) { kind, item in
+                                    switch kind {
+                                    case .rom(let rom):
+                                        navigateToRom(rom)
+                                    case .web(let game):
+                                        navigateToWeb(game)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                                .ignoresSafeArea(edges: .top)
+
+                                // Nav overlaid on top; keep your existing sheets/covers attached here
+                                HomeNavigationView(
+                                    isSettingsPresented: $isSettingsPresented,
+                                    onSettingsButtonTap: {
+                                        isSettingsPresented = true
+                                    },
+                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
+                                    dataController: dataController, viewModel: viewModel,
+                                    searchQuery: $viewModel.searchQuery
+                                )
+                                .padding(.top, geometry.safeAreaInsets.top)  // keep under status bar
+                                .padding(.horizontal, 8)
+                                .fullScreenCover(isPresented: $viewModel.isPresented) {
+                                    ZStack(alignment: .top) {
+                                        Color.black.opacity(0.6)
+                                        
+                                        VStack(spacing: 0) {
+                                            if BluetoothControllerService.shared.isControllerConnected {
+                                                // Half-height version
+                                                HalfScreenDocumentPicker { url in
+                                                    Task {
+                                                        isLoading = true
+                                                        await dataController.romManager.addRom(url: url)
+                                                        withAnimation {
+                                                            roms = dataController.romManager.fetchRoms()
+                                                            isLoading = false
+                                                        }
+                                                        viewModel.isPresented = false
                                                     }
-                                                    viewModel.isPresented = false
                                                 }
-                                            }
-                                            .background(Color(.systemBackground))
-                                            .cornerRadius(16)
-                                            .shadow(radius: 10)
-                                            
-                                            Spacer()
-                                        } else {
-                                            // Full-height version
-                                            DocumentPicker { url in
-                                                Task {
-                                                    isLoading = true
-                                                    await dataController.romManager.addRom(url: url)
-                                                    withAnimation {
-                                                        roms = dataController.romManager.fetchRoms()
-                                                        isLoading = false
+                                                .background(Color(.systemBackground))
+                                                .cornerRadius(16)
+                                                .shadow(radius: 10)
+                                                
+                                                Spacer()
+                                            } else {
+                                                // Full-height version
+                                                DocumentPicker { url in
+                                                    Task {
+                                                        isLoading = true
+                                                        await dataController.romManager.addRom(url: url)
+                                                        withAnimation {
+                                                            roms = dataController.romManager.fetchRoms()
+                                                            isLoading = false
+                                                        }
+                                                        viewModel.isPresented = false
                                                     }
-                                                    viewModel.isPresented = false
                                                 }
+                                                .ignoresSafeArea() // Let it take over the screen
                                             }
-                                            .ignoresSafeArea() // Let it take over the screen
                                         }
                                     }
                                 }
-                            }
-                            .sheet(isPresented: $isShopWebviewVisible) {
-                                NavigationView {
-                                    ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
-                                        .navigationTitle("Shop")
-                                        .navigationBarTitleDisplayMode(.inline)
-                                        .navigationBarItems(leading:
-                                                                Button(action: {
-                                            isShopWebviewVisible = false
-                                        }) {
-                                            HStack {
-                                                Image(systemName: "chevron.left")
-                                                Text("Back")
-                                            }
-                                        }
-                                        )
+                                .sheet(isPresented: $isShopWebviewVisible) {
+                                    NavigationView {
+                                        ShopWebView(url: URL(string: "https://shop.soolra.com/")!)
+                                            .navigationTitle("Shop")
+                                            .navigationBarTitleDisplayMode(.inline)
+                                            .navigationBarItems(leading:
+                                                Button(action: {
+                                                    isShopWebviewVisible = false
+                                                }) {
+                                                    HStack {
+                                                        Image(systemName: "chevron.left")
+                                                        Text("Back")
+                                                    }
+                                                }
+                                            )
+                                    }
+                                    .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
                                 }
-                                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
-                                
                             }
-                            
-                            
-                            
-                            if let (kind, item) = focusedLibraryTuple() {
-                                switch kind {
-                                case .rom(let rom):
-                                    CurrentItemView(
-                                        currentRom: rom,
-                                        currentView: $currentView,
-                                        focusedButtonIndex: $viewModel.focusedButtonIndex
-                                    )
-                                case .web:
-                                    CurrentItemView(
-                                        currentRom: nil,
-                                        currentView: $currentView,
-                                        focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                        addRomAction: nil,
-                                        overrideImage: item.iconImage,        // <— web-game icon
-                                        overrideTitle: item.displayName       // <— web-game name
-                                    )
-                                }
-                            } else {
-                                CurrentItemView(
-                                    currentRom: nil,
-                                    currentView: $currentView,
-                                    focusedButtonIndex: $viewModel.focusedButtonIndex,
-                                    addRomAction: { viewModel.isPresented = true }
-                                )
-                            }
-                            
-                            
-                            TitleSortingView(titleText: "All Games", sortingText: "A-Z")
-                                .padding(.top, 10)
-                            
-                            if items.isEmpty && !isLoading {
-                                emptyView
-                            } else {
-                                romGridView
-                            }
-                            
+                            // Bottom area: controller bar
                             SoolraControllerView(controllerViewModel: controllerViewModel, currentView: $currentView, onButton: { action, pressed in
                                 viewModel.controllerDidPress(action: action, pressed: pressed)
                             })
-                            
-                            .frame(width: geometry.size.width, height: totalHeight * 0.48)
+                            .frame(width: geometry.size.width, height: totalHeight * 0.45)
                             .edgesIgnoringSafeArea(.bottom)
                         }
-                        .edgesIgnoringSafeArea(.all)
                         .preferredColorScheme(.dark)
-                        .padding(.top, 5)
+                        // (intentionally no .edgesIgnoringSafeArea(.all) and no .padding(.top, 5))
+
                     }
                 case .game(let gameData):
                     GameView(data: gameData, currentView: $currentView, pauseViewModel: gameData.pauseViewModel)
@@ -473,6 +434,7 @@ struct HomeView: View {
             
         }
         .onAppear {
+            viewModel.isCarouselMode = true 
             engagementTracker.startTracking()
             if defaultRomsLoadingState.isLoading {
                 isLoading = true
@@ -554,29 +516,34 @@ struct HomeView: View {
 
 
         .onChange(of: controllerViewModel.lastAction) { evt in
-            guard let evt = evt, evt.pressed else { return }
-            
+            guard let evt = evt else { return }
+
             if isShopDialogVisible {
-                switch evt.action {
-                case .x: // close dialog
-                    isShopDialogVisible = false
-                case .a: // open webview in window
-                    isShopDialogVisible = false
-                    isShopWebviewVisible = true
-                default:
-                    break
+                if evt.pressed {
+                    switch evt.action {
+                    case .x:
+                        isShopDialogVisible = false
+                    case .a:
+                        isShopDialogVisible = false
+                        isShopWebviewVisible = true
+                    default: break
+                    }
                 }
                 return
             }
-            
+
             switch currentView {
             case .grid:
+                // forward BOTH press and release to your viewModel
                 viewModel.controllerDidPress(action: evt.action, pressed: evt.pressed)
+
             case .web:
+                // forward BOTH press and release to the BT delegate
                 BluetoothControllerService.shared.delegate?.controllerDidPress(
                     action: evt.action,
                     pressed: evt.pressed
                 )
+
             default:
                 break
             }
@@ -752,7 +719,9 @@ struct HomeView: View {
         }
         Task { @MainActor in
             self.currentView = .web(game)
-            viewModel.focusedButtonIndex = 4
+            if #unavailable(iOS 17) {
+                viewModel.focusedButtonIndex = 4
+            }
             engagementTracker.setCurrentRom(game.name)
         }
     }
@@ -767,12 +736,11 @@ struct HomeView: View {
                 // Load everything before transitioning view
                 let gameData = try await loadRom(rom: rom, consoleManager: consoleManager)
                 consoleManager.cheatCodesManager = CheatCodesManager(consoleManager: consoleManager)
-                // Once everything is ready, update the view
                 await MainActor.run {
-                    //withAnimation(.easeInOut(duration: 0.3)) {
                     self.currentView = .game(gameData)
-                    viewModel.focusedButtonIndex = 4
-                    //}
+                    if #unavailable(iOS 17) {
+                        viewModel.focusedButtonIndex = 4
+                    }
                 }
                 engagementTracker.setCurrentRom(rom.name ?? "none")
             } catch {
@@ -1007,61 +975,54 @@ struct HomeView: View {
         @Binding var searchQuery: String // 👈 Add this
         
         var body: some View {
-            
-            VStack {
+            ZStack(alignment: .topLeading) {
+                // Logo button - top left, slightly higher
+                BlinkingFocusedButton(selectedIndex: .constant(-1), index: 0, action: { }, content: {
+                    Image("home-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 40, height: 40)
+                        .padding()
+                })
+                .offset(x: 8, y: -50)
                 
-                HStack {
-                    BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 0, action: { }, content: {
-                        Image("home-logo")
+                BlinkingFocusedButton(
+                    selectedIndex: .constant(-1),
+                    index: 2,
+                    action: {
+                        viewModel.isPresented = true
+                    },
+                    content: {
+                        Image("add-rom-new")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 27, height: 27)
+                            .frame(width: 40, height: 40)
                             .padding()
-                    })
-                    Spacer(minLength: 10)
-                    //                    TextField("Search games...", text: $searchQuery)                        .padding(8)
-                    //                        .background(Color.white.opacity(0.15))
-                    //                        .cornerRadius(14)
-                    //                        .foregroundColor(.white)
-                    //                        .frame(height: 27)
-                    //                        .frame(maxWidth: .infinity)
-                    //                        .overlay(
-                    //                            HStack {
-                    //                                Spacer()
-                    //                                Image(systemName: "magnifyingglass")
-                    //                                    .foregroundColor(.white)
-                    //                                    .padding(.trailing, 10)
-                    //                            }
-                    //                        )
-                    
-                    
-                    BlinkingFocusedButton(selectedIndex: $focusedButtonIndex, index: 1, action: {
-                        onSettingsButtonTap()
-                        
-                    }, content: {
-                        Image("home-settings-icon")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .scaledToFit()
-                            .padding()
-                    })
-                    .sheet(isPresented: $isSettingsPresented, onDismiss: {
-                        // When settings is dismissed, ensure we get the delegate back
-                        viewModel.setAsDelegate()
-                    }) {
-                        SettingsView().environmentObject(dataController)
                     }
+                )
+                .offset(x: UIScreen.main.bounds.width * 0.68    , y: -50)
 
-
-
-
-                }
-                .frame(height: 27)
-                .padding(.leading, 8)
-                .padding(.trailing, 8)
-                .background(Color.clear)
                 
+                // Settings button - lower, roughly halfway down the screen
+                BlinkingFocusedButton(selectedIndex: .constant(-1), index: 1, action: {
+                    onSettingsButtonTap()
+                }, content: {
+                    Image("home-settings-icon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 40, height: 40)
+                        .padding()
+                })
+                .sheet(isPresented: $isSettingsPresented, onDismiss: {
+                    viewModel.setAsDelegate()
+                }) {
+                    SettingsView().environmentObject(dataController)
+                }
+                .offset(x: UIScreen.main.bounds.width * 0.8, y: -50)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(Color.clear)
+
         }
     }
     

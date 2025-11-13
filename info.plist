@@ -29,15 +29,15 @@
 			</array>
 		</dict>
 		<dict>
-        	<key>CFBundleTypeName</key>
-        	<string>ZIP Archive</string>
-        	<key>LSHandlerRank</key>
-        	<string>Alternate</string>
-        	<key>LSItemContentTypes</key>
-        	<array>
-            	<string>com.pkware.zip-archive</string>
-        	</array>
-    	</dict>
+			<key>CFBundleTypeName</key>
+			<string>ZIP Archive</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.pkware.zip-archive</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
@@ -48,8 +48,14 @@
 			<string>ExtendedGamepad</string>
 		</dict>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>ZalandoSansExpanded.ttf</string>
 		<string>DINCondensed-Regular.ttf</string>
 		<string>D-DIN.ttf</string>
 		<string>D-DINCondensed-Bold.ttf</string>
@@ -108,11 +114,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
-
 </dict>
 </plist>

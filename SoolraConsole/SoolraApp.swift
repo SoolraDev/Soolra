@@ -203,6 +203,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
+            for family in UIFont.familyNames.sorted() {
+                print("Family: \(family)")
+                for name in UIFont.fontNames(forFamilyName: family).sorted() {
+                    print("    \(name)")
+                }
+            }
+    
         
         return true
     }
