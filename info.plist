@@ -68,6 +68,7 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>ZalandoSansExpanded.ttf</string>
 		<string>DINCondensed-Regular.ttf</string>
 		<string>D-DIN.ttf</string>
 		<string>D-DINCondensed-Bold.ttf</string>

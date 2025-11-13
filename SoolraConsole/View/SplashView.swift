@@ -1,11 +1,5 @@
-//
-//  SOOLRA
-//
-//  Copyright © 2025 SOOLRA. All rights reserved.
-//
-
+import AVFoundation
 import SwiftUI
-import AVKit
 
 struct SplashView: View {
     @Binding var isShowingSplash: Bool
@@ -13,15 +7,20 @@ struct SplashView: View {
     @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState.shared
 
     var body: some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all) // Ensure black background
-            VideoPlayerView(videoName: "launchvideo", isShowingSplash: $isShowingSplash)
-                .edgesIgnoringSafeArea(.all)
-        }
-        .onTapGesture {
-            withAnimation {
-                isShowingSplash = false // Skip video when tapped
+        GeometryReader { geo in
+            ZStack {
+                Color.black.ignoresSafeArea()
+
+                VideoPlayerView(videoName: "splashvideo", isShowingSplash: $isShowingSplash)
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+                    .ignoresSafeArea()
             }
+            .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation { isShowingSplash = false }
         }
         .task {
             Task.detached(priority: .userInitiated) {
@@ -31,45 +30,73 @@ struct SplashView: View {
             }
         }
     }
-    
-    
 }
 
-struct VideoPlayerView: UIViewControllerRepresentable {
+struct VideoPlayerView: UIViewRepresentable {
     let videoName: String
     @Binding var isShowingSplash: Bool
 
-    func makeUIViewController(context: Context) -> UIViewController {
-        let controller = UIViewController()
-        controller.view.backgroundColor = .black // Set background color of controller
-        
+    final class PlayerView: UIView {
+        override class var layerClass: AnyClass { AVPlayerLayer.self }
+        var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+    }
+
+    final class Coordinator {
+        var player: AVPlayer?
+        var endObs: NSObjectProtocol?
+        init() {}
+        deinit {
+            if let p = player { p.pause() }
+            if let endObs { NotificationCenter.default.removeObserver(endObs) }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    func makeUIView(context: Context) -> PlayerView {
+        let v = PlayerView()
+        v.backgroundColor = .black
+
         guard let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") else {
             print("🚨 Video not found: \(videoName).mp4")
-            isShowingSplash = false // Skip splash if video is missing
-            return controller
+            DispatchQueue.main.async { isShowingSplash = false }
+            return v
         }
-        
+
         let player = AVPlayer(url: url)
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspectFill
+        context.coordinator.player = player
 
-        // Adjust frame: Full width, 200px bottom padding
-        let screenSize = UIScreen.main.bounds
-        playerLayer.frame = CGRect(x: 0, y: 0, width: screenSize.width, height: screenSize.height - 200)
+        let layer = v.playerLayer
+        layer.player = player
+        layer.videoGravity = .resizeAspectFill // fill screen, crop as needed
 
-        controller.view.layer.addSublayer(playerLayer)
+        // Start playback
         player.play()
 
-        // Auto-skip when video finishes
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
+        // Auto-dismiss on end
+        context.coordinator.endObs = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: player.currentItem,
+            queue: .main
+        ) { _ in
             isShowingSplash = false
         }
 
-        return controller
+        return v
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    func updateUIView(_ uiView: PlayerView, context: Context) {
+        // Nothing needed; SwiftUI drives sizing. The layer fills bounds automatically.
+    }
+
+    static func dismantleUIView(_ uiView: PlayerView, coordinator: Coordinator) {
+        coordinator.player?.pause()
+        if let endObs = coordinator.endObs {
+            NotificationCenter.default.removeObserver(endObs)
+        }
+    }
 }
+
 
 
 @MainActor

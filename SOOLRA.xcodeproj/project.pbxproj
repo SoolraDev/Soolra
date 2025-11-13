@@ -44,11 +44,28 @@
 		70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BD249F2C6BF6F10070B5F9 /* Colors.swift */; };
 		92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 92678D762DAA70E6001CEDD6 /* SQLite */; };
 		92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D802DAA76F5001CEDD6 /* Cheat.swift */; };
+		926B60EB2EC5CDD100543101 /* ZalandoSansExpanded.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */; };
+		926B75232EC6010000543101 /* Hextris.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75212EC6010000543101 /* Hextris.png */; };
+		926B75242EC6010000543101 /* Crane.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75202EC6010000543101 /* Crane.png */; };
+		926B75252EC6010000543101 /* Tower.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75222EC6010000543101 /* Tower.png */; };
+		926B753E2EC601D000543101 /* Blowhole.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B753C2EC601D000543101 /* Blowhole.png */; };
+		926B753F2EC601D000543101 /* Attack on Voxelburg.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75382EC601D000543101 /* Attack on Voxelburg.png */; };
+		926B75402EC601D000543101 /* Battleship.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75392EC601D000543101 /* Battleship.png */; };
+		926B75412EC601D000543101 /* Astrohawk.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75372EC601D000543101 /* Astrohawk.png */; };
+		926B75422EC601D000543101 /* Blind Jump.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B753B2EC601D000543101 /* Blind Jump.png */; };
+		926B75432EC601D000543101 /* 2048.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75362EC601D000543101 /* 2048.png */; };
+		926B75442EC601D000543101 /* Blast Arena.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B753A2EC601D000543101 /* Blast Arena.png */; };
+		926B75452EC601D000543101 /* Cats Curse.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B753D2EC601D000543101 /* Cats Curse.png */; };
+		926B75472EC6020200543101 /* Arcade Mania.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75462EC6020200543101 /* Arcade Mania.png */; };
 		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
 		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
-		92965FEB2EA7C72300D877C3 /* Stacker.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FEA2EA7C72300D877C3 /* Stacker.png */; };
+		92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */; };
+		92965FF12EAA6DD000D877C3 /* Famidash.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF02EAA6DD000D877C3 /* Famidash.png */; };
+		92965FF32EAA6DE200D877C3 /* Codemaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF22EAA6DE200D877C3 /* Codemaster.png */; };
+		92965FF52EAA70A800D877C3 /* Codemaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF42EAA70A800D877C3 /* Codemaster.png */; };
+		9296793A2EBB8E2200D877C3 /* splashvideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 929679392EBB8E2200D877C3 /* splashvideo.mp4 */; };
 		92A582922EA652C50044FE05 /* StackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A582912EA652C50044FE05 /* StackerViewModel.swift */; };
 		92A582942EA652E30044FE05 /* StackerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A582932EA652E30044FE05 /* StackerWrapper.swift */; };
 		92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */; };
@@ -65,16 +82,11 @@
 		92E057F22E5C96850002B6E6 /* RotatedLandscapeWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F12E5C96850002B6E6 /* RotatedLandscapeWebView.swift */; };
 		92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */; };
 		92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */; };
-		92E057F82E5E03560002B6E6 /* Hextris.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E057F72E5E03560002B6E6 /* Hextris.png */; };
-		92E057FA2E5F0AC00002B6E6 /* 2048.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E057F92E5F0AC00002B6E6 /* 2048.png */; };
 		92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */; };
 		92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */; };
-		92E07B5D2EA108320002B6E6 /* Tower.png in Resources */ = {isa = PBXBuildFile; fileRef = 92E07B5C2EA108320002B6E6 /* Tower.png */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */; };
 		92EF61DE2E31050F008D609E /* Hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616C2E31050F008D609E /* Hearts.png */; };
-		92EF61DF2E31050F008D609E /* Blast Arena.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61522E31050F008D609E /* Blast Arena.png */; };
-		92EF61E02E31050F008D609E /* Arcade Mania.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF614E2E31050F008D609E /* Arcade Mania.png */; };
 		92EF61E12E31050F008D609E /* Math and Logic.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61BA2E31050F008D609E /* Math and Logic.gba */; };
 		92EF61E22E31050F008D609E /* openNesBreakout.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61C12E31050F008D609E /* openNesBreakout.nes */; };
 		92EF61E32E31050F008D609E /* Tremblay Island.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61D72E31050F008D609E /* Tremblay Island.gba */; };
@@ -85,7 +97,6 @@
 		92EF61E82E31050F008D609E /* SeSnake.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61CA2E31050F008D609E /* SeSnake.gba */; };
 		92EF61E92E31050F008D609E /* SFcave.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61842E31050F008D609E /* SFcave.png */; };
 		92EF61EA2E31050F008D609E /* Minicraft.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61762E31050F008D609E /* Minicraft.png */; };
-		92EF61EB2E31050F008D609E /* Cats Curse.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61552E31050F008D609E /* Cats Curse.png */; };
 		92EF61EC2E31050F008D609E /* CodeMaster.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61A12E31050F008D609E /* CodeMaster.nes */; };
 		92EF61ED2E31050F008D609E /* Pong.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF617F2E31050F008D609E /* Pong.png */; };
 		92EF61EE2E31050F008D609E /* Dungeon.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61A72E31050F008D609E /* Dungeon.gba */; };
@@ -107,10 +118,8 @@
 		92EF61FE2E31050F008D609E /* MeteoRain.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61742E31050F008D609E /* MeteoRain.png */; };
 		92EF61FF2E31050F008D609E /* XNIQ.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61932E31050F008D609E /* XNIQ.png */; };
 		92EF62002E31050F008D609E /* Radicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61812E31050F008D609E /* Radicorn.png */; };
-		92EF62012E31050F008D609E /* Blowhole.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61542E31050F008D609E /* Blowhole.png */; };
 		92EF62022E31050F008D609E /* DCPR.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61A52E31050F008D609E /* DCPR.gba */; };
 		92EF62032E31050F008D609E /* SFcave.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61CB2E31050F008D609E /* SFcave.gba */; };
-		92EF62042E31050F008D609E /* Astrohawk.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF614F2E31050F008D609E /* Astrohawk.png */; };
 		92EF62052E31050F008D609E /* Blast Arena.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61992E31050F008D609E /* Blast Arena.gba */; };
 		92EF62062E31050F008D609E /* Astrohawk.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61962E31050F008D609E /* Astrohawk.gba */; };
 		92EF62072E31050F008D609E /* dabg.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF615D2E31050F008D609E /* dabg.png */; };
@@ -165,10 +174,8 @@
 		92EF62382E31050F008D609E /* WaimanuGBA.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61D82E31050F008D609E /* WaimanuGBA.gba */; };
 		92EF62392E31050F008D609E /* Chase.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61562E31050F008D609E /* Chase.png */; };
 		92EF623A2E31050F008D609E /* Blowhole.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF619B2E31050F008D609E /* Blowhole.gba */; };
-		92EF623B2E31050F008D609E /* CodeMaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF615A2E31050F008D609E /* CodeMaster.png */; };
 		92EF623C2E31050F008D609E /* Smart Gamble.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61CD2E31050F008D609E /* Smart Gamble.gba */; };
 		92EF623D2E31050F008D609E /* Inheritors of the Oubliette.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616F2E31050F008D609E /* Inheritors of the Oubliette.png */; };
-		92EF623E2E31050F008D609E /* Attack on Voxelburg.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61502E31050F008D609E /* Attack on Voxelburg.png */; };
 		92EF623F2E31050F008D609E /* Tremblay Island.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61902E31050F008D609E /* Tremblay Island.png */; };
 		92EF62402E31050F008D609E /* The Purple Night.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF618D2E31050F008D609E /* The Purple Night.png */; };
 		92EF62412E31050F008D609E /* Nonogram.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61BF2E31050F008D609E /* Nonogram.nes */; };
@@ -193,9 +200,7 @@
 		92EF62542E31050F008D609E /* THCTW.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF618B2E31050F008D609E /* THCTW.png */; };
 		92EF62552E31050F008D609E /* Famidash.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61AA2E31050F008D609E /* Famidash.nes */; };
 		92EF62562E31050F008D609E /* PipeSpin.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF617C2E31050F008D609E /* PipeSpin.png */; };
-		92EF62572E31050F008D609E /* Famidash.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61632E31050F008D609E /* Famidash.png */; };
 		92EF62582E31050F008D609E /* RavenX.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61822E31050F008D609E /* RavenX.png */; };
-		92EF62592E31050F008D609E /* Battleship.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61512E31050F008D609E /* Battleship.png */; };
 		92EF625A2E31050F008D609E /* Smart Gamble.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61862E31050F008D609E /* Smart Gamble.png */; };
 		92EF625B2E31050F008D609E /* Attack on Voxelburg.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61972E31050F008D609E /* Attack on Voxelburg.gba */; };
 		92EF625C2E31050F008D609E /* Symbol Merged.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61D12E31050F008D609E /* Symbol Merged.gba */; };
@@ -210,7 +215,6 @@
 		92EF62652E31050F008D609E /* Battleship.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61982E31050F008D609E /* Battleship.gba */; };
 		92EF62662E31050F008D609E /* The Purple Night.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61D42E31050F008D609E /* The Purple Night.gba */; };
 		92EF62672E31050F008D609E /* MatchIt.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61722E31050F008D609E /* MatchIt.png */; };
-		92EF62682E31050F008D609E /* Blind Jump.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61532E31050F008D609E /* Blind Jump.png */; };
 		9A6F41B1841602256D9A9987 /* Pods_SOOLRA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373F8BB57550C87EB6D0573 /* Pods_SOOLRA.framework */; };
 		9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D002CD0041C007508A8 /* D-DINCondensed.ttf */; };
 		9D123D032CD0046B007508A8 /* Ebrima.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D123D022CD0046B007508A8 /* Ebrima.ttf */; };
@@ -256,11 +260,28 @@
 		70838FDB2C6BC96500B7AE46 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		70BD249F2C6BF6F10070B5F9 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		92678D802DAA76F5001CEDD6 /* Cheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheat.swift; sourceTree = "<group>"; };
+		926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ZalandoSansExpanded.ttf; sourceTree = "<group>"; };
+		926B75202EC6010000543101 /* Crane.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Crane.png; sourceTree = "<group>"; };
+		926B75212EC6010000543101 /* Hextris.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Hextris.png; sourceTree = "<group>"; };
+		926B75222EC6010000543101 /* Tower.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tower.png; sourceTree = "<group>"; };
+		926B75362EC601D000543101 /* 2048.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2048.png; sourceTree = "<group>"; };
+		926B75372EC601D000543101 /* Astrohawk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Astrohawk.png; sourceTree = "<group>"; };
+		926B75382EC601D000543101 /* Attack on Voxelburg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Attack on Voxelburg.png"; sourceTree = "<group>"; };
+		926B75392EC601D000543101 /* Battleship.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Battleship.png; sourceTree = "<group>"; };
+		926B753A2EC601D000543101 /* Blast Arena.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blast Arena.png"; sourceTree = "<group>"; };
+		926B753B2EC601D000543101 /* Blind Jump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blind Jump.png"; sourceTree = "<group>"; };
+		926B753C2EC601D000543101 /* Blowhole.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Blowhole.png; sourceTree = "<group>"; };
+		926B753D2EC601D000543101 /* Cats Curse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Cats Curse.png"; sourceTree = "<group>"; };
+		926B75462EC6020200543101 /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
 		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
-		92965FEA2EA7C72300D877C3 /* Stacker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stacker.png; sourceTree = "<group>"; };
+		92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalGameCarousel.swift; sourceTree = "<group>"; };
+		92965FF02EAA6DD000D877C3 /* Famidash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Famidash.png; sourceTree = "<group>"; };
+		92965FF22EAA6DE200D877C3 /* Codemaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Codemaster.png; sourceTree = "<group>"; };
+		92965FF42EAA70A800D877C3 /* Codemaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Codemaster.png; sourceTree = "<group>"; };
+		929679392EBB8E2200D877C3 /* splashvideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = splashvideo.mp4; sourceTree = "<group>"; };
 		92A582912EA652C50044FE05 /* StackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackerViewModel.swift; sourceTree = "<group>"; };
 		92A582932EA652E30044FE05 /* StackerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackerWrapper.swift; sourceTree = "<group>"; };
 		92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewContainer.swift; sourceTree = "<group>"; };
@@ -277,25 +298,13 @@
 		92E057F12E5C96850002B6E6 /* RotatedLandscapeWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotatedLandscapeWebView.swift; sourceTree = "<group>"; };
 		92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisWrapper.swift; sourceTree = "<group>"; };
 		92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisViewModel.swift; sourceTree = "<group>"; };
-		92E057F72E5E03560002B6E6 /* Hextris.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Hextris.png; sourceTree = "<group>"; };
-		92E057F92E5F0AC00002B6E6 /* 2048.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2048.png; sourceTree = "<group>"; };
 		92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerWrapper.swift; sourceTree = "<group>"; };
 		92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerViewModel.swift; sourceTree = "<group>"; };
-		92E07B5C2EA108320002B6E6 /* Tower.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tower.png; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
-		92EF614E2E31050F008D609E /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
-		92EF614F2E31050F008D609E /* Astrohawk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Astrohawk.png; sourceTree = "<group>"; };
-		92EF61502E31050F008D609E /* Attack on Voxelburg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Attack on Voxelburg.png"; sourceTree = "<group>"; };
-		92EF61512E31050F008D609E /* Battleship.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Battleship.png; sourceTree = "<group>"; };
-		92EF61522E31050F008D609E /* Blast Arena.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blast Arena.png"; sourceTree = "<group>"; };
-		92EF61532E31050F008D609E /* Blind Jump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blind Jump.png"; sourceTree = "<group>"; };
-		92EF61542E31050F008D609E /* Blowhole.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Blowhole.png; sourceTree = "<group>"; };
-		92EF61552E31050F008D609E /* Cats Curse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Cats Curse.png"; sourceTree = "<group>"; };
 		92EF61562E31050F008D609E /* Chase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chase.png; sourceTree = "<group>"; };
 		92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Chocolate Hunter Runa.png"; sourceTree = "<group>"; };
 		92EF61582E31050F008D609E /* Christmas Advance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Christmas Advance.png"; sourceTree = "<group>"; };
 		92EF61592E31050F008D609E /* CocoBattleRoyale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CocoBattleRoyale.png; sourceTree = "<group>"; };
-		92EF615A2E31050F008D609E /* CodeMaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CodeMaster.png; sourceTree = "<group>"; };
 		92EF615B2E31050F008D609E /* Codename Monkey Bots.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Codename Monkey Bots.png"; sourceTree = "<group>"; };
 		92EF615C2E31050F008D609E /* Covid Adventure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Covid Adventure.png"; sourceTree = "<group>"; };
 		92EF615D2E31050F008D609E /* dabg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dabg.png; sourceTree = "<group>"; };
@@ -304,7 +313,6 @@
 		92EF61602E31050F008D609E /* Dungeon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Dungeon.png; sourceTree = "<group>"; };
 		92EF61612E31050F008D609E /* Dungeon Puzzlers Lament.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dungeon Puzzlers Lament.png"; sourceTree = "<group>"; };
 		92EF61622E31050F008D609E /* Falling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Falling.png; sourceTree = "<group>"; };
-		92EF61632E31050F008D609E /* Famidash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Famidash.png; sourceTree = "<group>"; };
 		92EF61642E31050F008D609E /* Feline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Feline.png; sourceTree = "<group>"; };
 		92EF61652E31050F008D609E /* Gabdeo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Gabdeo.png; sourceTree = "<group>"; };
 		92EF61662E31050F008D609E /* Gba Microjam 23.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gba Microjam 23.png"; sourceTree = "<group>"; };
@@ -540,6 +548,7 @@
 				F93A9ADA751C88A045C62C3B /* Pods */,
 				A9EE285B3C1341F385217B4B /* Frameworks */,
 				92EF61DC2E31050F008D609E /* BundledRoms */,
+				929679392EBB8E2200D877C3 /* splashvideo.mp4 */,
 			);
 			sourceTree = "<group>";
 		};
@@ -598,6 +607,7 @@
 			isa = PBXGroup;
 			children = (
 				2F50B7E32EB408B500E250EA /* OverlayViews */,
+				92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */,
 				92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */,
 				92E02F622E3F70CF0002B6E6 /* FullScreenWebView.swift */,
 				92EF51842E2693B0008D609E /* LicenseListView.swift */,
@@ -636,6 +646,7 @@
 				705827992C75766300AB8682 /* Orbitron-Medium.ttf */,
 				7058279A2C75766300AB8682 /* Orbitron-Regular.ttf */,
 				705827972C75766200AB8682 /* Orbitron-SemiBold.ttf */,
+				926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -682,28 +693,21 @@
 		92EF61942E31050F008D609E /* Artwork */ = {
 			isa = PBXGroup;
 			children = (
-				92EF614E2E31050F008D609E /* Arcade Mania.png */,
-				92EF614F2E31050F008D609E /* Astrohawk.png */,
-				92EF61502E31050F008D609E /* Attack on Voxelburg.png */,
-				92EF61512E31050F008D609E /* Battleship.png */,
-				92EF61522E31050F008D609E /* Blast Arena.png */,
-				92EF61532E31050F008D609E /* Blind Jump.png */,
-				92EF61542E31050F008D609E /* Blowhole.png */,
-				92EF61552E31050F008D609E /* Cats Curse.png */,
+				92965FF42EAA70A800D877C3 /* Codemaster.png */,
 				92EF61562E31050F008D609E /* Chase.png */,
 				92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */,
 				92EF61582E31050F008D609E /* Christmas Advance.png */,
 				92EF61592E31050F008D609E /* CocoBattleRoyale.png */,
-				92EF615A2E31050F008D609E /* CodeMaster.png */,
 				92EF615B2E31050F008D609E /* Codename Monkey Bots.png */,
 				92EF615C2E31050F008D609E /* Covid Adventure.png */,
 				92EF615D2E31050F008D609E /* dabg.png */,
 				92EF615E2E31050F008D609E /* DCPR.png */,
+				92965FF22EAA6DE200D877C3 /* Codemaster.png */,
 				92EF615F2E31050F008D609E /* Derelict.png */,
 				92EF61602E31050F008D609E /* Dungeon.png */,
 				92EF61612E31050F008D609E /* Dungeon Puzzlers Lament.png */,
 				92EF61622E31050F008D609E /* Falling.png */,
-				92EF61632E31050F008D609E /* Famidash.png */,
+				92965FF02EAA6DD000D877C3 /* Famidash.png */,
 				92EF61642E31050F008D609E /* Feline.png */,
 				92EF61652E31050F008D609E /* Gabdeo.png */,
 				92EF61662E31050F008D609E /* Gba Microjam 23.png */,
@@ -720,7 +724,6 @@
 				92EF61712E31050F008D609E /* luminesweeper.png */,
 				92EF61722E31050F008D609E /* MatchIt.png */,
 				92EF61732E31050F008D609E /* Math and Logic.png */,
-				92E07B5C2EA108320002B6E6 /* Tower.png */,
 				92EF61742E31050F008D609E /* MeteoRain.png */,
 				92EF61752E31050F008D609E /* MineBoyAdvance.png */,
 				92EF61762E31050F008D609E /* Minicraft.png */,
@@ -728,6 +731,7 @@
 				92EF61782E31050F008D609E /* Nonogram.png */,
 				92EF61792E31050F008D609E /* NovaTheSquirrel.png */,
 				92EF617A2E31050F008D609E /* openNesBreakout.png */,
+				926B75462EC6020200543101 /* Arcade Mania.png */,
 				92EF617B2E31050F008D609E /* openNesSnake.png */,
 				92EF617C2E31050F008D609E /* PipeSpin.png */,
 				92EF617D2E31050F008D609E /* Piranha Crisis.png */,
@@ -736,8 +740,10 @@
 				92EF61802E31050F008D609E /* Quantum Survival.png */,
 				92EF61812E31050F008D609E /* Radicorn.png */,
 				92EF61822E31050F008D609E /* RavenX.png */,
-				92E057F92E5F0AC00002B6E6 /* 2048.png */,
 				92EF61832E31050F008D609E /* SeSnake.png */,
+				926B75202EC6010000543101 /* Crane.png */,
+				926B75212EC6010000543101 /* Hextris.png */,
+				926B75222EC6010000543101 /* Tower.png */,
 				92EF61842E31050F008D609E /* SFcave.png */,
 				92EF61852E31050F008D609E /* Skyland.png */,
 				92EF61862E31050F008D609E /* Smart Gamble.png */,
@@ -749,13 +755,19 @@
 				92EF618C2E31050F008D609E /* The Axe.png */,
 				92EF618D2E31050F008D609E /* The Purple Night.png */,
 				92EF618E2E31050F008D609E /* Tigermoth.png */,
-				92965FEA2EA7C72300D877C3 /* Stacker.png */,
 				92EF618F2E31050F008D609E /* Titei Senki.png */,
 				92EF61902E31050F008D609E /* Tremblay Island.png */,
 				92EF61912E31050F008D609E /* WaimanuGBA.png */,
 				92EF61922E31050F008D609E /* WhereIsTheBall.png */,
 				92EF61932E31050F008D609E /* XNIQ.png */,
-				92E057F72E5E03560002B6E6 /* Hextris.png */,
+				926B75362EC601D000543101 /* 2048.png */,
+				926B75372EC601D000543101 /* Astrohawk.png */,
+				926B75382EC601D000543101 /* Attack on Voxelburg.png */,
+				926B75392EC601D000543101 /* Battleship.png */,
+				926B753A2EC601D000543101 /* Blast Arena.png */,
+				926B753B2EC601D000543101 /* Blind Jump.png */,
+				926B753C2EC601D000543101 /* Blowhole.png */,
+				926B753D2EC601D000543101 /* Cats Curse.png */,
 			);
 			path = Artwork;
 			sourceTree = "<group>";
@@ -952,8 +964,6 @@
 			files = (
 				92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */,
 				92EF61DE2E31050F008D609E /* Hearts.png in Resources */,
-				92EF61DF2E31050F008D609E /* Blast Arena.png in Resources */,
-				92EF61E02E31050F008D609E /* Arcade Mania.png in Resources */,
 				92EF61E12E31050F008D609E /* Math and Logic.gba in Resources */,
 				92EF61E22E31050F008D609E /* openNesBreakout.nes in Resources */,
 				92EF61E32E31050F008D609E /* Tremblay Island.gba in Resources */,
@@ -964,11 +974,9 @@
 				92EF61E82E31050F008D609E /* SeSnake.gba in Resources */,
 				92EF61E92E31050F008D609E /* SFcave.png in Resources */,
 				92EF61EA2E31050F008D609E /* Minicraft.png in Resources */,
-				92EF61EB2E31050F008D609E /* Cats Curse.png in Resources */,
 				92EF61EC2E31050F008D609E /* CodeMaster.nes in Resources */,
 				92EF61ED2E31050F008D609E /* Pong.png in Resources */,
 				92EF61EE2E31050F008D609E /* Dungeon.gba in Resources */,
-				92E057FA2E5F0AC00002B6E6 /* 2048.png in Resources */,
 				92EF61EF2E31050F008D609E /* PipeSpin.gba in Resources */,
 				92EF61F02E31050F008D609E /* Falling.png in Resources */,
 				92EF61F12E31050F008D609E /* Hearts.gba in Resources */,
@@ -980,17 +988,17 @@
 				92EF61F72E31050F008D609E /* Gba Microjam 23.png in Resources */,
 				92EF61F82E31050F008D609E /* Quantum Survival.gba in Resources */,
 				92EF61F92E31050F008D609E /* Falling.nes in Resources */,
+				92965FF12EAA6DD000D877C3 /* Famidash.png in Resources */,
 				92EF61FA2E31050F008D609E /* Skyland.png in Resources */,
 				92EF61FB2E31050F008D609E /* openNesSnake.nes in Resources */,
 				92EF61FC2E31050F008D609E /* Blind Jump.gba in Resources */,
+				92965FF32EAA6DE200D877C3 /* Codemaster.png in Resources */,
 				92EF61FD2E31050F008D609E /* Gabdeo.gba in Resources */,
 				92EF61FE2E31050F008D609E /* MeteoRain.png in Resources */,
 				92EF61FF2E31050F008D609E /* XNIQ.png in Resources */,
 				92EF62002E31050F008D609E /* Radicorn.png in Resources */,
-				92EF62012E31050F008D609E /* Blowhole.png in Resources */,
 				92EF62022E31050F008D609E /* DCPR.gba in Resources */,
 				92EF62032E31050F008D609E /* SFcave.gba in Resources */,
-				92EF62042E31050F008D609E /* Astrohawk.png in Resources */,
 				92EF62052E31050F008D609E /* Blast Arena.gba in Resources */,
 				92EF62062E31050F008D609E /* Astrohawk.gba in Resources */,
 				92EF62072E31050F008D609E /* dabg.png in Resources */,
@@ -1013,9 +1021,16 @@
 				92EF62182E31050F008D609E /* THCTW.gba in Resources */,
 				92EF62192E31050F008D609E /* Dungeon.png in Resources */,
 				92EF621A2E31050F008D609E /* openNesBreakout.png in Resources */,
+				926B753E2EC601D000543101 /* Blowhole.png in Resources */,
+				926B753F2EC601D000543101 /* Attack on Voxelburg.png in Resources */,
+				926B75402EC601D000543101 /* Battleship.png in Resources */,
+				926B75412EC601D000543101 /* Astrohawk.png in Resources */,
+				926B75422EC601D000543101 /* Blind Jump.png in Resources */,
+				926B75432EC601D000543101 /* 2048.png in Resources */,
+				926B75442EC601D000543101 /* Blast Arena.png in Resources */,
+				926B75452EC601D000543101 /* Cats Curse.png in Resources */,
 				92EF621B2E31050F008D609E /* WhereIsTheBall.gba in Resources */,
 				92EF621C2E31050F008D609E /* Dungeon Puzzlers Lament.png in Resources */,
-				92965FEB2EA7C72300D877C3 /* Stacker.png in Resources */,
 				92EF621D2E31050F008D609E /* GBA Puzzle Bobble.gba in Resources */,
 				92EF621E2E31050F008D609E /* Nomad 2.gba in Resources */,
 				92EF621F2E31050F008D609E /* Feline.gba in Resources */,
@@ -1023,7 +1038,11 @@
 				92EF62212E31050F008D609E /* Solar Guard.gba in Resources */,
 				92EF62222E31050F008D609E /* Lane.gba in Resources */,
 				92EF62232E31050F008D609E /* GO.png in Resources */,
+				92965FF52EAA70A800D877C3 /* Codemaster.png in Resources */,
 				92EF62242E31050F008D609E /* Arcade Mania.gba in Resources */,
+				926B75232EC6010000543101 /* Hextris.png in Resources */,
+				926B75242EC6010000543101 /* Crane.png in Resources */,
+				926B75252EC6010000543101 /* Tower.png in Resources */,
 				92EF62252E31050F008D609E /* RavenX.gba in Resources */,
 				92EF62262E31050F008D609E /* Ghosts_And_Graves.nes in Resources */,
 				92EF62272E31050F008D609E /* Solar Guard.png in Resources */,
@@ -1037,20 +1056,18 @@
 				92EF622F2E31050F008D609E /* CocoBattleRoyale.nes in Resources */,
 				92EF62302E31050F008D609E /* The Axe.gba in Resources */,
 				92EF62312E31050F008D609E /* SeSnake.png in Resources */,
-				92E07B5D2EA108320002B6E6 /* Tower.png in Resources */,
 				92EF62322E31050F008D609E /* MeteoRain.gba in Resources */,
 				92EF62332E31050F008D609E /* Math and Logic.png in Resources */,
 				92EF62342E31050F008D609E /* DCPR.png in Resources */,
 				92EF62352E31050F008D609E /* GBATactics.gba in Resources */,
+				926B75472EC6020200543101 /* Arcade Mania.png in Resources */,
 				92EF62362E31050F008D609E /* Chase.nes in Resources */,
 				92EF62372E31050F008D609E /* MatchIt.gba in Resources */,
 				92EF62382E31050F008D609E /* WaimanuGBA.gba in Resources */,
 				92EF62392E31050F008D609E /* Chase.png in Resources */,
 				92EF623A2E31050F008D609E /* Blowhole.gba in Resources */,
-				92EF623B2E31050F008D609E /* CodeMaster.png in Resources */,
 				92EF623C2E31050F008D609E /* Smart Gamble.gba in Resources */,
 				92EF623D2E31050F008D609E /* Inheritors of the Oubliette.png in Resources */,
-				92EF623E2E31050F008D609E /* Attack on Voxelburg.png in Resources */,
 				92EF623F2E31050F008D609E /* Tremblay Island.png in Resources */,
 				92EF62402E31050F008D609E /* The Purple Night.png in Resources */,
 				92EF62412E31050F008D609E /* Nonogram.nes in Resources */,
@@ -1075,14 +1092,12 @@
 				92EF62542E31050F008D609E /* THCTW.png in Resources */,
 				92EF62552E31050F008D609E /* Famidash.nes in Resources */,
 				92EF62562E31050F008D609E /* PipeSpin.png in Resources */,
-				92EF62572E31050F008D609E /* Famidash.png in Resources */,
 				92EF62582E31050F008D609E /* RavenX.png in Resources */,
-				92EF62592E31050F008D609E /* Battleship.png in Resources */,
 				92EF625A2E31050F008D609E /* Smart Gamble.png in Resources */,
 				92EF625B2E31050F008D609E /* Attack on Voxelburg.gba in Resources */,
 				92EF625C2E31050F008D609E /* Symbol Merged.gba in Resources */,
 				92EF625D2E31050F008D609E /* CocoBattleRoyale.png in Resources */,
-				92E057F82E5E03560002B6E6 /* Hextris.png in Resources */,
+				9296793A2EBB8E2200D877C3 /* splashvideo.mp4 in Resources */,
 				92EF625E2E31050F008D609E /* Space Game.png in Resources */,
 				92EF625F2E31050F008D609E /* Quantum Survival.png in Resources */,
 				92EF62602E31050F008D609E /* Christmas Advance.png in Resources */,
@@ -1093,7 +1108,6 @@
 				92EF62652E31050F008D609E /* Battleship.gba in Resources */,
 				92EF62662E31050F008D609E /* The Purple Night.gba in Resources */,
 				92EF62672E31050F008D609E /* MatchIt.png in Resources */,
-				92EF62682E31050F008D609E /* Blind Jump.png in Resources */,
 				9D123D0F2CD00B56007508A8 /* DINCondensed-Regular.ttf in Resources */,
 				705827A02C75766300AB8682 /* Orbitron-Regular.ttf in Resources */,
 				9D123D072CD008E4007508A8 /* D-DIN.ttf in Resources */,
@@ -1101,6 +1115,7 @@
 				928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */,
 				4CCFFDB32D4E94D0002B9F4A /* launchvideo.mp4 in Resources */,
 				705827A22C75766300AB8682 /* Orbitron-Black.ttf in Resources */,
+				926B60EB2EC5CDD100543101 /* ZalandoSansExpanded.ttf in Resources */,
 				7058279D2C75766300AB8682 /* Orbitron-SemiBold.ttf in Resources */,
 				9D123D012CD0041D007508A8 /* D-DINCondensed.ttf in Resources */,
 				7058279F2C75766300AB8682 /* Orbitron-Medium.ttf in Resources */,
@@ -1207,6 +1222,7 @@
 				186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */,
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
 				92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */,
+				92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */,
 				92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */,
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
@@ -1358,7 +1374,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
@@ -1381,7 +1397,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.9.0;
+				MARKETING_VERSION = 6.0.0;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1411,7 +1427,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
 				ENABLE_PREVIEWS = YES;
@@ -1433,7 +1449,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.9.0;
+				MARKETING_VERSION = 6.0.0;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
