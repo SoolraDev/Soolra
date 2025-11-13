@@ -568,11 +568,48 @@ struct HomeView: View {
     }
     
     func rebuildItems() {
-        let romItems: [(LibraryKind, LibraryItem)] = roms.map { (.rom($0), $0 as LibraryItem) }
+        let priorityNames = [
+            "Arcade Mania",
+            "Astrohawk",
+            "Attack on Voxelburg",
+            "Battleship",
+            "Blast Arena",
+            "Blind Jump",
+            "Blowhole",
+            "Cats Curse",
+            "Chase"
+        ]
+
+        // Create a lookup so sorting is O(1)
+        let priorityIndex: [String: Int] = Dictionary(
+            uniqueKeysWithValues: priorityNames.enumerated().map { ($1, $0) }
+        )
+
+        // Sort ROMs by priority first, then alphabetically for the rest
+        let sortedRoms = roms.sorted { a, b in
+            let aKey = priorityIndex[a.displayName] ?? Int.max
+            let bKey = priorityIndex[b.displayName] ?? Int.max
+
+            if aKey != bKey {
+                return aKey < bKey
+            }
+            return a.displayName.localizedCaseInsensitiveCompare(b.displayName) == .orderedAscending
+        }
+
+        let romItems: [(LibraryKind, LibraryItem)] = sortedRoms.map { (.rom($0), $0 as LibraryItem) }
         let webItems: [(LibraryKind, LibraryItem)] = webGames.map { (.web($0), $0 as LibraryItem) }
-        // Decide ordering rules; here we interleave after the upload tile or simply append:
-        items =  webItems + romItems
+
+        // Your current rule: web games first, then ROMs
+        items = webItems + romItems
     }
+
+    
+//    func rebuildItems() {
+//        let romItems: [(LibraryKind, LibraryItem)] = roms.map { (.rom($0), $0 as LibraryItem) }
+//        let webItems: [(LibraryKind, LibraryItem)] = webGames.map { (.web($0), $0 as LibraryItem) }
+//        // Decide ordering rules; here we interleave after the upload tile or simply append:
+//        items =  webItems + romItems
+//    }
 
     private func focusedLibraryTuple() -> (LibraryKind, LibraryItem)? {
         let idx = viewModel.focusedButtonIndex - 4

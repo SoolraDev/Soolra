@@ -50,9 +50,9 @@ enum WebGameCatalog {
                 }
             ),
             WebGame(
-                name: "Stacker",
+                name: "Crane",
                 url: uStacker,
-                icon: UIImage(named: "Stacker"),
+                icon: UIImage(named: "Crane"),
                 makeViewModel: { StackerViewModel(startURL: uStacker) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(StackerWrapper(viewModel: vm as! StackerViewModel, onClose: onClose))
