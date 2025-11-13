@@ -5,7 +5,7 @@
 //  Created by Kai Yoshida on 10/08/2025.
 //
 
-import SwiftUICore
+import SwiftUI
 
 struct WebGameContainerView: View {
     let game: WebGame

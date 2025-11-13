@@ -4,18 +4,20 @@
 //  Copyright © 2025 SOOLRA. All rights reserved.
 //
 
-import SwiftUI
 import CoreData
+import SwiftUI
 
 class SettingsViewModel: ObservableObject, ControllerServiceDelegate {
     @Published var selectedIndex: Int = 0
     let maxItems = 3  // Updated number of selectable items in settings
     var onDismiss: (() -> Void)?
-    
+
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {
         if !pressed { return }
-        print("SettingsView: Controller pressed - \(pressed), action: \(action.rawValue)")
-        
+        print(
+            "SettingsView: Controller pressed - \(pressed), action: \(action.rawValue)"
+        )
+
         switch action {
         case .up:
             selectedIndex = max(0, selectedIndex - 1)
@@ -43,6 +45,8 @@ struct SettingsView: View {
     @State private var showWebView = false
     @State private var showSlither = false
 
+    @StateObject private var walletmanager = walletManager
+
     var body: some View {
         NavigationView {
             List {
@@ -50,17 +54,29 @@ struct SettingsView: View {
                     Toggle("Dark Mode", isOn: $themeManager.isDarkMode)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(viewModel.selectedIndex == 0 ? Color.white : Color.clear, lineWidth: 2)
+                                .stroke(
+                                    viewModel.selectedIndex == 0
+                                        ? Color.white : Color.clear,
+                                    lineWidth: 2
+                                )
                         )
 
-                    Picker("Keyboard Color", selection: $themeManager.keyboardColor) {
-                        ForEach(ThemeManager.KeyboardColor.allCases, id: \.self) { color in
+                    Picker(
+                        "Keyboard Color",
+                        selection: $themeManager.keyboardColor
+                    ) {
+                        ForEach(ThemeManager.KeyboardColor.allCases, id: \.self)
+                        { color in
                             Text(color.rawValue.capitalized)
                         }
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.selectedIndex == 1 ? Color.white : Color.clear, lineWidth: 2)
+                            .stroke(
+                                viewModel.selectedIndex == 1
+                                    ? Color.white : Color.clear,
+                                lineWidth: 2
+                            )
                     )
 
                     NavigationLink("Manage Games") {
@@ -68,17 +84,24 @@ struct SettingsView: View {
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.selectedIndex == 2 ? Color.white : Color.clear, lineWidth: 2)
+                            .stroke(
+                                viewModel.selectedIndex == 2
+                                    ? Color.white : Color.clear,
+                                lineWidth: 2
+                            )
                     )
-                    
+
                     NavigationLink("Game Licenses") {
                         LicenseListView()
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.selectedIndex == 2 ? Color.white : Color.clear, lineWidth: 2)
+                            .stroke(
+                                viewModel.selectedIndex == 2
+                                    ? Color.white : Color.clear,
+                                lineWidth: 2
+                            )
                     )
-
 
                 }
 
@@ -92,104 +115,121 @@ struct SettingsView: View {
                         .foregroundColor(.secondary)
                 }
 
+                Group {
+                    switch walletmanager.authState {
+                    case .authenticated:
+                        Text("Sign out")
+                            .foregroundStyle(.red)
+                            .onTapGesture {
+                                Task {
+                                    await walletmanager.signOut()
+                                }
+                            }
+                    default:
+                        EmptyView()
+                    }
+                }
 
             }
             .navigationBarTitle("Settings", displayMode: .inline)
-            .navigationBarItems(leading:
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                        Text("Back")
+            .navigationBarItems(
+                leading:
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
                     }
-                }
             )
             .listStyle(GroupedListStyle())
         }.preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
 
-
-        .onAppear {
-            // Set the controller delegate to SettingsViewModel when view appears
-            BluetoothControllerService.shared.delegate = viewModel
-            viewModel.onDismiss = {
-                presentationMode.wrappedValue.dismiss()
+            .onAppear {
+                // Set the controller delegate to SettingsViewModel when view appears
+                BluetoothControllerService.shared.delegate = viewModel
+                viewModel.onDismiss = {
+                    presentationMode.wrappedValue.dismiss()
+                }
+                print(
+                    "SettingsView: Setting controller delegate to SettingsViewModel"
+                )
             }
-            print("SettingsView: Setting controller delegate to SettingsViewModel")
-        }
-        .onDisappear {
-            // Set the delegate back to HomeView's ViewModel when leaving
-            if BluetoothControllerService.shared.delegate === viewModel {
-                print("SettingsView: Setting controller delegate back to HomeView")
-                HomeViewModel.shared.setAsDelegate()
+            .onDisappear {
+                // Set the delegate back to HomeView's ViewModel when leaving
+                if BluetoothControllerService.shared.delegate === viewModel {
+                    print(
+                        "SettingsView: Setting controller delegate back to HomeView"
+                    )
+                    HomeViewModel.shared.setAsDelegate()
+                }
             }
-        }
     }
-    
-    
-    
-    
+
     struct ManageRomsView: View {
         @EnvironmentObject var dataController: CoreDataController
         @State private var newRomName: String = ""
         @State private var isLoading: Bool = false
         @StateObject private var viewModel = HomeViewModel.shared  // Use the shared HomeViewModel instance
-        @State private var isPresented: Bool = false // To track sheet presentation
+        @State private var isPresented: Bool = false  // To track sheet presentation
         @State private var roms: [Rom] = []
-        
+
+        @StateObject private var walletmanager = walletManager
+
         var body: some View {
             NavigationView {
                 VStack {
-                    
+
                     // Loading overlay
                     if isLoading {
-//                        ZStack {
-//                            // Dimmed background
-//                            Color.black.opacity(0.3)
-//                                .edgesIgnoringSafeArea(.all) // Optional: If you want to dim the screen
+                        //                        ZStack {
+                        //                            // Dimmed background
+                        //                            Color.black.opacity(0.3)
+                        //                                .edgesIgnoringSafeArea(.all) // Optional: If you want to dim the screen
 
-                            // Spinner overlay
-                            VStack(spacing: 15) {
-                                
-                                
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white)) // Adjust spinner color
-                                    .scaleEffect(1.5) // Adjust size
+                        // Spinner overlay
+                        VStack(spacing: 15) {
 
-                                Text("Loading...")
-                                    .foregroundColor(.white) // Match text color to spinner
-                                    .font(.headline) // Adjust font style
-                            }
-                            .padding(30)
-                            .background(Color.black.opacity(0.8)) // Darker background for contrast
-                            .cornerRadius(20) // Rounded corners
-                            .shadow(radius: 10) // Optional shadow
-                            .zIndex(1000) // Ensure it stays on top
+                            ProgressView()
+                                .progressViewStyle(
+                                    CircularProgressViewStyle(tint: .white)
+                                )  // Adjust spinner color
+                                .scaleEffect(1.5)  // Adjust size
+
+                            Text("Loading...")
+                                .foregroundColor(.white)  // Match text color to spinner
+                                .font(.headline)  // Adjust font style
                         }
-//
-//                    }
-                    
+                        .padding(30)
+                        .background(Color.black.opacity(0.8))  // Darker background for contrast
+                        .cornerRadius(20)  // Rounded corners
+                        .shadow(radius: 10)  // Optional shadow
+                        .zIndex(1000)  // Ensure it stays on top
+                    }
+                    //
+                    //                    }
+
                     List {
-                        
+
                         ForEach(roms, id: \.self) { rom in
                             HStack {
                                 Text(rom.name ?? "Unknown")
                                 Spacer()
                                 Button("Delete") {
                                     withAnimation {
-                                        dataController.romManager.deleteRom(rom: rom)
-                                        roms = dataController.romManager.fetchRoms()
+                                        dataController.romManager.deleteRom(
+                                            rom: rom
+                                        )
+                                        roms = dataController.romManager
+                                            .fetchRoms()
                                     }
                                 }
                                 .foregroundColor(.red)
                             }
                         }
                     }
-                    .listStyle(InsetGroupedListStyle()) // Optional for styling
-                    
-                    
-                    
-                    
+                    .listStyle(InsetGroupedListStyle())  // Optional for styling
                 }
                 .navigationTitle("Manage Games")
                 .toolbar {
@@ -207,27 +247,25 @@ struct SettingsView: View {
                 }
                 .sheet(isPresented: $isPresented) {
                     DocumentPicker { url in
-                        
+
                         // Use RomManager to handle adding the ROM
                         Task {
                             isLoading = true
-                            await dataController.romManager.addRom( url: url)
+                            await dataController.romManager.addRom(url: url)
                             withAnimation {
                                 roms = dataController.romManager.fetchRoms()
                                 isLoading = false
                             }
                         }
-                        
+
                     }
                     .font(.custom("Orbitron-Black", size: 24))
                 }
             }
         }
-        
-        
+
     }
-    
-    
+
     //struct CreateAccountView: View {
     //    @State private var username: String = ""
     //    @State private var email: String = ""
@@ -262,7 +300,7 @@ struct SettingsView: View {
     //        WebViewRepresentable(url: url)
     //    }
     //}
-    
+
     //// WebViewRepresentable to handle WKWebView
     //import WebKit
     //struct WebViewRepresentable: UIViewRepresentable {
@@ -276,13 +314,10 @@ struct SettingsView: View {
     //        uiView.load(URLRequest(url: url))
     //    }
     //}
-    
-    
+
     struct SettingsView_Previews: PreviewProvider {
         static var previews: some View {
             SettingsView()
         }
     }
 }
-
-
