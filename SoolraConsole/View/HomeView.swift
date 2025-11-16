@@ -164,6 +164,7 @@ struct HomeView: View {
                 }
             }
         }
+        
         .onChange(of: defaultRomsLoadingState.isLoading) { loading in
             if !loading {
                 roms = dataController.romManager.fetchRoms()
@@ -241,6 +242,10 @@ struct HomeView: View {
                 viewModel.onAppear()
             }
         }
+        .onChange(of: walletManager.privyUser?.id) { newID in
+            engagementTracker.setPrivyId(newID)
+        }
+
         .environmentObject(controllerViewModel)
         .profileOverlay(isPresented: overlaystate.isProfileOverlayVisible)
         .walletOverlay(isPresented: overlaystate.isWalletOverlayVisible)
@@ -340,7 +345,10 @@ struct HomeView: View {
                 geometry.size.height + safeAreaTop + safeAreaBottom
 
             ZStack(alignment: .bottom) {
-                WebGameContainerView(game: webGame) { currentView = .grid }
+                WebGameContainerView(game: webGame) {
+                    engagementTracker.setCurrentRom("none")
+                    currentView = .grid
+                }
                     .frame(
                         width: geometry.size.width,
                         height: geometry.size.height
@@ -720,6 +728,7 @@ struct HomeView: View {
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
                 currentView = .grid
+                engagementTracker.setCurrentRom("none")
             }
         }
 
