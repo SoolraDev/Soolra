@@ -5,5 +5,29 @@
 //  Created by Michael Essiet on 10/11/2025.
 //
 
-public let soolraBackendURL =
-    "https://elysia-backend-aa99026e9094.herokuapp.com"
+import Foundation
+
+struct Configuration {
+    // MARK: - API Details
+    
+    #if DEBUG
+    // --- DEVELOPMENT ---
+    // This code will only be used when running in the Debug configuration (from Xcode).
+    static let privyAppId = "cmi1t9gor026hl80c5lemdxbr"
+    static let privyClientId = "client-WY6TAYNcsf7GgVJHBBPzTjeoQsFwxc9kpnMtriSSQ4jda"
+    static let soolraBackendURL = "https://elysia-backend-aa99026e9094.herokuapp.com"
+    static let enableDiagnostics = true
+
+    #else
+    // --- PRODUCTION ---
+    // This code will be used for all other builds (Release, TestFlight, App Store).
+    static let privyAppId = "cmi1t9gor026hl80c5lemdxbr"
+    static let privyClientId = "client-WY6TAYNcsf7GgVJHBBPzTjeoQsFwxc9kpnMtriSSQ4jda"
+    static let soolraBackendURL = "https://elysia-backend-aa99026e9094.herokuapp.com"
+    static let enableDiagnostics = false
+    #endif
+
+    // MARK: - Other Constants
+    
+    static let defaultTimeout: TimeInterval = 30
+}

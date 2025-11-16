@@ -51,8 +51,8 @@ public class WalletManager: ObservableObject {
 
     init() {
         let privyConfig = PrivyConfig(
-            appId: "cmhce45oa003jl40b67t2vutc",
-            appClientId: "client-WY6STFdmgPu6LfcrVXcaSA6XkDLHC59UeaxwAY2aautjw",
+            appId: Configuration.privyAppId,
+            appClientId: Configuration.privyClientId,
             loggingConfig: .init(logLevel: .verbose)
         )
         self.privyClient = PrivySdk.initialize(config: privyConfig)
@@ -152,7 +152,7 @@ public class WalletManager: ObservableObject {
 
         // 3. Construct the URL for the API endpoint
         let urlString =
-            "\(soolraBackendURL)/v1/users/\(userId)/balance/\(address ?? "")"
+            "\(Configuration.soolraBackendURL)/v1/users/\(userId)/balance/\(address ?? "")"
 
         guard let url = URL(string: urlString) else {
             print("Error: Could not create a valid URL from \(urlString)")
@@ -171,7 +171,9 @@ public class WalletManager: ObservableObject {
 
         do {
             // 4. Perform an asynchronous network request using the configured URLRequest so headers are sent
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await URLSession.shared.data(
+                for: request
+            )
 
             // 5. Validate the HTTP response
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -180,7 +182,9 @@ public class WalletManager: ObservableObject {
                 return
             }
             guard httpResponse.statusCode == 200 else {
-                print("Error: Received a non-200 status code from the server: \(httpResponse.statusCode)")
+                print(
+                    "Error: Received a non-200 status code from the server: \(httpResponse.statusCode)"
+                )
                 self.balances = defaultBalances
                 return
             }
