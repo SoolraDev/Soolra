@@ -27,21 +27,26 @@ struct ProfileView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(height: 120)
                     .clipped()
-                AsyncImage(
-                    url: URL(string: "https://i.pravatar.cc/150")  // Example URL
-                ) { image in
-                    image.resizable()
-                        .aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: 80, height: 80)
-                .background(.gray)
-                .clipShape(Circle())
-                .overlay(
-                    Circle().stroke(Color.purple, lineWidth: 3)
-                )
-                .offset(x: -120, y: 60)
+
+                // TODO: Implement custom user icons using NFTs
+                //                AsyncImage(
+                //                    url: URL(string: "https://i.pravatar.cc/150")  // Example URL
+                //                ) { image in
+                //                    image.resizable()
+                //                        .aspectRatio(contentMode: .fill)
+                //                } placeholder: {
+                //                    ProgressView()
+                //                }
+                Image(systemName: "person.crop.circle")
+                    .resizable()
+                    .foregroundStyle(.white)
+                    .frame(width: 80, height: 80)
+                    .background(.gray)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle().stroke(Color.purple, lineWidth: 3)
+                    )
+                    .offset(x: -120, y: 60)
             }
             .padding(.bottom, 40)
 
@@ -76,7 +81,7 @@ struct ProfileView: View {
 
                 HStack {
                     ForEach(0..<3) { index in
-                        AsyncImage(
+                        CachedAsyncImage(
                             url: URL(
                                 string:
                                     "https://random.danielpetrica.com/api/random?format=thumb"
@@ -100,7 +105,7 @@ struct ProfileView: View {
                 }
             }
 
-            Group {
+            VStack {
                 Text("Treasures")
                     .font(.title2)
                     .foregroundStyle(.white)
@@ -111,7 +116,7 @@ struct ProfileView: View {
                 ScrollView(.horizontal, showsIndicators: true) {
                     HStack {
                         ForEach(0..<10) { index in
-                            AsyncImage(
+                            CachedAsyncImage(
                                 url: URL(
                                     string:
                                         "https://random.danielpetrica.com/api/random?format=thumb"
@@ -134,7 +139,7 @@ struct ProfileView: View {
                         }
                     }
                 }.padding(.horizontal)
-            }
+            }.comingSoon()
 
             Button("Close") { withAnimation { isPresented.toggle() } }
                 .padding()

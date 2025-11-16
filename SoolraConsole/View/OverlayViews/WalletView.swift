@@ -62,6 +62,7 @@ struct WalletView: View {
                     .disabled(true)
             }
             .padding()
+            .comingSoon()
 
             VStack {
                 Menu {

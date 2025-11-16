@@ -21,7 +21,6 @@ struct GameViewData: Equatable {
         return lhs.name == rhs.name && lhs.romPath == rhs.romPath
     }
 }
-
 enum CurrentView: Equatable {
     case grid
     case gameDetail(Rom)

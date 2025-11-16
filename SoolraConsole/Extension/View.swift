@@ -44,3 +44,48 @@ extension View {
             )
     }
 }
+
+/// A view modifier that applies a blur and an overlay to indicate a "Coming Soon" feature.
+struct ComingSoonModifier: ViewModifier {
+    /// A boolean to control whether the overlay is active.
+    var isEnabled: Bool
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content
+                .blur(radius: 8)
+                .overlay(
+                    ZStack {
+                        // Frosted glass effect for a modern iOS look
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                            .frame(maxWidth: 200, maxHeight: 120)
+
+                        VStack(spacing: 8) {
+                            Image(systemName: "lock.fill")
+                                .font(.title)
+                            Text("Coming Soon")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+                )
+                // Disable user interaction with the content behind the overlay
+                .allowsHitTesting(false)
+        } else {
+            content
+        }
+    }
+}
+
+/// Extension to make the modifier easier to use.
+extension View {
+    /// Applies a "Coming Soon" overlay to the view.
+    /// - Parameter isEnabled: A boolean to control whether the overlay is visible.
+    ///   Defaults to `true`.
+    func comingSoon(_ isEnabled: Bool = true) -> some View {
+        self.modifier(ComingSoonModifier(isEnabled: isEnabled))
+    }
+}
