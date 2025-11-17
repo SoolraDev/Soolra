@@ -53,7 +53,7 @@ struct HomeView: View {
         .shared
 
     @StateObject private var viewModel = HomeViewModel.shared
-    @StateObject private var engagementTracker = EngagementTracker()
+    @StateObject private var engagementTracker = globalEngagementTracker
     @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState
         .shared
 

@@ -1,15 +1,25 @@
 import Foundation
-import FirebaseAnalytics
 import UIKit
 
+@MainActor
+let globalEngagementTracker = EngagementTracker.shared
+
 class EngagementTracker: ObservableObject {
-    private var timer: Timer?
-    private var currentRom: String = "none"
-    private var privyId: String = "none"
-    private var lastInGameTime: Double = 0  // Track when we last checkpointed game time (in ms)
-    
-    init() {
-        
+    static let shared = EngagementTracker()
+
+    private let apiClient = ApiClient()
+    private var privyId: String?
+
+    // Timer for the heartbeat mechanism
+    private var heartbeatTimer: Timer?
+
+    // Properties for tracking the *active* game session
+    private var currentRomName: String?
+    private var sessionStartTime: Date?
+    private var lastHeartbeatTime: Date?  // Tracks the start of the last time slice
+
+    // Make init private for singleton pattern
+    private init() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(appDidBecomeActive),
@@ -24,143 +34,210 @@ class EngagementTracker: ObservableObject {
             object: nil
         )
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
-    // MARK: - App lifecycle hooks
-    
+
+    // ... (rest of the EngagementTracker code is unchanged)
+
+    // MARK: - App Lifecycle & Tracking Control
+
     @objc private func appDidBecomeActive() {
-        
-        // Resume heartbeats
+        // When the app is active, start the heartbeat timer and upload any pending sessions.
         startTracking()
-        
-        // Reset game timer when app becomes active (if in a game)
-        if currentRom != "none" {
-            lastInGameTime = Date().timeIntervalSince1970 * 1000
+        Task {
+            await uploadPendingSessions()
         }
     }
-    
+
     @objc private func appDidEnterBackground() {
-        
-        // Save any elapsed time if in a game
-        if currentRom != "none" {
-            addElapsedGameTime()
-        }
-        
-        // Stop heartbeats
+        // When backgrounding, save any final in-progress time and stop the timer.
+        saveCurrentTimeSlice()
         stopTracking()
     }
 
-    // MARK: - Public API
-    
+    /// Starts the heartbeat timer. The HomeView can call this in onAppear.
     func startTracking() {
+        // Ensure we don't have multiple timers running.
         stopTracking()
-        timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
-            self.onHeartbeat()
+
+        // The timer will call onHeartbeat every 30 seconds.
+        heartbeatTimer = Timer.scheduledTimer(
+            withTimeInterval: 30.0,
+            repeats: true
+        ) { [weak self] _ in
+            self?.onHeartbeat()
         }
+        print("❤️ Tracking started.")
     }
-    
+
+    /// Stops the heartbeat timer.
     func stopTracking() {
-        timer?.invalidate()
-        timer = nil
+        heartbeatTimer?.invalidate()
+        heartbeatTimer = nil
+        print("🚫 Tracking stopped.")
     }
-    
-    // MARK: - Heartbeat Handler
-    
-    private func onHeartbeat() {
-        
-        // If user is playing a game, checkpoint the elapsed time
-        if currentRom != "none" {
-            addElapsedGameTime()
-            // Reset checkpoint
-            lastInGameTime = Date().timeIntervalSince1970 * 1000
-        }
-        
-        // Get current total (as integer, no decimals)
-        let totalMs = Int(UserDefaults.standard.double(forKey: gametimeKey()))
-        
-        print("📊 Sending session_heartbeat - total_gametime_ms: \(totalMs)")
-        
-        // Send heartbeat event with total gametime
-        Analytics.logEvent("session_heartbeat", parameters: [
-            "privy_id": self.privyId,
-            "current_rom": self.currentRom,
-            "total_gametime_ms": totalMs,
-            "timestamp": Date().timeIntervalSince1970
-        ])
-    }
-    
-    func setCurrentRom(_ rom: String) {
-        
-        // Ending a game session
-        if rom == "none" {
-            
-            // Add elapsed time since last checkpoint
-            addElapsedGameTime()
-            
-            let totalMs = Int(UserDefaults.standard.double(forKey: gametimeKey()))
-            
-            
-            Analytics.logEvent("game_ended", parameters: [
-                "privy_id": self.privyId,
-                "current_rom": self.currentRom,
-                "total_gametime_ms": totalMs,
-                "timestamp": Date().timeIntervalSince1970
-            ])
-            
-            currentRom = "none"
-            lastInGameTime = 0
-            return
-        }
-        
-        // Starting / switching to a game
-        currentRom = rom
-        lastInGameTime = Date().timeIntervalSince1970 * 1000
-        
-        let totalMs = Int(UserDefaults.standard.double(forKey: gametimeKey()))
-        
-        
-        Analytics.logEvent("game_started", parameters: [
-            "privy_id": self.privyId,
-            "current_rom": rom,
-            "total_gametime_ms": totalMs,
-            "timestamp": Date().timeIntervalSince1970
-        ])
-    }
-    
-    // MARK: - Add elapsed game time since last checkpoint
-    
-    private func addElapsedGameTime() {
-        guard lastInGameTime > 0 else {
-            return
-        }
-        
-        let nowMs = Date().timeIntervalSince1970 * 1000
-        let elapsedMs = nowMs - lastInGameTime
-        let existingMs = UserDefaults.standard.double(forKey: gametimeKey())
-        let updatedTotalMs = existingMs + elapsedMs
-        
-        UserDefaults.standard.set(updatedTotalMs, forKey: gametimeKey())
-        
-        print("⏱️ Added elapsed time: \(Int(elapsedMs)) ms (from \(Int(lastInGameTime)) to \(Int(nowMs)))")
-        print("📦 Total for \(privyId): \(Int(existingMs)) ms → \(Int(updatedTotalMs)) ms")
-    }
-    
-    // MARK: - Privy ID
-    
+
+    // MARK: - Public API
+
     func setPrivyId(_ id: String?) {
-        self.privyId = id ?? "none"
-    
-        
-        let totalMs = UserDefaults.standard.double(forKey: gametimeKey())
-        print("⏱️ Loaded total game time for \(privyId): \(Int(totalMs)) ms")
+        guard let id = id, !id.isEmpty else {
+            self.privyId = nil
+            // Clear any pending sessions for the logged-out user if needed
+            return
+        }
+        self.privyId = id
+        Task { await syncWithBackend() }
     }
-    
-    // MARK: - Keys for cached data
-    
-    private func gametimeKey() -> String {
-        "total_gametime_\(privyId)"
+
+    /// Call this when a game starts or the user navigates away.
+    /// Pass the name of the game to start, or `nil`/`"none"` to end the current session.
+    func setCurrentRom(_ romName: String?) {
+        // Finalize and save any existing game session before starting a new one.
+        saveCurrentTimeSlice()
+
+        guard let romName = romName, romName != "none", !romName.isEmpty else {
+            // If the new name is nil or "none", we just end the session.
+            currentRomName = nil
+            lastHeartbeatTime = nil
+            return
+        }
+
+        // Start a new game session.
+        self.currentRomName = romName
+        // The lastHeartbeatTime is the anchor for our next time slice.
+        self.lastHeartbeatTime = Date()
+        print("🎮 Game started: \(romName)")
+    }
+
+    // MARK: - Core Logic
+
+    /// The heartbeat function, called by the timer.
+    @objc private func onHeartbeat() {
+        print("❤️ Heartbeat fired.")
+        // The heartbeat's job is to save the current slice of time.
+        saveCurrentTimeSlice()
+    }
+
+    /// Calculates the time since the last heartbeat, saves it as a record, and resets the timer anchor.
+    private func saveCurrentTimeSlice() {
+        // Ensure a game is actually running.
+        guard let romName = currentRomName, let startTime = lastHeartbeatTime
+        else {
+            return
+        }
+
+        let now = Date()
+        let duration = now.timeIntervalSince(startTime)
+
+        // Ignore tiny fragments that are likely noise.
+        guard duration >= 1.0 else { return }
+
+        let timeSlice = GameSessionRecord(
+            id: UUID(),
+            gameName: romName,
+            duration: duration,
+            score: 0,  // Score can be added later if needed
+            recordedAt: now
+        )
+
+        print("💾 Saving time slice for \(romName). Duration: \(Int(duration))s")
+        saveSessionLocally(timeSlice)
+
+        // IMPORTANT: Reset the anchor time to now for the next slice.
+        self.lastHeartbeatTime = now
+
+        // After saving, trigger an upload attempt.
+        Task {
+            await uploadPendingSessions()
+        }
+    }
+
+    private func syncWithBackend() async {
+        guard let userId = privyId else { return }
+        print("🔄 Syncing with backend for user \(userId)...")
+
+        guard
+            let remoteMetrics = await apiClient.fetchUserMetrics(userId: userId)
+        else {
+            print("Could not sync metrics from server.")
+            return
+        }
+
+        let remoteTotalSeconds = TimeInterval(
+            remoteMetrics.totalTimePlayed / 1000
+        )
+        UserDefaults.standard.set(
+            remoteTotalSeconds,
+            forKey: totalPlayTimeKey()
+        )
+        print(
+            "✅ Synced total playtime from backend: \(Int(remoteTotalSeconds))s"
+        )
+
+        await uploadPendingSessions()
+    }
+
+    private func uploadPendingSessions() async {
+        guard let userId = privyId, !getPendingSessions().isEmpty else {
+            return
+        }
+
+        var pending = getPendingSessions()
+        print("📤 Found \(pending.count) session(s) to upload.")
+
+        for session in pending {
+            let success = await apiClient.postGameSession(
+                session,
+                userId: userId
+            )
+            if success {
+                removeLocalSession(withId: session.id)
+            } else {
+                print(
+                    "🛑 Upload failed for session \(session.id). Will retry later."
+                )
+                break
+            }
+        }
+    }
+
+    // MARK: - UserDefaults Persistence (Unchanged)
+
+    private func pendingSessionsKey() -> String {
+        "pending_sessions_\(privyId ?? "guest")"
+    }
+    private func totalPlayTimeKey() -> String {
+        "total_play_time_\(privyId ?? "guest")"
+    }
+
+    private func saveSessionLocally(_ session: GameSessionRecord) {
+        var pending = getPendingSessions()
+        pending.append(session)
+        if let data = try? JSONEncoder().encode(pending) {
+            UserDefaults.standard.set(data, forKey: pendingSessionsKey())
+        }
+    }
+
+    private func getPendingSessions() -> [GameSessionRecord] {
+        guard
+            let data = UserDefaults.standard.data(forKey: pendingSessionsKey()),
+            let sessions = try? JSONDecoder().decode(
+                [GameSessionRecord].self,
+                from: data
+            )
+        else {
+            return []
+        }
+        return sessions
+    }
+
+    private func removeLocalSession(withId sessionId: UUID) {
+        var pending = getPendingSessions()
+        pending.removeAll { $0.id == sessionId }
+        if let data = try? JSONEncoder().encode(pending) {
+            UserDefaults.standard.set(data, forKey: pendingSessionsKey())
+        }
     }
 }

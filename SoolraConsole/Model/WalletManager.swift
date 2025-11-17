@@ -63,12 +63,46 @@ public class WalletManager: ObservableObject {
         }
     }
 
+    /// The single point of truth for updating all app services after authentication.
+    private func onUserAuthenticated() async {
+        guard let user = self.privyUser else { return }
+
+        // 1. Get the JWT for API calls
+        let accessToken = try? await user.getAccessToken()
+
+        // 2. Update the shared AuthManager for the ApiClient
+        AuthManager.shared.currentPrivyId = user.id
+        AuthManager.shared.currentJwt = accessToken
+
+        // 3. Notify the EngagementTracker of the new user
+        globalEngagementTracker.setPrivyId(user.id)
+
+        print("✅ WalletManager: Auth state updated for user \(user.id).")
+    }
+
+    /// The single point of truth for clearing state after logout.
+    private func onUserSignedOut() {
+        // 1. Clear the shared AuthManager
+        AuthManager.shared.clear()
+
+        // 2. Notify the EngagementTracker that the user is gone
+        globalEngagementTracker.setPrivyId(nil as String?)
+
+        print("🔴 WalletManager: Auth state cleared.")
+    }
+
     // MARK: - Public Auth Methods
 
     public func checkInitialAuthState() async {
         self.isLoading = true
         self.authState = await self.privyClient.getAuthState()
         self.privyUser = await self.privyClient.getUser()
+
+        if self.privyUser != nil {
+            // User is already logged in, update services
+            await onUserAuthenticated()
+        }
+
         self.isLoading = false
     }
 
@@ -76,13 +110,17 @@ public class WalletManager: ObservableObject {
         self.isLoading = true
         self.errorMessage = nil
         do {
-            self.privyUser = try await self.privyClient.oAuth.login(
-                with: .google
-            )
-            self.authState = .authenticated(self.privyUser!)
-            if self.privyUser?.embeddedEthereumWallets.isEmpty == true {
+            let user = try await self.privyClient.oAuth.login(with: .google)
+            self.privyUser = user
+            self.authState = .authenticated(user)
+
+            if user.embeddedEthereumWallets.isEmpty == true {
                 try await self.createWallet()
             }
+
+            // User is now logged in, update services
+            await onUserAuthenticated()
+
         } catch {
             self.errorMessage = error.localizedDescription
         }
@@ -99,14 +137,20 @@ public class WalletManager: ObservableObject {
         self.isLoading = true
         self.errorMessage = nil
         do {
-            self.privyUser = try await self.privyClient.email.loginWithCode(
+            let user = try await self.privyClient.email.loginWithCode(
                 otp,
                 sentTo: email
             )
-            self.authState = .authenticated(self.privyUser!)
-            if self.privyUser?.embeddedEthereumWallets.isEmpty == true {
+            self.privyUser = user
+            self.authState = .authenticated(user)
+
+            if user.embeddedEthereumWallets.isEmpty == true {
                 try await self.createWallet()
             }
+
+            // User is now logged in, update services
+            await onUserAuthenticated()
+
         } catch {
             self.errorMessage = error.localizedDescription
         }
@@ -118,86 +162,69 @@ public class WalletManager: ObservableObject {
         await self.privyUser?.logout()
         self.privyUser = nil
         self.authState = await self.privyClient.getAuthState()
+
+        // User is now signed out, clear services
+        onUserSignedOut()
+
         self.isLoading = false
     }
 
     public func getAccessToken() async -> String? {
-        do {
-            return try await self.privyUser?.getAccessToken()
-        } catch {
-            print("Something went wrong while getting the user's access token")
-            return nil
-        }
+        // This is now mainly used internally by the onUserAuthenticated method
+        return try? await self.privyUser?.getAccessToken()
     }
 
     public func getBalances() async {
-        // Default balances to return in case of any failure
         let defaultBalances = ["usdc": "0.0", "usdt": "0.0"]
 
-        guard let accessToken = await self.getAccessToken() else {
-            print("Error: Access token is nil. Returning default balances.")
-            self.balances = defaultBalances
-            return
-        }
-
-        // 1. Safely unwrap the user ID
+        // The ApiClient will now get the token from AuthManager, so this function
+        // no longer needs to fetch it directly. We just need the user ID.
         guard let userId = self.privyUser?.id else {
             print("Error: User ID is nil.")
             self.balances = defaultBalances
             return
         }
 
-        // 2. Get the wallet address
-        let address = self.getAddress()
-
-        // 3. Construct the URL for the API endpoint
+        let address = self.getAddress() ?? ""
         let urlString =
-            "\(Configuration.soolraBackendURL)/v1/users/\(userId)/balance/\(address ?? "")"
-
+            "\(Configuration.soolraBackendURL)/v1/users/\(userId)/balance/\(address)"
         guard let url = URL(string: urlString) else {
-            print("Error: Could not create a valid URL from \(urlString)")
             self.balances = defaultBalances
             return
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        // Add the user's JWT
-        request.setValue(
-            "\(accessToken)",
-            forHTTPHeaderField: "jwt"
-        )
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // The ApiClient and its AuthManager handle headers now.
+        // For direct calls like this, we retrieve from AuthManager.
+        if let headers = AuthManager.shared.getAuthHeaders() {
+            request.allHTTPHeaderFields = headers
+        } else {
+            print("Error: Could not get auth headers for getBalances.")
+            self.balances = defaultBalances
+            return
+        }
 
         do {
-            // 4. Perform an asynchronous network request using the configured URLRequest so headers are sent
             let (data, response) = try await URLSession.shared.data(
                 for: request
             )
-
-            // 5. Validate the HTTP response
-            guard let httpResponse = response as? HTTPURLResponse else {
-                print("Error: Response was not an HTTPURLResponse.")
-                self.balances = defaultBalances
-                return
-            }
-            guard httpResponse.statusCode == 200 else {
+            guard let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200
+            else {
                 print(
-                    "Error: Received a non-200 status code from the server: \(httpResponse.statusCode)"
+                    "Error: Received non-200 status from getBalances: \((response as? HTTPURLResponse)?.statusCode ?? -1)"
                 )
                 self.balances = defaultBalances
                 return
             }
-
-            // 6. Decode the JSON response into a dictionary
             let balances = try JSONDecoder().decode(
                 [String: String].self,
                 from: data
             )
             self.balances = balances
-
         } catch {
-            // 7. Handle any errors that occur during the network request or decoding
             print(
                 "An error occurred while fetching balances: \(error.localizedDescription)"
             )
@@ -205,7 +232,7 @@ public class WalletManager: ObservableObject {
         }
     }
 
-    // ... (rest of your wallet methods like createWallet, signTransaction, etc.)
+    // (rest of the wallet methods like createWallet, signTransaction, etc.)
     func createWallet() async throws -> EmbeddedEthereumWallet? {
         return try await self.privyUser?.createEthereumWallet()
     }
