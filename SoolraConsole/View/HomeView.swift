@@ -859,7 +859,7 @@ struct HomeNavigationView: View {
                 } else {
                     base
                 }
-            }.hidden()
+            }
 
             Group {
                 let base = BlinkingFocusedButton(

@@ -69,9 +69,9 @@ struct ProfileView: View {
                     title: "Total Time Played",
                     value: userMetrics.totalTimePlayed.toWordedString()
                 )
-            }.padding()
+            }.padding().comingSoon()
 
-            Group {
+            VStack {
                 Text("Top 3 games")
                     .font(.title2)
                     .foregroundStyle(.white)
@@ -103,7 +103,7 @@ struct ProfileView: View {
                         }
                     }
                 }
-            }
+            }.comingSoon()
 
             VStack {
                 Text("Treasures")
