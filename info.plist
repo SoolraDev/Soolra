@@ -41,6 +41,19 @@
 	</array>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.soolra.soolra</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>soolra</string>
+			</array>
+		</dict>
+	</array>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
