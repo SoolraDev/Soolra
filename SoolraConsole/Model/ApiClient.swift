@@ -64,7 +64,13 @@ class ApiClient {
                 print("🚨 Fetch metrics failed: Invalid response")
                 return nil
             }
-            let metrics = try JSONDecoder().decode(
+            // 1. Create a JSONDecoder instance.
+            let decoder = JSONDecoder()
+            // 2. Set the date decoding strategy to handle ISO 8601 strings.
+            decoder.dateDecodingStrategy = .iso8601
+
+            // 3. Use the configured decoder.
+            let metrics = try decoder.decode(
                 UserMetricsResponse.self,
                 from: data
             )
@@ -137,5 +143,15 @@ struct MetricsUploadBody: Codable {
 struct UserMetricsResponse: Codable {
     let id: String
     let totalTimePlayed: Int  // Milliseconds from backend
+    let points: Int
+    let lastUpdated: Date
+    let ranking: Int?
     // Add other fields like points, ranking, etc., if you need them in the app
+}
+
+struct Game: Codable {
+    let imageUrl: String?
+    let gameName: String
+    let score: Int
+    let duration: TimeInterval
 }

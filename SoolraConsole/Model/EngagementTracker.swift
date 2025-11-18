@@ -1,3 +1,4 @@
+import FirebaseAnalytics
 import Foundation
 import UIKit
 
@@ -97,6 +98,14 @@ class EngagementTracker: ObservableObject {
         // Finalize and save any existing game session before starting a new one.
         saveCurrentTimeSlice()
 
+        Analytics.logEvent(
+            "game_started",
+            parameters: [
+                "current_rom": romName ?? "unknown",
+                "timestamp": Date().timeIntervalSince1970,
+            ]
+        )
+
         guard let romName = romName, romName != "none", !romName.isEmpty else {
             // If the new name is nil or "none", we just end the session.
             currentRomName = nil
@@ -127,6 +136,15 @@ class EngagementTracker: ObservableObject {
         else {
             return
         }
+
+        // Upload Firebase analytics
+        Analytics.logEvent(
+            "session_heartbeat",
+            parameters: [
+                "current_rom": romName,
+                "timestamp": Date().timeIntervalSince1970,
+            ]
+        )
 
         let now = Date()
         let duration = now.timeIntervalSince(startTime)

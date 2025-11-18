@@ -23,7 +23,7 @@ struct Configuration {
     // This code will be used for all other builds (Release, TestFlight, App Store).
     static let privyAppId = "cmi1t9gor026hl80c5lemdxbr"
     static let privyClientId = "client-WY6TAYNcsf7GgVJHBBPzTjeoQsFwxc9kpnMtriSSQ4jda"
-    static let soolraBackendURL = "https://elysia-backend-aa99026e9094.herokuapp.com"
+    static let soolraBackendURL = "https://api.soolra.com"
     static let enableDiagnostics = false
     #endif
 

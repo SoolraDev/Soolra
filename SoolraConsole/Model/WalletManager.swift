@@ -76,6 +76,8 @@ public class WalletManager: ObservableObject {
 
         // 3. Notify the EngagementTracker of the new user
         globalEngagementTracker.setPrivyId(user.id)
+        
+        await dataManager.fetchUserMetrics(userId: user.id)
 
         print("✅ WalletManager: Auth state updated for user \(user.id).")
     }
@@ -87,6 +89,8 @@ public class WalletManager: ObservableObject {
 
         // 2. Notify the EngagementTracker that the user is gone
         globalEngagementTracker.setPrivyId(nil as String?)
+        
+        dataManager.clear()
 
         print("🔴 WalletManager: Auth state cleared.")
     }

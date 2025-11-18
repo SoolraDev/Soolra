@@ -8,13 +8,6 @@
 import SwiftUI
 
 struct ProfileView: View {
-    private let userMetrics: UserMetrics = UserMetrics(
-        userId: "",
-        points: 100,
-        lastUpdated: Date(),
-        ranking: 100,
-        totalTimePlayed: 100000
-    )
     @Binding var isPresented: Bool
     @StateObject private var vv = overlayState
 
@@ -55,21 +48,25 @@ struct ProfileView: View {
                 MetricBanner(
                     iconName: "target",
                     title: "Points Earned",
-                    value: "\(userMetrics.points)"
+//                    value: "\(dataManager.userMetrics?.points, default: "0")"
+                    value: "Coming soon"
                 )
 
                 MetricBanner(
                     iconName: "trophy.fill",
                     title: "Time Played Ranking",
-                    value: "\(userMetrics.ranking)"
+                    value: "\(dataManager.userMetrics?.ranking, default: "0")"
                 )
 
                 MetricBanner(
                     iconName: "hourglass",
                     title: "Total Time Played",
-                    value: userMetrics.totalTimePlayed.toWordedString()
+                    value: dataManager.userMetrics?.totalTimePlayed.toWordedString() ?? "0"
                 )
-            }.padding().comingSoon()
+            }.padding()
+                .task {
+                    await dataManager.refresh()
+                }
 
             VStack {
                 Text("Top 3 games")
