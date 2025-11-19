@@ -11,6 +11,14 @@ struct ProfileView: View {
     @Binding var isPresented: Bool
     @StateObject private var vv = overlayState
 
+    // State for the image picker flow
+    @State private var isShowingImagePicker = false
+    @State private var selectedImage: UIImage?
+    @State private var isUploading = false
+
+    // A unique ID to force AsyncImage to reload after an upload
+    @State private var imageId = UUID()
+
     var body: some View {
         VStack(spacing: 16) {
             // MARK: banner
@@ -21,25 +29,25 @@ struct ProfileView: View {
                     .frame(height: 120)
                     .clipped()
 
-                // TODO: Implement custom user icons using NFTs
-                //                AsyncImage(
-                //                    url: URL(string: "https://i.pravatar.cc/150")  // Example URL
-                //                ) { image in
-                //                    image.resizable()
-                //                        .aspectRatio(contentMode: .fill)
-                //                } placeholder: {
-                //                    ProgressView()
-                //                }
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .foregroundStyle(.white)
-                    .frame(width: 80, height: 80)
-                    .background(.gray)
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle().stroke(Color.purple, lineWidth: 3)
-                    )
-                    .offset(x: -120, y: 60)
+                Button(action: {
+                    isShowingImagePicker = true
+                }) {
+                    profileImageView
+                        .overlay {
+                            // Show a loading spinner overlay while uploading
+                            if isUploading {
+                                ZStack {
+                                    Color.black.opacity(0.4)
+                                    ProgressView()
+                                        .tint(.white)
+                                        .foregroundStyle(.white)
+                                }
+                                .clipShape(.circle)
+                                .ignoresSafeArea()
+                            }
+                        }
+                }
+                .offset(x: -120, y: 60)
             }
             .padding(.bottom, 40)
 
@@ -48,7 +56,7 @@ struct ProfileView: View {
                 MetricBanner(
                     iconName: "target",
                     title: "Points Earned",
-//                    value: "\(dataManager.userMetrics?.points, default: "0")"
+                    //                    value: "\(dataManager.userMetrics?.points, default: "0")"
                     value: "Coming soon"
                 )
 
@@ -61,7 +69,8 @@ struct ProfileView: View {
                 MetricBanner(
                     iconName: "hourglass",
                     title: "Total Time Played",
-                    value: dataManager.userMetrics?.totalTimePlayed.toWordedString() ?? "0"
+                    value: dataManager.userMetrics?.totalTimePlayed
+                        .toWordedString() ?? "0"
                 )
             }.padding()
                 .task {
@@ -149,6 +158,68 @@ struct ProfileView: View {
         .padding()
         .edgesIgnoringSafeArea(.all)
         .background(.gray.opacity(0.5))
+        .sheet(isPresented: $isShowingImagePicker) {
+            ImagePicker(image: $selectedImage)
+        }
+        .onChange(of: selectedImage) { _ in
+            guard let image = selectedImage else { return }
+            Task {
+                await uploadImage(image)
+            }
+        }
+    }
+
+    /// A computed property for the user's profile image view.
+    @ViewBuilder
+    private var profileImageView: some View {
+        // Construct the stable redirect URL for the user's image.
+        let imageUrlString =
+            "\(Configuration.soolraBackendURL)/v1/users/\(walletManager.privyUser?.id ?? "")/image"
+
+        AsyncImage(url: URL(string: imageUrlString)) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            case .failure, .empty:
+                // Fallback icon if the image fails to load or doesn't exist.
+                Image(systemName: "person.crop.circle")
+                    .resizable()
+                    .foregroundStyle(.white)
+            @unknown default:
+                // Placeholder while loading.
+                ProgressView()
+            }
+        }
+        .id(imageId)  // The key to forcing a reload on demand
+        .frame(width: 80, height: 80)
+        .background(.gray)
+        .clipShape(Circle())
+        .overlay(
+            Circle().stroke(Color.purple, lineWidth: 3)
+        )
+    }
+
+    /// The function that handles the upload task.
+    private func uploadImage(_ image: UIImage) async {
+        guard let userId = walletManager.privyUser?.id else { return }
+
+        isUploading = true
+        defer {
+            isUploading = false
+            selectedImage = nil  // Clear the selection after attempting upload
+        }
+
+        do {
+            _ = try await ProfileImageUploader.upload(image: image, for: userId)
+            // On success, change the imageId to force the AsyncImage to reload from the URL.
+            imageId = UUID()
+            print("✅ Image uploaded successfully.")
+        } catch {
+            print("❌ Failed to upload image: \(error.localizedDescription)")
+            // Optionally show an error alert to the user here.
+        }
     }
 }
 
