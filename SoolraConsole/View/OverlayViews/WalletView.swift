@@ -106,13 +106,24 @@ struct WalletView: View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal)
 
-            Button("Close") {
-                overlaystate.isWalletOverlayVisible.wrappedValue = false
-            }.padding().foregroundStyle(.white)
+            // NOTE: Previous "Close" button was removed from here
+            Spacer().frame(height: 20)
         }
         .purpleGradientBackground()
         .background(.ultraThinMaterial)
         .cornerRadius(20)
+        // MARK: Close Button Overlay
+        .overlay(alignment: .topTrailing) {
+            Button {
+                withAnimation { isPresented.toggle() }
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(.white)
+                    .padding()
+                    .shadow(radius: 2)
+            }
+        }
         .frame(maxWidth: 400, maxHeight: .infinity)
         .padding()
         .edgesIgnoringSafeArea(.all)
