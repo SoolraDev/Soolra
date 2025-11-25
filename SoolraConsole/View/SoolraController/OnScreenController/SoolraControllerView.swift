@@ -22,8 +22,10 @@ struct SoolraControllerView: View {
             VStack(spacing: 0) {
                 Spacer()
                 HStack(alignment: .top) {
-                    ArrowsView(onButton: { action, pressed in
-                        onButton?(action, pressed)
+                    ArrowsView(
+                        controllerViewModel: controllerViewModel,
+                        onButton: { action, pressed in
+                            onButton?(action, pressed)
                     })
                         .padding(.leading, 35)
                         .environmentObject(consoleManager)
@@ -50,7 +52,9 @@ struct SoolraControllerView: View {
                 }
                 MergedFunctionalKeyView(onButtonPress: onButtonPress)
                     .environmentObject(consoleManager)
-                ShoulderButtonView(onButton: { action, pressed in
+                ShoulderButtonView(
+                    controllerViewModel: controllerViewModel,
+                    onButton: { action, pressed in
                     onButton?(action, pressed)
                 })
                     .environmentObject(consoleManager)

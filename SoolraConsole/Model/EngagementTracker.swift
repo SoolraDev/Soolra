@@ -18,6 +18,11 @@ class EngagementTracker: ObservableObject {
     private var currentRomName: String?
     private var sessionStartTime: Date?
     private var lastHeartbeatTime: Date?  // Tracks the start of the last time slice
+    
+    // Time slice scoring
+    private var currentRomScoreModifier: Float = 1.0;
+    private var buttonPressPerSliceCounter: Int = 0;
+    private var buttonsRequiredToScoreSlice: Int = 5;
 
     // Make init private for singleton pattern
     private init() {
@@ -58,6 +63,18 @@ class EngagementTracker: ObservableObject {
         stopTracking()
     }
 
+    
+    func trackButtonPress(){
+        buttonPressPerSliceCounter+=1
+        print("buttonPressPerSliceCounter is: \(buttonPressPerSliceCounter)")
+    }
+    
+    func timeSliceHadEnoughButtonPresses() -> Bool{
+        print("buttonPressPerSliceCounter is: \(buttonPressPerSliceCounter)")
+        print("buttonsRequiredToScoreSlice is: \(buttonsRequiredToScoreSlice)")
+        return buttonPressPerSliceCounter >= buttonsRequiredToScoreSlice
+    }
+    
     /// Starts the heartbeat timer. The HomeView can call this in onAppear.
     func startTracking() {
         // Ensure we don't have multiple timers running.
@@ -65,7 +82,7 @@ class EngagementTracker: ObservableObject {
 
         // The timer will call onHeartbeat every 30 seconds.
         heartbeatTimer = Timer.scheduledTimer(
-            withTimeInterval: 30.0,
+            withTimeInterval: 30,
             repeats: true
         ) { [weak self] _ in
             self?.onHeartbeat()
@@ -94,7 +111,7 @@ class EngagementTracker: ObservableObject {
 
     /// Call this when a game starts or the user navigates away.
     /// Pass the name of the game to start, or `nil`/`"none"` to end the current session.
-    func setCurrentRom(_ romName: String?) {
+    func setCurrentRom(_ romName: String?, romScoreModifier: Float) {
         // Finalize and save any existing game session before starting a new one.
         saveCurrentTimeSlice()
 
@@ -109,12 +126,14 @@ class EngagementTracker: ObservableObject {
         guard let romName = romName, romName != "none", !romName.isEmpty else {
             // If the new name is nil or "none", we just end the session.
             currentRomName = nil
+            currentRomScoreModifier = 1.0
             lastHeartbeatTime = nil
             return
         }
 
         // Start a new game session.
         self.currentRomName = romName
+        self.currentRomScoreModifier = romScoreModifier
         // The lastHeartbeatTime is the anchor for our next time slice.
         self.lastHeartbeatTime = Date()
         print("🎮 Game started: \(romName)")
@@ -148,24 +167,27 @@ class EngagementTracker: ObservableObject {
 
         let now = Date()
         let duration = now.timeIntervalSince(startTime)
-
+        
+        let score = Int(round(timeSliceHadEnoughButtonPresses() ? currentRomScoreModifier : 0))
+        print("currentRomScoreModifier is: \(currentRomScoreModifier)")
         // Ignore tiny fragments that are likely noise.
         guard duration >= 1.0 else { return }
-
+            
         let timeSlice = GameSessionRecord(
             id: UUID(),
             gameName: romName,
             duration: duration,
-            score: 0,  // Score can be added later if needed
+            score: score,  // Score can be added later if needed
             recordedAt: now
         )
 
-        print("💾 Saving time slice for \(romName). Duration: \(Int(duration))s")
+        print("💾 Saving time slice for \(romName). Duration: \(Int(duration))s. Score: \(score).")
         saveSessionLocally(timeSlice)
 
         // IMPORTANT: Reset the anchor time to now for the next slice.
         self.lastHeartbeatTime = now
-
+        self.buttonPressPerSliceCounter = 0
+        
         // After saving, trigger an upload attempt.
         Task {
             await uploadPendingSessions()

@@ -199,35 +199,7 @@ struct HomeView: View {
         }
         .onChange(of: controllerViewModel.lastAction) { evt in
             guard let evt = evt else { return }
-
-            if isShopDialogVisible {
-                if evt.pressed {
-                    switch evt.action {
-                    case .x:
-                        isShopDialogVisible = false
-                    case .a:
-                        isShopDialogVisible = false
-                        isShopWebviewVisible = true
-                    default: break
-                    }
-                }
-                return
-            }
-
-            switch currentView {
-            case .grid:
-                viewModel.controllerDidPress(
-                    action: evt.action,
-                    pressed: evt.pressed
-                )
-            case .web:
-                BluetoothControllerService.shared.delegate?.controllerDidPress(
-                    action: evt.action,
-                    pressed: evt.pressed
-                )
-            default:
-                break
-            }
+            handleControllerEvent(evt)
         }
         .onChange(of: isSettingsPresented) { newValue in
             if !newValue {
@@ -252,8 +224,56 @@ struct HomeView: View {
         .marketOverlay(isPresented: overlaystate.isMarketOverlayVisible)
     }
 
-    // MARK: - Refactored Main Views
-
+    // Add this helper function in your HomeView struct, outside of body
+    private func handleControllerEvent(_ evt: ControllerAction) {
+        if isShopDialogVisible {
+            if evt.pressed {
+                switch evt.action {
+                case .x:
+                    isShopDialogVisible = false
+                case .a:
+                    isShopDialogVisible = false
+                    isShopWebviewVisible = true
+                default: break
+                }
+            }
+            return
+        }
+        
+        // Track button presses for engagement
+        if evt.pressed {
+            switch currentView {
+            case .game, .web:
+                // Only track meaningful gameplay buttons, not menu buttons
+                switch evt.action {
+                case .a, .b, .x, .y, .up, .down, .left, .right,
+                     .upRight, .upLeft, .downRight, .downLeft, .l, .r:
+                    engagementTracker.trackButtonPress()
+                default:
+                    break
+                }
+            default:
+                break
+            }
+        }
+        
+        switch currentView {
+        case .grid:
+            viewModel.controllerDidPress(
+                action: evt.action,
+                pressed: evt.pressed
+            )
+        case .web:
+            BluetoothControllerService.shared.delegate?.controllerDidPress(
+                action: evt.action,
+                pressed: evt.pressed
+            )
+        default:
+            break
+        }
+    }
+    
+    
     @ViewBuilder
     private var gridAndDetailView: some View {
         GeometryReader { geometry in
@@ -346,7 +366,7 @@ struct HomeView: View {
 
             ZStack(alignment: .bottom) {
                 WebGameContainerView(game: webGame) {
-                    engagementTracker.setCurrentRom("none")
+                    engagementTracker.setCurrentRom("none", romScoreModifier: 0.0)
                     currentView = .grid
                 }
                     .frame(
@@ -665,7 +685,7 @@ struct HomeView: View {
             if #unavailable(iOS 17) {
                 viewModel.focusedButtonIndex = 4
             }
-            engagementTracker.setCurrentRom(game.name)
+            engagementTracker.setCurrentRom(game.name, romScoreModifier: game.passiveScoreModifier)
         }
     }
 
@@ -690,7 +710,7 @@ struct HomeView: View {
                         viewModel.focusedButtonIndex = 4
                     }
                 }
-                engagementTracker.setCurrentRom(rom.name ?? "none")
+                engagementTracker.setCurrentRom(rom.name ?? "none", romScoreModifier: rom.passiveScoreModifier ?? 0)
             } catch {
                 print("Failed to load console: \(error)")
             }
@@ -728,7 +748,7 @@ struct HomeView: View {
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
                 currentView = .grid
-                engagementTracker.setCurrentRom("none")
+                engagementTracker.setCurrentRom("none", romScoreModifier: 0)
             }
         }
 

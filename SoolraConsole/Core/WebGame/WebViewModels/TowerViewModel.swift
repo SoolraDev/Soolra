@@ -27,6 +27,7 @@ final class TowerViewModel: ObservableObject, WebGameViewModel, ControllerServic
 
 //        case .y, .b, .a:
         case .y, .b, .a:
+            print("pressed \(action)")
             if pressed {
                 sendKey(type: "keydown", which: 32, key: " ", codeName: "Space")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
@@ -82,7 +83,7 @@ final class TowerViewModel: ObservableObject, WebGameViewModel, ControllerServic
 
     // MARK: - JS bridge
     private func injectJS(_ js: String, completion: ((Any?, Error?) -> Void)? = nil) {
-        print(js)
+//        print(js)
         DispatchQueue.main.async {
             guard let webView = self.webView else { completion?(nil, NSError(domain: "NoWebView", code: 0)); return }
             webView.evaluateJavaScript(js, completionHandler: completion)

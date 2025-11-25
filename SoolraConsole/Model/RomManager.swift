@@ -259,6 +259,7 @@ class RomManager {
             rom.imageData = imageData
             rom.consoleType = getConsoleType(from: url)?.rawValue ?? "unknown"
             rom.createdAt    = Date()
+            rom.passiveScoreModifier = 1.0
             save()
         }
     }

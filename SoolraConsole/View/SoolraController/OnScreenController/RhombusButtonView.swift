@@ -29,14 +29,14 @@ struct RhombusButtonView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.x, true)
+//                            onButton?(.x, true)
                             controllerViewModel.controllerDidPress(action: .x, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.x, false)
+//                        onButton?(.x, false)
                         controllerViewModel.controllerDidPress(action: .x, pressed: false)
                     }
             )
@@ -54,14 +54,14 @@ struct RhombusButtonView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.b, true)
+//                            onButton?(.b, true)
                             controllerViewModel.controllerDidPress(action: .b, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.b, false)
+//                        onButton?(.b, false)
                         controllerViewModel.controllerDidPress(action: .b, pressed: false)
                     }
             )
@@ -79,14 +79,14 @@ struct RhombusButtonView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.y, true)
+//                            onButton?(.y, true)
                             controllerViewModel.controllerDidPress(action: .y, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.y, false)
+//                        onButton?(.y, false)
                         controllerViewModel.controllerDidPress(action: .y, pressed: false)
                     }
             )

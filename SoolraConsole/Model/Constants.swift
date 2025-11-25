@@ -16,6 +16,9 @@ struct Configuration {
     static let privyAppId = "cmi1t9gor026hl80c5lemdxbr"
     static let privyClientId = "client-WY6TAYNcsf7GgVJHBBPzTjeoQsFwxc9kpnMtriSSQ4jda"
     static let soolraBackendURL = "http://localhost:3000"
+//    static let soolraBackendURL = "https://2c251cfd7362.ngrok-free.app"
+    
+    
     static let enableDiagnostics = true
 
     #else

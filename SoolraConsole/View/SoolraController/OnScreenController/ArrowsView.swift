@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ArrowsView: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel
     @State private var isPressed = false
     var onButtonPress: ((SoolraControllerAction) -> Void)?
     var onButton: ((SoolraControllerAction, Bool) -> Void)?
@@ -31,13 +32,15 @@ struct ArrowsView: View {
                                     if !isPressed {
                                         isPressed = true
                                         HapticManager.shared.buttonPress()
-                                        onButton?(.up, true)
+//                                        onButton?(.up, true)
+                                        controllerViewModel.controllerDidPress(action: .up, pressed: true)
                                     }
                                 }
                                 .onEnded { _ in
                                     isPressed = false
                                     HapticManager.shared.buttonRelease()
-                                    onButton?(.up, false)
+//                                    onButton?(.up, false)
+                                    controllerViewModel.controllerDidPress(action: .up, pressed: false)
                                 }
                         )
             
@@ -53,13 +56,15 @@ struct ArrowsView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.down, true)
+//                            onButton?(.down, true)
+                            controllerViewModel.controllerDidPress(action: .down, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.down, false)
+//                        onButton?(.down, false)
+                        controllerViewModel.controllerDidPress(action: .down, pressed: false)
                     }
             )
             
@@ -75,13 +80,15 @@ struct ArrowsView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.left, true)
+//                            onButton?(.left, true)
+                            controllerViewModel.controllerDidPress(action: .left, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.left, false)
+//                        onButton?(.left, false)
+                        controllerViewModel.controllerDidPress(action: .left, pressed: false)
                     })
         
             
@@ -97,13 +104,15 @@ struct ArrowsView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.right, true)
+//                            onButton?(.right, true)
+                            controllerViewModel.controllerDidPress(action: .right, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
                         onButton?(.right, false)
+                        controllerViewModel.controllerDidPress(action: .right, pressed: false)
                     })
         
         }

@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ShoulderButtonView: View {
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel
     var onButtonPress: ((SoolraControllerAction) -> Void)?
     var onButton: ((SoolraControllerAction, Bool) -> Void)?
     @State private var isPressed = false
@@ -28,13 +29,16 @@ struct ShoulderButtonView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.l, true)
+//                            onButton?(.l, true)
+                            controllerViewModel.controllerDidPress(action: .l, pressed: true)
+                            
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.l, false)
+//                        onButton?(.l, false)
+                        controllerViewModel.controllerDidPress(action: .l, pressed: false)
                     }
             )
 
@@ -54,13 +58,15 @@ struct ShoulderButtonView: View {
                         if !isPressed {
                             isPressed = true
                             HapticManager.shared.buttonPress()
-                            onButton?(.r, true)
+//                            onButton?(.r, true)
+                            controllerViewModel.controllerDidPress(action: .r, pressed: true)
                         }
                     }
                     .onEnded { _ in
                         isPressed = false
                         HapticManager.shared.buttonRelease()
-                        onButton?(.r, false)
+//                        onButton?(.r, false)
+                        controllerViewModel.controllerDidPress(action: .r, pressed: false)
                     }
             )
         }

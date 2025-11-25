@@ -15,6 +15,7 @@ struct WebGame: Identifiable {
     let name: String
     let url: URL
     let icon: UIImage?
+    let passiveScoreModifier: Float = 1.0
     let makeViewModel: () -> any WebGameViewModel
     let makeWrapper: (_ vm: any WebGameViewModel, _ onClose: @escaping () -> Void) -> AnyView
 }
