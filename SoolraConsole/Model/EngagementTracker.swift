@@ -210,16 +210,18 @@ class EngagementTracker: ObservableObject {
             return
         }
 
-        let remoteTotalSeconds = TimeInterval(
-            remoteMetrics.totalTimePlayed / 1000
-        )
+        let remoteTotalSeconds = TimeInterval(remoteMetrics.totalTimePlayed / 1000)
+        let remoteTotalPoints = remoteMetrics.points
+        
         UserDefaults.standard.set(
             remoteTotalSeconds,
             forKey: totalPlayTimeKey()
         )
-        print(
-            "✅ Synced total playtime from backend: \(Int(remoteTotalSeconds))s"
+        UserDefaults.standard.set(
+            remoteTotalPoints,
+            forKey: totalPointsKey()
         )
+        print("✅ Synced from backend, total playtime: \(Int(remoteTotalSeconds))s, total points: \(remoteTotalPoints)")
 
         await uploadPendingSessions()
     }
@@ -255,6 +257,9 @@ class EngagementTracker: ObservableObject {
     }
     private func totalPlayTimeKey() -> String {
         "total_play_time_\(privyId ?? "guest")"
+    }
+    private func totalPointsKey() -> String {
+        "total_points_\(privyId ?? "guest")"
     }
 
     private func saveSessionLocally(_ session: GameSessionRecord) {
