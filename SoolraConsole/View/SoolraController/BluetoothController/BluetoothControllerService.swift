@@ -16,6 +16,8 @@ class BluetoothControllerService: ObservableObject {
     @Published private(set) var isControllerConnected: Bool = false
     weak var delegate: ControllerServiceDelegate?
     
+    var buttonTracker: ((SoolraControllerAction, Bool) -> Void)?
+    
     // Separate state tracking for each stick
     private var leftStickDirection: SoolraControllerAction?
     private var rightStickDirection: SoolraControllerAction?
@@ -134,52 +136,64 @@ class BluetoothControllerService: ObservableObject {
         // Button handlers
         gamepad.buttonA.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .a, pressed: pressed)
+            self?.buttonTracker?(.a, pressed)
         }
         gamepad.buttonB.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .b, pressed: pressed)
+            self?.buttonTracker?(.b, pressed)
         }
         gamepad.buttonX.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .x, pressed: pressed)
+            self?.buttonTracker?(.x, pressed)
+            
         }
         gamepad.buttonY.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .y, pressed: pressed)
+            self?.buttonTracker?(.y, pressed)
         }
         gamepad.leftShoulder.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .l, pressed: pressed)
+            self?.buttonTracker?(.l, pressed)
         }
         gamepad.rightShoulder.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .r, pressed: pressed)
+            self?.buttonTracker?(.r, pressed)
         }
 
         // D-pad handlers
         gamepad.dpad.up.pressedChangedHandler = { [weak self] _, _, pressed in
-            print("D-Pad Up pressed: \(pressed)")  // simple console log
             self?.delegate?.controllerDidPress(action: .up, pressed: pressed)
+            self?.buttonTracker?(.up, pressed)
         }
         gamepad.dpad.down.pressedChangedHandler = { [weak self] _, _, pressed in
-            print("D-Pad Down pressed: \(pressed)")  // simple console log
             self?.delegate?.controllerDidPress(action: .down, pressed: pressed)
+            self?.buttonTracker?(.down, pressed)
         }
 
         gamepad.dpad.left.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .left, pressed: pressed)
+            self?.buttonTracker?(.left, pressed)
         }
         gamepad.dpad.right.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .right, pressed: pressed)
+            self?.buttonTracker?(.right, pressed)
         }
 
         // System buttons
         gamepad.buttonOptions?.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .select, pressed: pressed)
+            self?.buttonTracker?(.select, pressed)
         }
             
         gamepad.buttonHome?.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .menu, pressed: pressed)
+            self?.buttonTracker?(.menu, pressed)
         }
         gamepad.buttonHome?.preferredSystemGestureState = .disabled
         
         gamepad.buttonMenu.pressedChangedHandler = { [weak self] _, _, pressed in
             self?.delegate?.controllerDidPress(action: .start, pressed: pressed)
+            self?.buttonTracker?(.start, pressed)
         }
 
         gamepad.leftThumbstick.valueChangedHandler = { [weak self] _, xAxis, yAxis in

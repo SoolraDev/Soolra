@@ -123,15 +123,25 @@ struct HomeView: View {
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
             }
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isShopDialogVisible = !BluetoothControllerService.shared
                     .isControllerConnected
             }
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                 if isShopDialogVisible {
                     isShopDialogVisible = false
+                }
+            }
+            BluetoothControllerService.shared.buttonTracker = { action, pressed in
+                guard pressed else { return }
+                
+                switch currentView {
+                case .web:
+                    engagementTracker.trackButtonPress(action: action)
+                default:
+                    break
                 }
             }
         }
@@ -244,14 +254,7 @@ struct HomeView: View {
         if evt.pressed {
             switch currentView {
             case .game, .web:
-                // Only track meaningful gameplay buttons, not menu buttons
-                switch evt.action {
-                case .a, .b, .x, .y, .up, .down, .left, .right,
-                     .upRight, .upLeft, .downRight, .downLeft, .l, .r:
-                    engagementTracker.trackButtonPress()
-                default:
-                    break
-                }
+                engagementTracker.trackButtonPress(action: evt.action)
             default:
                 break
             }
@@ -710,7 +713,7 @@ struct HomeView: View {
                         viewModel.focusedButtonIndex = 4
                     }
                 }
-                engagementTracker.setCurrentRom(rom.name ?? "none", romScoreModifier: rom.passiveScoreModifier ?? 0)
+                engagementTracker.setCurrentRom(rom.name ?? "none", romScoreModifier: rom.passiveScoreModifier ?? 1.0)
             } catch {
                 print("Failed to load console: \(error)")
             }

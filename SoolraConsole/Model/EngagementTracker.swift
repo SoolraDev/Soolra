@@ -64,9 +64,14 @@ class EngagementTracker: ObservableObject {
     }
 
     
-    func trackButtonPress(){
-        buttonPressPerSliceCounter+=1
-        print("buttonPressPerSliceCounter is: \(buttonPressPerSliceCounter)")
+    func trackButtonPress(action: SoolraControllerAction) {
+        switch action {
+        case .a, .b, .x, .y, .up, .down, .left, .right, .l, .r:
+            buttonPressPerSliceCounter+=1
+            print("buttonPressPerSliceCounter is: \(buttonPressPerSliceCounter)")
+        default:
+            break
+        }
     }
     
     func timeSliceHadEnoughButtonPresses() -> Bool{
