@@ -10,6 +10,8 @@ import SwiftUI
 struct ProfileView: View {
     @Binding var isPresented: Bool
     @StateObject private var vv = overlayState
+    
+    @ObservedObject private var datamanager = dataManager
 
     // State for the image picker flow
     @State private var isShowingImagePicker = false
@@ -56,25 +58,24 @@ struct ProfileView: View {
                 MetricBanner(
                     iconName: "target",
                     title: "Points Earned",
-                    //                    value: "\(dataManager.userMetrics?.points, default: "0")"
-                    value: "Coming soon"
+                    value: "\(datamanager.userMetrics?.points, default: "0")"
                 )
 
                 MetricBanner(
                     iconName: "trophy.fill",
                     title: "Time Played Ranking",
-                    value: "\(dataManager.userMetrics?.ranking, default: "0")"
+                    value: "\(datamanager.userMetrics?.ranking, default: "0")"
                 )
 
                 MetricBanner(
                     iconName: "hourglass",
                     title: "Total Time Played",
-                    value: dataManager.userMetrics?.totalTimePlayed
+                    value: datamanager.userMetrics?.totalTimePlayed
                         .toWordedString() ?? "0"
                 )
             }.padding()
                 .task {
-                    await dataManager.refresh()
+                    await datamanager.refresh()
                 }
 
             VStack {
