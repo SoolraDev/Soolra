@@ -66,7 +66,9 @@ struct HomeView: View {
     @State private var currentView: CurrentView = .grid
     @State private var roms: [Rom] = []
     @State private var isLoading: Bool = false
-    @StateObject private var controllerViewModel = ControllerViewModel()
+//    @StateObject private var controllerViewModel = ControllerViewModel()
+    @StateObject private var controllerViewModel = ControllerViewModel.shared
+
     @State private var isLoadingGame: Bool = false
     @State private var items: [(LibraryKind, LibraryItem)] = []
     @State private var webGames: [WebGame] = WebGameCatalog.all()
@@ -116,6 +118,7 @@ struct HomeView: View {
         .onAppear {
             viewModel.isCarouselMode = true
             engagementTracker.startTracking()
+            BluetoothControllerService.shared.delegate = controllerViewModel
             if defaultRomsLoadingState.isLoading {
                 isLoading = true
             } else {
@@ -209,7 +212,17 @@ struct HomeView: View {
         }
         .onChange(of: controllerViewModel.lastAction) { evt in
             guard let evt = evt else { return }
+            if overlaystate.isProfileOverlayVisible.wrappedValue ||
+               overlaystate.isWalletOverlayVisible.wrappedValue ||
+               overlaystate.isMarketOverlayVisible.wrappedValue {
+                return
+            }
             handleControllerEvent(evt)
+        }
+        .onChange(of: currentView) { newView in
+            if case .grid = newView {
+                BluetoothControllerService.shared.delegate = controllerViewModel
+            }
         }
         .onChange(of: isSettingsPresented) { newValue in
             if !newValue {
@@ -751,6 +764,10 @@ struct HomeView: View {
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
                 currentView = .grid
+                
+                // Reset controller delegate immediately
+                BluetoothControllerService.shared.delegate = controllerViewModel
+                
                 engagementTracker.setCurrentRom("none", romScoreModifier: 0)
             }
         }

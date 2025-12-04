@@ -98,7 +98,6 @@ struct GameView: View {
             .onAppear {
                 handleOnAppear()
             }
-            .onDisappear(perform: handleOnDisappear)
             .onChange(of: controllerViewModel.lastAction, perform: handleControllerActionChange)
             .onChange(of: consoleManager.shouldShowPauseMenu) { shouldShow in
                 print("🎮 Detected shouldShowPauseMenu change to: \(shouldShow)")
@@ -178,12 +177,6 @@ struct GameView: View {
         print("GameView: Setting controller delegate")
     }
     
-    private func handleOnDisappear() {
-        if BluetoothControllerService.shared.delegate === controllerViewModel {
-            print("GameView: Setting controller delegate back to HomeView")
-            HomeViewModel.shared.setAsDelegate()
-        }
-    }
     
     private func handleControllerActionChange(_ action: ControllerAction?) {
         if let action = action, currentView != .grid {

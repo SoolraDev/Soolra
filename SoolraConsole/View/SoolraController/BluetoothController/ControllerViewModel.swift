@@ -13,9 +13,11 @@ struct ControllerAction: Equatable {
 }
 
 class ControllerViewModel: ObservableObject, ControllerServiceDelegate {
+    static let shared = ControllerViewModel()
+    
     @Published var lastAction: ControllerAction?
 
-    init() {
+    private init() {
         BluetoothControllerService.shared.delegate = self
     }
 
