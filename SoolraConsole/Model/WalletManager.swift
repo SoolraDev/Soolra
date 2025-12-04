@@ -126,7 +126,7 @@ public class WalletManager: ObservableObject {
             await onUserAuthenticated()
 
         } catch {
-            self.errorMessage = error.localizedDescription
+            self.errorMessage = "Couldn't log in with Google. Please try again."
         }
         self.isLoading = false
     }
