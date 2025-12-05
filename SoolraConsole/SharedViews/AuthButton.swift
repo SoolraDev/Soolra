@@ -25,9 +25,13 @@ struct AuthButton: View {
             if let errorMessage = manager.errorMessage {
                 retryButton
                     .alert(
-                        "Error: \(errorMessage)",
+                        errorMessage,
                         isPresented: .constant(isErrorVisible),
-                        actions: {}
+                        actions: {
+                            Button("Close") {
+                                manager.errorMessage = nil
+                            }
+                        }
                     )
             } else if manager.isLoading {
                 ProgressView("Please wait…")
@@ -67,6 +71,7 @@ struct AuthButton: View {
             Button("Sign in") {
                 showingAuthOptions = true
             }
+            .tint(.purple)
             .buttonStyle(.borderedProminent)
         }
     }
