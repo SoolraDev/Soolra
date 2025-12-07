@@ -23,6 +23,31 @@ class EngagementTracker: ObservableObject {
     private var currentRomScoreModifier: Float = 1.0;
     private var buttonPressPerSliceCounter: Int = 0;
     private var buttonsRequiredToScoreSlice: Int = 5;
+    
+    // Milestone definitions
+    private let hourMilestones: [Int: Int] = [
+        1: 100,
+        2: 200,
+        3: 300,
+        4: 400,
+        5: 500,
+        6: 600,
+        7: 700,
+        8: 800,
+        9: 900,
+        10: 1000,
+        24: 3000
+    ]
+    
+    private let gamesMilestones: [Int: Int] = [
+        3: 500,
+        5: 750,
+        10: 1000
+    ]
+    
+    // Track which milestones have been awarded (store the milestone values, e.g., [1, 2, 3] for hours)
+    private var completedHourMilestones: Set<Int> = []
+    private var completedGamesMilestones: Set<Int> = []
 
     // Make init private for singleton pattern
     private init() {
@@ -39,13 +64,14 @@ class EngagementTracker: ObservableObject {
             name: UIApplication.didEnterBackgroundNotification,
             object: nil
         )
+        
+        // Load milestone tracking from UserDefaults
+        loadMilestoneTracking()
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-
-    // ... (rest of the EngagementTracker code is unchanged)
 
     // MARK: - App Lifecycle & Tracking Control
 
@@ -111,6 +137,7 @@ class EngagementTracker: ObservableObject {
             return
         }
         self.privyId = id
+        loadMilestoneTracking() // Reload milestones for the new user
         Task { await syncWithBackend() }
     }
 
@@ -173,20 +200,32 @@ class EngagementTracker: ObservableObject {
         let now = Date()
         let duration = now.timeIntervalSince(startTime)
         
-        let score = Int(round(timeSliceHadEnoughButtonPresses() ? currentRomScoreModifier : 0))
-        print("currentRomScoreModifier is: \(currentRomScoreModifier)")
         // Ignore tiny fragments that are likely noise.
         guard duration >= 1.0 else { return }
+        
+        let hadEnoughButtonPresses = timeSliceHadEnoughButtonPresses()
+        var score = Int(round(hadEnoughButtonPresses ? currentRomScoreModifier : 0))
+        
+        // Track distinct game if session qualifies (>=15s with enough button presses)
+        if duration >= 15.0 && hadEnoughButtonPresses {
+            addDistinctGamePlayed(romName)
+        }
+        
+        // Calculate milestone bonus points
+        let bonusPoints = calcSessionPointEarningEvents(sessionDuration: duration)
+        score = score + bonusPoints
+        
+        print("currentRomScoreModifier is: \(currentRomScoreModifier)")
             
         let timeSlice = GameSessionRecord(
             id: UUID(),
             gameName: romName,
             duration: duration,
-            score: score,  // Score can be added later if needed
+            score: score,
             recordedAt: now
         )
 
-        print("💾 Saving time slice for \(romName). Duration: \(Int(duration))s. Score: \(score).")
+        print("💾 Saving time slice for \(romName). Duration: \(Int(duration))s. Score: \(score). Bonus: \(bonusPoints).")
         saveSessionLocally(timeSlice)
 
         // IMPORTANT: Reset the anchor time to now for the next slice.
@@ -199,6 +238,49 @@ class EngagementTracker: ObservableObject {
         }
     }
 
+    private func calcSessionPointEarningEvents(sessionDuration: TimeInterval) -> Int {
+        var bonusPoints = 0
+        
+        // Get baseline from server sync
+        let serverTotalSeconds = UserDefaults.standard.double(forKey: totalPlayTimeKey())
+        
+        // Calculate current total time (server baseline + all local pending sessions)
+        let localSessions = getPendingSessions()
+        let localAccumulatedTime = localSessions.reduce(0.0) { $0 + $1.duration }
+        let currentTotalSeconds = serverTotalSeconds + localAccumulatedTime + sessionDuration
+        
+        // Calculate hours
+        let currentTotalHours = Int(currentTotalSeconds / 3600)
+        
+        // Check for new hour milestones
+        for (hourMilestone, points) in hourMilestones {
+            if currentTotalHours >= hourMilestone && !completedHourMilestones.contains(hourMilestone) {
+                bonusPoints += points
+                completedHourMilestones.insert(hourMilestone)
+                print("🎉 Hour milestone reached! \(hourMilestone) hours completed, awarded \(points) points")
+            }
+        }
+        
+        // Calculate games milestones
+        let currentGamesCount = getDistinctGamesPlayed().count
+        
+        // Check for new games milestones
+        for (gamesMilestone, points) in gamesMilestones {
+            if currentGamesCount >= gamesMilestone && !completedGamesMilestones.contains(gamesMilestone) {
+                bonusPoints += points
+                completedGamesMilestones.insert(gamesMilestone)
+                print("🎉 Games milestone reached! \(gamesMilestone) distinct games played, awarded \(points) points")
+            }
+        }
+        
+        // Save the updated milestone tracking
+        if bonusPoints > 0 {
+            saveMilestoneTracking()
+        }
+        
+        return bonusPoints
+    }
+    
     private func syncWithBackend() async {
         guard let userId = privyId else { return }
         print("🔄 Syncing with backend for user \(userId)...")
@@ -221,6 +303,25 @@ class EngagementTracker: ObservableObject {
             remoteTotalPoints,
             forKey: totalPointsKey()
         )
+        
+        // Recalculate which hour milestones should already be completed based on server data
+        let serverTotalHours = Int(remoteTotalSeconds / 3600)
+        for (hourMilestone, _) in hourMilestones {
+            if serverTotalHours >= hourMilestone {
+                completedHourMilestones.insert(hourMilestone)
+            }
+        }
+        
+        // TODO: When server provides distinct games count, sync it here
+        // let remoteGamesCount = remoteMetrics.distinctGamesPlayed
+        // for (gamesMilestone, _) in gamesMilestones {
+        //     if remoteGamesCount >= gamesMilestone {
+        //         completedGamesMilestones.insert(gamesMilestone)
+        //     }
+        // }
+        
+        saveMilestoneTracking()
+        
         print("✅ Synced from backend, total playtime: \(Int(remoteTotalSeconds))s, total points: \(remoteTotalPoints)")
 
         await uploadPendingSessions()
@@ -250,7 +351,68 @@ class EngagementTracker: ObservableObject {
         }
     }
 
-    // MARK: - UserDefaults Persistence (Unchanged)
+    // MARK: - Distinct Games Tracking
+    
+    private func addDistinctGamePlayed(_ gameName: String) {
+        var games = getDistinctGamesPlayed()
+        let previousCount = games.count
+        games.insert(gameName)
+        
+        if games.count > previousCount {
+            saveDistinctGamesPlayed(games)
+            print("🎮 New distinct game tracked: \(gameName). Total: \(games.count)")
+        }
+    }
+    
+    private func getDistinctGamesPlayed() -> Set<String> {
+        guard let data = UserDefaults.standard.data(forKey: distinctGamesPlayedKey()),
+              let games = try? JSONDecoder().decode(Set<String>.self, from: data) else {
+            return Set<String>()
+        }
+        return games
+    }
+    
+    private func saveDistinctGamesPlayed(_ games: Set<String>) {
+        if let data = try? JSONEncoder().encode(games) {
+            UserDefaults.standard.set(data, forKey: distinctGamesPlayedKey())
+        }
+    }
+    
+    // MARK: - Milestone Tracking Persistence
+    
+    private func loadMilestoneTracking() {
+        // Load completed hour milestones
+        if let data = UserDefaults.standard.data(forKey: completedHourMilestonesKey()),
+           let milestones = try? JSONDecoder().decode(Set<Int>.self, from: data) {
+            completedHourMilestones = milestones
+        } else {
+            completedHourMilestones = []
+        }
+        
+        // Load completed games milestones
+        if let data = UserDefaults.standard.data(forKey: completedGamesMilestonesKey()),
+           let milestones = try? JSONDecoder().decode(Set<Int>.self, from: data) {
+            completedGamesMilestones = milestones
+        } else {
+            completedGamesMilestones = []
+        }
+        
+        print("📊 Loaded milestones - Hours: \(completedHourMilestones.sorted()), Games: \(completedGamesMilestones.sorted())")
+    }
+    
+    private func saveMilestoneTracking() {
+        // Save completed hour milestones
+        if let data = try? JSONEncoder().encode(completedHourMilestones) {
+            UserDefaults.standard.set(data, forKey: completedHourMilestonesKey())
+        }
+        
+        // Save completed games milestones
+        if let data = try? JSONEncoder().encode(completedGamesMilestones) {
+            UserDefaults.standard.set(data, forKey: completedGamesMilestonesKey())
+        }
+    }
+
+    // MARK: - UserDefaults Persistence
 
     private func pendingSessionsKey() -> String {
         "pending_sessions_\(privyId ?? "guest")"
@@ -260,6 +422,15 @@ class EngagementTracker: ObservableObject {
     }
     private func totalPointsKey() -> String {
         "total_points_\(privyId ?? "guest")"
+    }
+    private func distinctGamesPlayedKey() -> String {
+        "distinct_games_played_\(privyId ?? "guest")"
+    }
+    private func completedHourMilestonesKey() -> String {
+        "completed_hour_milestones_\(privyId ?? "guest")"
+    }
+    private func completedGamesMilestonesKey() -> String {
+        "completed_games_milestones_\(privyId ?? "guest")"
     }
 
     private func saveSessionLocally(_ session: GameSessionRecord) {
