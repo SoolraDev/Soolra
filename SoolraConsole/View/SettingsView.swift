@@ -171,8 +171,8 @@ struct SettingsView: View {
         @EnvironmentObject var dataController: CoreDataController
         @State private var newRomName: String = ""
         @State private var isLoading: Bool = false
-        @StateObject private var viewModel = HomeViewModel.shared  // Use the shared HomeViewModel instance
-        @State private var isPresented: Bool = false  // To track sheet presentation
+        @StateObject private var viewModel = HomeViewModel.shared
+        @State private var isPresented: Bool = false
         @State private var roms: [Rom] = []
 
         @StateObject private var walletmanager = walletManager
@@ -180,38 +180,27 @@ struct SettingsView: View {
         var body: some View {
             NavigationView {
                 VStack {
-
                     // Loading overlay
                     if isLoading {
-                        //                        ZStack {
-                        //                            // Dimmed background
-                        //                            Color.black.opacity(0.3)
-                        //                                .edgesIgnoringSafeArea(.all) // Optional: If you want to dim the screen
-
-                        // Spinner overlay
                         VStack(spacing: 15) {
-
                             ProgressView()
                                 .progressViewStyle(
                                     CircularProgressViewStyle(tint: .white)
-                                )  // Adjust spinner color
-                                .scaleEffect(1.5)  // Adjust size
+                                )
+                                .scaleEffect(1.5)
 
                             Text("Loading...")
-                                .foregroundColor(.white)  // Match text color to spinner
-                                .font(.headline)  // Adjust font style
+                                .foregroundColor(.white)
+                                .font(.headline)
                         }
                         .padding(30)
-                        .background(Color.black.opacity(0.8))  // Darker background for contrast
-                        .cornerRadius(20)  // Rounded corners
-                        .shadow(radius: 10)  // Optional shadow
-                        .zIndex(1000)  // Ensure it stays on top
+                        .background(Color.black.opacity(0.8))
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .zIndex(1000)
                     }
-                    //
-                    //                    }
 
                     List {
-
                         ForEach(roms, id: \.self) { rom in
                             HStack {
                                 Text(rom.name ?? "Unknown")
@@ -229,9 +218,10 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    .listStyle(InsetGroupedListStyle())  // Optional for styling
+                    .listStyle(InsetGroupedListStyle())
                 }
                 .navigationTitle("Manage Games")
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
@@ -242,13 +232,10 @@ struct SettingsView: View {
                     }
                 }
                 .onAppear {
-                    // Fetch ROMs when view appears
                     roms = dataController.romManager.fetchRoms()
                 }
                 .sheet(isPresented: $isPresented) {
                     DocumentPicker { url in
-
-                        // Use RomManager to handle adding the ROM
                         Task {
                             isLoading = true
                             await dataController.romManager.addRom(url: url)
@@ -257,15 +244,12 @@ struct SettingsView: View {
                                 isLoading = false
                             }
                         }
-
                     }
                     .font(.custom("Orbitron-Black", size: 24))
                 }
             }
         }
-
     }
-
     //struct CreateAccountView: View {
     //    @State private var username: String = ""
     //    @State private var email: String = ""
