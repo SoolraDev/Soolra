@@ -10,7 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     @Binding var isPresented: Bool
     @StateObject private var vv = overlayState
-    
+
     @ObservedObject private var datamanager = dataManager
 
     // State for the image picker flow
@@ -147,7 +147,7 @@ struct ProfileView: View {
                     }
                 }.padding(.horizontal)
             }.comingSoon()
-            
+
             // NOTE: Previous "Close" button was removed from here
             Spacer().frame(height: 20)
         }
@@ -188,21 +188,14 @@ struct ProfileView: View {
         let imageUrlString =
             "\(Configuration.soolraBackendURL)/v1/users/\(walletManager.privyUser?.id ?? "")/image"
 
-        AsyncImage(url: URL(string: imageUrlString)) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            case .failure, .empty:
-                // Fallback icon if the image fails to load or doesn't exist.
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .foregroundStyle(.white)
-            @unknown default:
-                // Placeholder while loading.
-                ProgressView()
-            }
+        CachedAsyncImage(url: URL(string: imageUrlString)) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } placeholder: {
+            Image(systemName: "person.crop.circle")
+                .resizable()
+                .foregroundStyle(.white)
         }
         .id(imageId)  // The key to forcing a reload on demand
         .frame(width: 80, height: 80)
