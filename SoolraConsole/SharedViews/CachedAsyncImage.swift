@@ -7,17 +7,14 @@
 import SwiftUI
 
 /// A view that asynchronously loads, caches, and displays an image.
-///
-/// This view first checks an in-memory cache for the image. If the image is found,
-/// it's displayed immediately. Otherwise, it downloads the image from the given URL,
-/// stores it in the cache, and then displays it.
+/// It implements a "stale-while-revalidate" strategy: if an image is in the cache,
+/// it is displayed immediately, but a network request is still fired in the background
+/// to fetch the latest version.
 struct CachedAsyncImage<Content: View, Placeholder: View>: View {
     private let url: URL?
     private let content: (Image) -> Content
     private let placeholder: () -> Placeholder
     
-    // Use the @StateObject pattern if you were to create a more complex loader object.
-    // For this direct implementation, @State is sufficient.
     @State private var image: UIImage? = nil
     @State private var isLoading = false
 
@@ -32,39 +29,50 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
     }
     
     var body: some View {
-        if let image = image {
-            content(Image(uiImage: image))
-        } else {
-            placeholder()
-                .task(id: url) { // .task is recommended for async operations in SwiftUI
-                    await loadImage()
-                }
+        Group {
+            if let image = image {
+                content(Image(uiImage: image))
+            } else {
+                placeholder()
+            }
+        }
+        .task(id: url) {
+            await loadImage()
         }
     }
     
     private func loadImage() async {
         guard let url = url, !isLoading else { return }
         
-        // 1. Check cache first
+        // 1. Check cache first and show it immediately if it exists.
         if let cachedImage = ImageCache.shared.get(for: url) {
             self.image = cachedImage
-            return
+            // Do NOT return here. We want to continue to fetch the latest version.
         }
         
-        // 2. If not in cache, start download
+        // 2. Always start download to revalidate/update content
         isLoading = true
-        defer { isLoading = false } // Ensure isLoading is reset
+        defer { isLoading = false }
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            // Use a specific URLRequest to bypass local caching protocols if necessary,
+            // or rely on standard URLSession behavior.
+            let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
             if let downloadedImage = UIImage(data: data) {
-                // 3. Save to cache and update UI
-                ImageCache.shared.set(image: downloadedImage, for: url)
-                self.image = downloadedImage
+                // 3. Update UI and Cache with the fresh image
+                // Only trigger a UI update if the data actually changed or if we didn't have an image before
+                if downloadedImage != self.image {
+                    ImageCache.shared.set(image: downloadedImage, for: url)
+                    withAnimation {
+                        self.image = downloadedImage
+                    }
+                }
             }
         } catch {
             print("Failed to load image from \(url): \(error.localizedDescription)")
-            // Handle error state if needed, e.g., show a different placeholder
         }
     }
 }

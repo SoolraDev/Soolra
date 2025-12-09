@@ -66,7 +66,7 @@ struct HomeView: View {
     @State private var currentView: CurrentView = .grid
     @State private var roms: [Rom] = []
     @State private var isLoading: Bool = false
-//    @StateObject private var controllerViewModel = ControllerViewModel()
+    //    @StateObject private var controllerViewModel = ControllerViewModel()
     @StateObject private var controllerViewModel = ControllerViewModel.shared
 
     @State private var isLoadingGame: Bool = false
@@ -126,20 +126,22 @@ struct HomeView: View {
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
             }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isShopDialogVisible = !BluetoothControllerService.shared
                     .isControllerConnected
             }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                 if isShopDialogVisible {
                     isShopDialogVisible = false
                 }
             }
-            BluetoothControllerService.shared.buttonTracker = { action, pressed in
+            BluetoothControllerService.shared.buttonTracker = {
+                action,
+                pressed in
                 guard pressed else { return }
-                
+
                 switch currentView {
                 case .web:
                     engagementTracker.trackButtonPress(action: action)
@@ -177,7 +179,7 @@ struct HomeView: View {
                 }
             }
         }
-        
+
         .onChange(of: defaultRomsLoadingState.isLoading) { loading in
             if !loading {
                 roms = dataController.romManager.fetchRoms()
@@ -212,9 +214,10 @@ struct HomeView: View {
         }
         .onChange(of: controllerViewModel.lastAction) { evt in
             guard let evt = evt else { return }
-            if overlaystate.isProfileOverlayVisible.wrappedValue ||
-               overlaystate.isWalletOverlayVisible.wrappedValue ||
-               overlaystate.isMarketOverlayVisible.wrappedValue {
+            if overlaystate.isProfileOverlayVisible.wrappedValue
+                || overlaystate.isWalletOverlayVisible.wrappedValue
+                || overlaystate.isMarketOverlayVisible.wrappedValue
+            {
                 return
             }
             handleControllerEvent(evt)
@@ -262,7 +265,7 @@ struct HomeView: View {
             }
             return
         }
-        
+
         // Track button presses for engagement
         if evt.pressed {
             switch currentView {
@@ -272,7 +275,7 @@ struct HomeView: View {
                 break
             }
         }
-        
+
         switch currentView {
         case .grid:
             viewModel.controllerDidPress(
@@ -288,8 +291,7 @@ struct HomeView: View {
             break
         }
     }
-    
-    
+
     @ViewBuilder
     private var gridAndDetailView: some View {
         GeometryReader { geometry in
@@ -382,14 +384,17 @@ struct HomeView: View {
 
             ZStack(alignment: .bottom) {
                 WebGameContainerView(game: webGame) {
-                    engagementTracker.setCurrentRom("none", romScoreModifier: 0.0)
+                    engagementTracker.setCurrentRom(
+                        "none",
+                        romScoreModifier: 0.0
+                    )
                     currentView = .grid
                 }
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height
-                    )
-                    .edgesIgnoringSafeArea(.all)
+                .frame(
+                    width: geometry.size.width,
+                    height: geometry.size.height
+                )
+                .edgesIgnoringSafeArea(.all)
 
                 SoolraControllerView(
                     controllerViewModel: controllerViewModel,
@@ -701,7 +706,10 @@ struct HomeView: View {
             if #unavailable(iOS 17) {
                 viewModel.focusedButtonIndex = 4
             }
-            engagementTracker.setCurrentRom(game.name, romScoreModifier: game.passiveScoreModifier)
+            engagementTracker.setCurrentRom(
+                game.name,
+                romScoreModifier: game.passiveScoreModifier
+            )
         }
     }
 
@@ -726,7 +734,10 @@ struct HomeView: View {
                         viewModel.focusedButtonIndex = 4
                     }
                 }
-                engagementTracker.setCurrentRom(rom.name ?? "none", romScoreModifier: rom.passiveScoreModifier ?? 1.0)
+                engagementTracker.setCurrentRom(
+                    rom.name ?? "none",
+                    romScoreModifier: rom.passiveScoreModifier ?? 1.0
+                )
             } catch {
                 print("Failed to load console: \(error)")
             }
@@ -764,10 +775,10 @@ struct HomeView: View {
                 rebuildItems()
                 viewModel.updateItemsCount(items.count)
                 currentView = .grid
-                
+
                 // Reset controller delegate immediately
                 BluetoothControllerService.shared.delegate = controllerViewModel
-                
+
                 engagementTracker.setCurrentRom("none", romScoreModifier: 0)
             }
         }
@@ -824,7 +835,7 @@ struct HomeNavigationView: View {
                 .offset(x: 8, y: -50)
 
             actionButtons
-                .offset(x: UIScreen.main.bounds.width * 0.45, y: -50)
+                .offset(x: UIScreen.main.bounds.width * 0.32, y: -50)
 
             settingsButton
                 .offset(x: UIScreen.main.bounds.width * 0.8, y: -50)
@@ -853,8 +864,8 @@ struct HomeNavigationView: View {
                             Image("home-logo")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 40, height: 40)
-                                .padding()
+                                .frame(width: 45, height: 45)
+                                .padding(4)
                         }
                     default:
                         AuthButton()
@@ -867,6 +878,32 @@ struct HomeNavigationView: View {
     @ViewBuilder
     private var actionButtons: some View {
         HStack {
+            Group {
+                let base = BlinkingFocusedButton(
+                    selectedIndex: $focusedButtonIndex,
+                    index: 1,
+                    action: {
+                        viewModel.isPresented.toggle()
+                    },
+                    content: {
+                        Button(action: {
+
+                            viewModel.isPresented.toggle()
+                        }) {
+                            Image(systemName: "plus")
+                                .resizable().scaledToFit()
+                                .frame(width: 25, height: 25)
+                                .padding().foregroundStyle(.white)
+                        }
+                    }
+                )
+                if #available(iOS 26.0, *) {
+                    base.glassEffect()
+                } else {
+                    base
+                }
+            }
+
             Group {
                 let base = BlinkingFocusedButton(
                     selectedIndex: $focusedButtonIndex,
