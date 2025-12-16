@@ -7,7 +7,20 @@ final class HextrisViewModel: ObservableObject, WebGameViewModel, ControllerServ
     private var keyState = Set<Int>()
     private var needsStart = true     // stay in "press start" mode until success
     var dismiss: (() -> Void)?
-
+    @Published var needsAudioActivation = true
+        
+        func activateAudio() {
+            injectJS("""
+            // Try to play all loaded sounds
+            for (var id in bkcore.Audio.sounds) {
+                var sound = bkcore.Audio.sounds[id];
+                if (sound.play) {
+                    sound.play().catch(e => console.log('Audio play failed:', e));
+                }
+            }
+            """)
+            needsAudioActivation = false
+        }
     init(startURL: URL) { self.startURL = startURL }
 
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {

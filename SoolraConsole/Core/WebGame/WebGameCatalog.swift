@@ -19,9 +19,20 @@ enum WebGameCatalog {
 //        let uHextris = URL(string: "https://hextris.io/")!
         let uHextris = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/hextris/")!
         let uTower = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/tower/")!
+//        let uHexGl = URL(string: "https://webgames.soolra.com/hexgl/")!
+        let uHexGl = URL(string: "http://192.168.1.135:3000/hexgl/")!
 
         return [
 
+            WebGame(
+                name: "HexGl",
+                url: uHexGl,
+                icon: UIImage(named: "HexGl"),
+                makeViewModel: { TowerViewModel(startURL: uHexGl) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(TowerWrapper(viewModel: vm as! TowerViewModel, onClose: onClose))
+                }
+            ),
             WebGame(
                 name: "Tower",
                 url: uTower,

@@ -47,6 +47,8 @@
 		705827A22C75766300AB8682 /* Orbitron-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7058279C2C75766300AB8682 /* Orbitron-Black.ttf */; };
 		70838FDC2C6BC96500B7AE46 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70838FDB2C6BC96500B7AE46 /* SplashView.swift */; };
 		70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BD249F2C6BF6F10070B5F9 /* Colors.swift */; };
+		92267CA82EF168E300E56716 /* HexGlWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92267CA72EF168E300E56716 /* HexGlWrapper.swift */; };
+		92267CAA2EF1693A00E56716 /* HexGlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92267CA92EF1693A00E56716 /* HexGlViewModel.swift */; };
 		92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 92678D762DAA70E6001CEDD6 /* SQLite */; };
 		92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D802DAA76F5001CEDD6 /* Cheat.swift */; };
 		926B60EB2EC5CDD100543101 /* ZalandoSansExpanded.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */; };
@@ -269,6 +271,8 @@
 		705827A32C7576D500AB8682 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
 		70838FDB2C6BC96500B7AE46 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		70BD249F2C6BF6F10070B5F9 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		92267CA72EF168E300E56716 /* HexGlWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexGlWrapper.swift; sourceTree = "<group>"; };
+		92267CA92EF1693A00E56716 /* HexGlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexGlViewModel.swift; sourceTree = "<group>"; };
 		92678D802DAA76F5001CEDD6 /* Cheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheat.swift; sourceTree = "<group>"; };
 		926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ZalandoSansExpanded.ttf; sourceTree = "<group>"; };
 		926B75202EC6010000543101 /* Crane.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Crane.png; sourceTree = "<group>"; };
@@ -684,6 +688,7 @@
 			isa = PBXGroup;
 			children = (
 				92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */,
+				92267CA92EF1693A00E56716 /* HexGlViewModel.swift */,
 				92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */,
 				92A582912EA652C50044FE05 /* StackerViewModel.swift */,
 				92E04DD32E5C6CA40002B6E6 /* YabalaliViewModel.swift */,
@@ -697,6 +702,7 @@
 			children = (
 				92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */,
 				92A582932EA652E30044FE05 /* StackerWrapper.swift */,
+				92267CA72EF168E300E56716 /* HexGlWrapper.swift */,
 				92E04DD12E5C6C9A0002B6E6 /* KrunkerWrapper2.swift */,
 				92E057EF2E5C94290002B6E6 /* YabalaliWrapper.swift */,
 				92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */,
@@ -1243,6 +1249,8 @@
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
 				92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */,
 				92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */,
+				92267CAA2EF1693A00E56716 /* HexGlViewModel.swift in Sources */,
+				92267CA82EF168E300E56716 /* HexGlWrapper.swift in Sources */,
 				92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */,
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
@@ -1417,7 +1425,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.0.0;
+				MARKETING_VERSION = 7.0.2;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1469,7 +1477,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.0.0;
+				MARKETING_VERSION = 7.0.2;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
