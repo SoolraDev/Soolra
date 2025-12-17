@@ -28,9 +28,9 @@ enum WebGameCatalog {
                 name: "HexGl",
                 url: uHexGl,
                 icon: UIImage(named: "HexGl"),
-                makeViewModel: { TowerViewModel(startURL: uHexGl) as any WebGameViewModel },
+                makeViewModel: { HexGlViewModel(startURL: uHexGl) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
-                    AnyView(TowerWrapper(viewModel: vm as! TowerViewModel, onClose: onClose))
+                    AnyView(HexGlWrapper(viewModel: vm as! HexGlViewModel, onClose: onClose))
                 }
             ),
             WebGame(
