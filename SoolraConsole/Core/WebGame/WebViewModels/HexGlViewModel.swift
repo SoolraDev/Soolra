@@ -6,16 +6,12 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
     weak var webView: WKWebView?
     private var keyState = Set<Int>()
     private var needsStart = true
-    private var audioActivated = false
     var dismiss: (() -> Void)?
     
     init(startURL: URL) { self.startURL = startURL }
     
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {
-        if !audioActivated && pressed {
-            activateAudio()
-            audioActivated = true
-        }
+
         
         func handle(_ which: Int, _ key: String, _ code: String) {
             pressed ? keyDown(which: which, key: key, codeName: code)
@@ -31,21 +27,11 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
         case .y:
             print("pressed \(action)")
             handle(65, "a", "KeyA")
-//            if pressed {
-//                sendKey(type: "keydown", which: 65, key: "a", codeName: "KeyA")
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
-//                    self?.sendKey(type: "keyup", which: 65, key: "a", codeName: "KeyA")
-//                }
-//            }
+
         case .a:
             print("pressed \(action)")
             handle(68, "d", "KeyD")
-//            if pressed {
-//                sendKey(type: "keydown", which: 68, key: "d", codeName: "KeyD")
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
-//                    self?.sendKey(type: "keyup", which: 68, key: "d", codeName: "KeyD")
-//                }
-//            }
+
         case .right:
             handle(39, "ArrowRight", "ArrowRight")
         case .down:
@@ -55,17 +41,6 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
         default:
             break
         }
-    }
-    
-    private func activateAudio() {
-        injectJS("""
-        for (var id in bkcore.Audio.sounds) {
-            var sound = bkcore.Audio.sounds[id];
-            if (sound.play) {
-                sound.play().catch(function(e) { console.log('Audio play failed:', e); });
-            }
-        }
-        """)
     }
     
     private func keyDown(which: Int, key: String, codeName: String) {
@@ -81,6 +56,10 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
     }
     
     private func sendKey(type: String, which: Int, key: String, codeName: String) {
+        if needsStart {
+            triggerStart()
+        }
+        
         injectJS("""
         var e = new KeyboardEvent('\(type)', {
             key: '\(key)',
@@ -92,6 +71,27 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
         });
         document.dispatchEvent(e);x
         """)
+    }
+    private func triggerStart() {
+        injectJS("""
+        var step2 = document.getElementById('step-2');
+        if (step2 && step2.style.display !== 'none') {
+            step2.click();
+            'found';
+        } else {
+            'not found';
+        }
+        """) { [weak self] result, error in
+            if let resultString = result as? String {
+                print("Step-2 click result: \(resultString)")
+                if resultString == "found" {
+                    self?.needsStart = false
+                }
+            }
+            if let error = error {
+                print("Step-2 click error: \(error)")
+            }
+        }
     }
     
     private func injectJS(_ js: String, completion: ((Any?, Error?) -> Void)? = nil) {

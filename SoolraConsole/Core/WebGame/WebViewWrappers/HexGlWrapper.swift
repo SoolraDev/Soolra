@@ -18,14 +18,12 @@ struct HexGlWrapper: View {
                     makeConfiguration: {
                         let cfg = WKWebViewConfiguration()
                         cfg.allowsInlineMediaPlayback = true
-                        cfg.mediaTypesRequiringUserActionForPlayback = [] // ← Allow autoplay
-//                        cfg.applicationNameForUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+                        cfg.mediaTypesRequiringUserActionForPlayback = []
+                        cfg.preferences.javaScriptEnabled = true  // Add this
                         return cfg
                     },
                     onWebViewReady: { web in
                         viewModel.webView = web
-
-//                        web.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
                     }
                 )
 //                .frame(width: geo.size.width, height: geo.size.height * 0.6, alignment: .top) // ⬅ top half
