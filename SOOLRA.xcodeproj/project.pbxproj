@@ -64,6 +64,7 @@
 		926B75442EC601D000543101 /* Blast Arena.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B753A2EC601D000543101 /* Blast Arena.png */; };
 		926B75452EC601D000543101 /* Cats Curse.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B753D2EC601D000543101 /* Cats Curse.png */; };
 		926B75472EC6020200543101 /* Arcade Mania.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75462EC6020200543101 /* Arcade Mania.png */; };
+		927063782EF2EC6B002648B7 /* HexGl.png in Resources */ = {isa = PBXBuildFile; fileRef = 927063772EF2EC6B002648B7 /* HexGl.png */; };
 		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
@@ -287,6 +288,7 @@
 		926B753C2EC601D000543101 /* Blowhole.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Blowhole.png; sourceTree = "<group>"; };
 		926B753D2EC601D000543101 /* Cats Curse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Cats Curse.png"; sourceTree = "<group>"; };
 		926B75462EC6020200543101 /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
+		927063772EF2EC6B002648B7 /* HexGl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HexGl.png; sourceTree = "<group>"; };
 		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -784,6 +786,7 @@
 				926B75362EC601D000543101 /* 2048.png */,
 				926B75372EC601D000543101 /* Astrohawk.png */,
 				926B75382EC601D000543101 /* Attack on Voxelburg.png */,
+				927063772EF2EC6B002648B7 /* HexGl.png */,
 				926B75392EC601D000543101 /* Battleship.png */,
 				926B753A2EC601D000543101 /* Blast Arena.png */,
 				926B753B2EC601D000543101 /* Blind Jump.png */,
@@ -1081,6 +1084,7 @@
 				92EF62332E31050F008D609E /* Math and Logic.png in Resources */,
 				92EF62342E31050F008D609E /* DCPR.png in Resources */,
 				92EF62352E31050F008D609E /* GBATactics.gba in Resources */,
+				927063782EF2EC6B002648B7 /* HexGl.png in Resources */,
 				926B75472EC6020200543101 /* Arcade Mania.png in Resources */,
 				92EF62362E31050F008D609E /* Chase.nes in Resources */,
 				92EF62372E31050F008D609E /* MatchIt.gba in Resources */,

@@ -477,7 +477,7 @@ License: https://www.gnu.org/licenses/gpl-3.0.html
                 Text("""
 Developed by wendelscardua and published under the MIT License.
 Source: https://github.com/wendelscardua/sweet-dreams-nonogram
-License: http://opensource.org/licenses/mit-license.html
+License: https://opensource.org/license/mit
 """)
             }
             
@@ -488,6 +488,16 @@ Source: https://github.com/Hextris/hextris
 License: https://github.com/Hextris/hextris/blob/gh-pages/LICENSE.md
 """)
             }
+            
+            Section(header: Text("HexGl").font(.headline)) {
+                Text("""
+Developed by Thibaut Despoulain (BKcore) and published under the MIT License.
+Source: https://github.com/BKcore/HexGL
+License: https://opensource.org/license/mit
+""")
+            }
+            
+            
             
         }
     }
