@@ -173,7 +173,7 @@ struct HomeView: View {
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
                 let idx = index - 4
-                let vis = visibleItems()
+                let vis = activeCarouselIndex == 0 ? visibleItems() : featuredItems()
                 if idx >= 0 && idx < vis.count {
                     let (kind, _) = vis[idx].element
                     switch kind {
@@ -282,12 +282,12 @@ struct HomeView: View {
                     // Both up and down switch to the inactive carousel
                     switchToCarousel(activeCarouselIndex == 0 ? 1 : 0)
                     return // Don't pass to view model
-                case .y:
+//                case .y:
                     // Toggle favorite on focused item
-                    if viewModel.focusedButtonIndex >= 4 {
-                        toggleFavoriteAtCurrentIndex()
-                        return // Don't pass to view model
-                    }
+//                    if viewModel.focusedButtonIndex >= 4 {
+//                        toggleFavoriteAtCurrentIndex()
+//                        return // Don't pass to view model
+//                    }
                 default:
                     break
                 }
