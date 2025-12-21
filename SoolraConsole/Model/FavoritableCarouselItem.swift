@@ -25,16 +25,15 @@ struct FavoritableCarouselItem<Content: View>: View {
                     .font(.system(size: 30))
                     .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
                     .offset(x: 25, y: -25)
-
             }
         }
         .onLongPressGesture(minimumDuration: 0.5) {
             showFavoriteDialog = true
         }
         .confirmationDialog(
-            isFavorite ? "Remove from Favorites?" : "Add to Favorites?",
+            "",
             isPresented: $showFavoriteDialog,
-            titleVisibility: .visible
+            titleVisibility: .hidden
         ) {
             Button(isFavorite ? "Remove from Favorites" : "Add to Favorites") {
                 onToggleFavorite()

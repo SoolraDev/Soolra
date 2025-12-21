@@ -1,12 +1,4 @@
 //
-//  FavoritesManager.swift
-//  SOOLRA
-//
-//  Created by Kai Yoshida on 21/12/2025.
-//
-
-
-//
 //  SOOLRA - Favorites Manager
 //
 //  Copyright © 2025 SOOLRA. All rights reserved.
@@ -26,28 +18,40 @@ class FavoritesManager: ObservableObject {
         loadFavorites()
     }
     
+    // MARK: - Stable ID Generation
+    
+    private func stableID(for item: LibraryItem) -> String {
+        if let rom = item as? Rom {
+            return "rom-\(rom.objectID.uriRepresentation().absoluteString)"
+        } else if let webGame = item as? WebGame {
+            return "web-\(webGame.name)" // Use name, not UUID id
+        }
+        return "unknown-\(item.displayName)"
+    }
+    
     // MARK: - Public Methods
     
     func isFavorite(_ item: LibraryItem) -> Bool {
-        return favoriteIds.contains(item.id)
+        return favoriteIds.contains(stableID(for: item))
     }
     
     func toggleFavorite(_ item: LibraryItem) {
-        if favoriteIds.contains(item.id) {
-            favoriteIds.remove(item.id)
+        let id = stableID(for: item)
+        if favoriteIds.contains(id) {
+            favoriteIds.remove(id)
         } else {
-            favoriteIds.insert(item.id)
+            favoriteIds.insert(id)
         }
         saveFavorites()
     }
     
     func addToFavorites(_ item: LibraryItem) {
-        favoriteIds.insert(item.id)
+        favoriteIds.insert(stableID(for: item))
         saveFavorites()
     }
     
     func removeFromFavorites(_ item: LibraryItem) {
-        favoriteIds.remove(item.id)
+        favoriteIds.remove(stableID(for: item))
         saveFavorites()
     }
     
@@ -61,19 +65,5 @@ class FavoritesManager: ObservableObject {
     
     private func saveFavorites() {
         UserDefaults.standard.set(Array(favoriteIds), forKey: userDefaultsKey)
-    }
-}
-
-// MARK: - LibraryItem Extension for Favorites
-
-extension LibraryItem {
-    var id: String {
-        // Generate unique ID based on item type
-        if let rom = self as? Rom {
-            return "rom-\(rom.objectID.uriRepresentation().absoluteString)"
-        } else if let webGame = self as? WebGame {
-            return "web-\(webGame.id)"
-        }
-        return UUID().uuidString
     }
 }
