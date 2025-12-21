@@ -15,6 +15,8 @@ struct HorizontalGameCarousel: View {
     let onOpen: (LibraryKind, LibraryItem) -> Void
     let indexOffset: Int // Offset to convert HomeView index to carousel index
     
+    @ObservedObject private var favoritesManager = FavoritesManager.shared
+    
     // Layout knobs
     private let cardSizeFocused = CGSize(width: 230, height: 230)
     private let cardSizeUnfocused = CGSize(width: 120, height: 120)
@@ -229,13 +231,21 @@ fileprivate struct HorizontalCarousel_iOS17: View {
         let zIndex = zFor(item.id)
         let itemID = compoundID(for: item, zIndex: zIndex)
         
-        CarouselCard(
-            kind: kind,
+        FavoritableCarouselItem(
             item: item,
-            isFocused: isFocused,
-            cardSizeFocused: cardSizeFocused,
-            cardSizeUnfocused: cardSizeUnfocused
-        )
+            isFavorite: FavoritesManager.shared.isFavorite(item),
+            onToggleFavorite: {
+                FavoritesManager.shared.toggleFavorite(item)
+            }
+        ) {
+            CarouselCard(
+                kind: kind,
+                item: item,
+                isFocused: isFocused,
+                cardSizeFocused: cardSizeFocused,
+                cardSizeUnfocused: cardSizeUnfocused
+            )
+        }
         .onTapGesture { onOpen(kind, item) }
         .id(itemID)
         .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))

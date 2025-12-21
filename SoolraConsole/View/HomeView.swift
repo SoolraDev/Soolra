@@ -42,6 +42,11 @@ struct HomeView: View {
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
     @StateObject private var overlaystate = overlayState
+    @StateObject private var favoritesManager = FavoritesManager.shared
+
+    // Toast notification for favorites
+    @State private var showFavoriteToast: Bool = false
+    @State private var favoriteToastMessage: String = ""
 
     // MARK: - Dual Carousel State
     @State private var activeCarouselIndex: Int = 0 // 0 = main, 1 = secondary
@@ -94,6 +99,7 @@ struct HomeView: View {
             if isShopDialogVisible { shopDialog }
             if isOfflineDialogVisible { offlineDialog }
             if isLoading { loadingOverlay }
+            if showFavoriteToast { favoriteToast }
         }
         .onAppear {
             viewModel.isCarouselMode = true
@@ -274,6 +280,12 @@ struct HomeView: View {
                         switchToCarousel(0)
                         return // Don't pass to view model
                     }
+                case .y:
+                    // Toggle favorite on focused item
+                    if viewModel.focusedButtonIndex >= 4 {
+                        toggleFavoriteAtCurrentIndex()
+                        return // Don't pass to view model
+                    }
                 default:
                     break
                 }
@@ -356,6 +368,7 @@ struct HomeView: View {
                                 navigateToWeb(game)
                             }
                         }
+                        .id("main-\(favoritesManager.favoriteIds.count)")
                         .opacity(activeCarouselIndex == 0 ? 1 : 0)
                         .allowsHitTesting(activeCarouselIndex == 0)
                         .zIndex(activeCarouselIndex == 0 ? 1 : 0)
@@ -372,6 +385,7 @@ struct HomeView: View {
                                 navigateToWeb(game)
                             }
                         }
+                        .id("secondary-\(favoritesManager.favoriteIds.count)")
                         .opacity(activeCarouselIndex == 1 ? 1 : 0)
                         .allowsHitTesting(activeCarouselIndex == 1)
                         .zIndex(activeCarouselIndex == 1 ? 1 : 0)
@@ -776,6 +790,58 @@ struct HomeView: View {
         }
         .zIndex(1000)
     }
+    
+    @ViewBuilder
+    private var favoriteToast: some View {
+        VStack {
+            Spacer()
+            HStack(spacing: 10) {
+                Image(systemName: favoriteToastMessage.contains("Added") ? "star.fill" : "star.slash.fill")
+                    .foregroundColor(.white)
+                Text(favoriteToastMessage)
+                    .foregroundColor(.white)
+                    .font(.system(size: 15, weight: .semibold))
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(Color.black.opacity(0.85))
+            .cornerRadius(25)
+            .shadow(radius: 10)
+            .padding(.bottom, 100)
+        }
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .zIndex(2000)
+    }
+
+    // MARK: - Favorites Helper
+    
+    private func toggleFavoriteAtCurrentIndex() {
+        let items = activeCarouselIndex == 0 ? visibleItems() : featuredItems()
+        let idx = viewModel.focusedButtonIndex - 4
+        
+        guard idx >= 0 && idx < items.count else { return }
+        
+        let (_, item) = items[idx].element
+        toggleFavorite(item)
+    }
+    
+    private func toggleFavorite(_ item: LibraryItem) {
+        let wasFavorite = favoritesManager.isFavorite(item)
+        favoritesManager.toggleFavorite(item)
+        
+        // Show toast
+        favoriteToastMessage = wasFavorite ? "Removed from Favorites" : "Added to Favorites"
+        withAnimation {
+            showFavoriteToast = true
+        }
+        
+        // Auto-hide toast after 2 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation {
+                showFavoriteToast = false
+            }
+        }
+    }
 
     // MARK: - Logic and Helper Functions
 
@@ -821,22 +887,17 @@ struct HomeView: View {
     }
     
     // MARK: - Featured Items for Secondary Carousel
-    // You can customize this logic based on what you want to show
-    // Examples: Recently played, favorites, featured games, etc.
+    // Shows only favorited games
     private func featuredItems() -> [(offset: Int, element: (LibraryKind, LibraryItem))] {
-        // Example: Show only web games, or recently played, or favorites
-        // For now, let's show just web games as an example
         Array(items.enumerated())
             .filter { pair in
-                let (kind, item) = pair.element
-                // Show only web games in secondary carousel
-                if case .web = kind {
-                    return viewModel.searchQuery.isEmpty
-                        || item.searchKey.localizedCaseInsensitiveContains(
-                            viewModel.searchQuery
-                        )
-                }
-                return false
+                let (_, item) = pair.element
+                let matchesSearch = viewModel.searchQuery.isEmpty
+                    || item.searchKey.localizedCaseInsensitiveContains(
+                        viewModel.searchQuery
+                    )
+                let isFavorited = favoritesManager.isFavorite(item)
+                return matchesSearch && isFavorited
             }
     }
 

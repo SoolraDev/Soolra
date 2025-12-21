@@ -66,11 +66,13 @@
 		926B75472EC6020200543101 /* Arcade Mania.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75462EC6020200543101 /* Arcade Mania.png */; };
 		927063782EF2EC6B002648B7 /* HexGl.png in Resources */ = {isa = PBXBuildFile; fileRef = 927063772EF2EC6B002648B7 /* HexGl.png */; };
 		9270637A2EF7E8D9002648B7 /* SharedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927063792EF7E8D9002648B7 /* SharedTypes.swift */; };
+		9270637C2EF809F4002648B7 /* FavoritableCarouselItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9270637B2EF809F4002648B7 /* FavoritableCarouselItem.swift */; };
+		9270637E2EF80AA0002648B7 /* FavoritesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9270637D2EF80AA0002648B7 /* FavoritesManager.swift */; };
 		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
 		928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */; };
-		92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */; };
+		92965FED2EAA4C4000D877C3 /* HorizontalGameCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92965FEC2EAA4C4000D877C3 /* HorizontalGameCarousel.swift */; };
 		92965FF12EAA6DD000D877C3 /* Famidash.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF02EAA6DD000D877C3 /* Famidash.png */; };
 		92965FF32EAA6DE200D877C3 /* Codemaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF22EAA6DE200D877C3 /* Codemaster.png */; };
 		92965FF52EAA70A800D877C3 /* Codemaster.png in Resources */ = {isa = PBXBuildFile; fileRef = 92965FF42EAA70A800D877C3 /* Codemaster.png */; };
@@ -291,11 +293,13 @@
 		926B75462EC6020200543101 /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
 		927063772EF2EC6B002648B7 /* HexGl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HexGl.png; sourceTree = "<group>"; };
 		927063792EF7E8D9002648B7 /* SharedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTypes.swift; sourceTree = "<group>"; };
+		9270637B2EF809F4002648B7 /* FavoritableCarouselItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritableCarouselItem.swift; sourceTree = "<group>"; };
+		9270637D2EF80AA0002648B7 /* FavoritesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesManager.swift; sourceTree = "<group>"; };
 		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		928FA35E2DD8E88700F3C848 /* EngagementTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngagementTracker.swift; sourceTree = "<group>"; };
-		92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalGameCarousel.swift; sourceTree = "<group>"; };
+		92965FEC2EAA4C4000D877C3 /* HorizontalGameCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalGameCarousel.swift; sourceTree = "<group>"; };
 		92965FF02EAA6DD000D877C3 /* Famidash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Famidash.png; sourceTree = "<group>"; };
 		92965FF22EAA6DE200D877C3 /* Codemaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Codemaster.png; sourceTree = "<group>"; };
 		92965FF42EAA70A800D877C3 /* Codemaster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Codemaster.png; sourceTree = "<group>"; };
@@ -609,6 +613,8 @@
 		183DF1D32862E1780088FE1C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				9270637B2EF809F4002648B7 /* FavoritableCarouselItem.swift */,
+				9270637D2EF80AA0002648B7 /* FavoritesManager.swift */,
 				2F8AFD192ECE682B00F3A2D4 /* ImagePicker.swift */,
 				2F8AFD1B2ECE687900F3A2D4 /* ProfileImageUploader.swift */,
 				2F3B2C542EC9E84E00C4E694 /* ImageCacheManager.swift */,
@@ -630,7 +636,7 @@
 			isa = PBXGroup;
 			children = (
 				2F50B7E32EB408B500E250EA /* OverlayViews */,
-				92965FEC2EAA4C4000D877C3 /* VerticalGameCarousel.swift */,
+				92965FEC2EAA4C4000D877C3 /* HorizontalGameCarousel.swift */,
 				92E02F602E3F6E220002B6E6 /* WebViewContainer.swift */,
 				92E02F622E3F70CF0002B6E6 /* FullScreenWebView.swift */,
 				92EF51842E2693B0008D609E /* LicenseListView.swift */,
@@ -1255,8 +1261,10 @@
 				186B04AD28661B940013EFDC /* CGPoint+distanceTo.swift in Sources */,
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
 				92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */,
-				92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */,
+				92965FED2EAA4C4000D877C3 /* HorizontalGameCarousel.swift in Sources */,
 				9270637A2EF7E8D9002648B7 /* SharedTypes.swift in Sources */,
+				9270637E2EF80AA0002648B7 /* FavoritesManager.swift in Sources */,
+				9270637C2EF809F4002648B7 /* FavoritableCarouselItem.swift in Sources */,
 				92267CAA2EF1693A00E56716 /* HexGlViewModel.swift in Sources */,
 				92267CA82EF168E300E56716 /* HexGlWrapper.swift in Sources */,
 				92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */,
