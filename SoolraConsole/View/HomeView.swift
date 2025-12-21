@@ -215,6 +215,16 @@ struct HomeView: View {
         .onChange(of: walletManager.privyUser?.id) { newID in
             engagementTracker.setPrivyId(newID)
         }
+        .onChange(of: viewModel.focusedButtonIndex) { newIndex in
+            // Continuously sync view model changes back to active carousel
+            if case .grid = currentView {
+                if activeCarouselIndex == 0 {
+                    mainCarouselFocusIndex = newIndex
+                } else {
+                    secondaryCarouselFocusIndex = newIndex
+                }
+            }
+        }
         .environmentObject(controllerViewModel)
         .profileOverlay(isPresented: overlaystate.isProfileOverlayVisible)
         .walletOverlay(isPresented: overlaystate.isWalletOverlayVisible)
@@ -256,41 +266,43 @@ struct HomeView: View {
                     // Switch to secondary carousel (swipe up)
                     if activeCarouselIndex == 0 {
                         switchToCarousel(1)
+                        return // Don't pass to view model
                     }
                 case .down:
                     // Switch back to main carousel (swipe down)
                     if activeCarouselIndex == 1 {
                         switchToCarousel(0)
+                        return // Don't pass to view model
                     }
                 default:
-                    // Pass other controls to the view model, but it will update the appropriate focus index
-                    // Since we're using separate indices, we need to handle this differently
-                    // The view model still handles the logic, we just sync afterwards
-                    viewModel.controllerDidPress(
-                        action: evt.action,
-                        pressed: evt.pressed
-                    )
-                    
-                    // Sync the viewModel's focusedButtonIndex to our active carousel's index
-                    if activeCarouselIndex == 0 {
-                        mainCarouselFocusIndex = viewModel.focusedButtonIndex
-                    } else {
-                        secondaryCarouselFocusIndex = viewModel.focusedButtonIndex
-                    }
-                }
-            } else {
-                viewModel.controllerDidPress(
-                    action: evt.action,
-                    pressed: evt.pressed
-                )
-                
-                // Sync on release too
-                if activeCarouselIndex == 0 {
-                    mainCarouselFocusIndex = viewModel.focusedButtonIndex
-                } else {
-                    secondaryCarouselFocusIndex = viewModel.focusedButtonIndex
+                    break
                 }
             }
+            
+            // Sync view model's focus index from active carousel BEFORE processing
+            let beforeSync = viewModel.focusedButtonIndex
+            if activeCarouselIndex == 0 {
+                viewModel.focusedButtonIndex = mainCarouselFocusIndex
+            } else {
+                viewModel.focusedButtonIndex = secondaryCarouselFocusIndex
+            }
+            print("🔄 SYNC BEFORE: viewModel.focusedButtonIndex \(beforeSync) -> \(viewModel.focusedButtonIndex) (carousel \(activeCarouselIndex))")
+            
+            // Now pass all controller input to view model
+            viewModel.controllerDidPress(
+                action: evt.action,
+                pressed: evt.pressed
+            )
+            
+            // Sync back after view model processes
+            let afterVM = viewModel.focusedButtonIndex
+            if activeCarouselIndex == 0 {
+                mainCarouselFocusIndex = viewModel.focusedButtonIndex
+            } else {
+                secondaryCarouselFocusIndex = viewModel.focusedButtonIndex
+            }
+            print("🔄 SYNC AFTER: viewModel.focusedButtonIndex \(afterVM) -> carousel[\(activeCarouselIndex)] = \(activeCarouselIndex == 0 ? mainCarouselFocusIndex : secondaryCarouselFocusIndex)")
+            
         case .web:
             BluetoothControllerService.shared.delegate?.controllerDidPress(
                 action: evt.action,
@@ -307,12 +319,6 @@ struct HomeView: View {
         
         withAnimation(carouselSpring) {
             activeCarouselIndex = index
-            // Reset focused index to first game when switching
-            if index == 0 {
-                mainCarouselFocusIndex = 4
-            } else {
-                secondaryCarouselFocusIndex = 4
-            }
         }
     }
 
@@ -350,8 +356,9 @@ struct HomeView: View {
                                 navigateToWeb(game)
                             }
                         }
-                        .offset(y: activeCarouselIndex == 0 ? 0 : -geometry.size.height)
                         .opacity(activeCarouselIndex == 0 ? 1 : 0)
+                        .allowsHitTesting(activeCarouselIndex == 0)
+                        .zIndex(activeCarouselIndex == 0 ? 1 : 0)
                         
                         // Secondary Carousel (Featured/Favorites/Recent/etc)
                         HorizontalGameCarousel(
@@ -365,60 +372,9 @@ struct HomeView: View {
                                 navigateToWeb(game)
                             }
                         }
-                        .offset(y: activeCarouselIndex == 1 ? 0 : geometry.size.height)
                         .opacity(activeCarouselIndex == 1 ? 1 : 0)
-                        
-                        // Carousel toggle - positioned at bottom of carousel area
-                        VStack {
-                            Spacer()
-                            HStack(spacing: 0) {
-                                Button(action: {
-                                    if activeCarouselIndex != 0 {
-                                        switchToCarousel(0)
-                                    }
-                                }) {
-                                    Text("All Games")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(activeCarouselIndex == 0 ? .black : .white.opacity(0.7))
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 4)
-                                        .background(
-                                            activeCarouselIndex == 0
-                                                ? Color.white
-                                                : Color.clear
-                                        )
-                                        .cornerRadius(10)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Button(action: {
-                                    if activeCarouselIndex != 1 {
-                                        switchToCarousel(1)
-                                    }
-                                }) {
-                                    Text("Favorites")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(activeCarouselIndex == 1 ? .black : .white.opacity(0.7))
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 4)
-                                        .background(
-                                            activeCarouselIndex == 1
-                                                ? Color.white
-                                                : Color.clear
-                                        )
-                                        .cornerRadius(10)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            .padding(3)
-                            .background(Color.white.opacity(0.15))
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
-                            )
-                            .padding(.bottom, 16)
-                        }
+                        .allowsHitTesting(activeCarouselIndex == 1)
+                        .zIndex(activeCarouselIndex == 1 ? 1 : 0)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .ignoresSafeArea(edges: .top)
@@ -449,6 +405,60 @@ struct HomeView: View {
                             }
                     )
                     .animation(carouselSpring, value: activeCarouselIndex)
+                    
+                    // Carousel toggle - positioned at bottom, OUTSIDE carousel ZStack
+                    VStack {
+                        Spacer()
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                if activeCarouselIndex != 0 {
+                                    switchToCarousel(0)
+                                }
+                            }) {
+                                Text("All Games")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(activeCarouselIndex == 0 ? .black : .white.opacity(0.7))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        activeCarouselIndex == 0
+                                            ? Color.white
+                                            : Color.clear
+                                    )
+                                    .cornerRadius(10)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Button(action: {
+                                if activeCarouselIndex != 1 {
+                                    switchToCarousel(1)
+                                }
+                            }) {
+                                Text("Favorites")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(activeCarouselIndex == 1 ? .black : .white.opacity(0.7))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        activeCarouselIndex == 1
+                                            ? Color.white
+                                            : Color.clear
+                                    )
+                                    .cornerRadius(10)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .padding(3)
+                        .background(Color.white.opacity(0.15))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                        )
+                        .padding(.bottom, 16)
+                    }
+                    .allowsHitTesting(true)
+                    .zIndex(100) // Ensure toggle is above everything
 
                     // Navigation overlay on top of carousels
                     HomeNavigationView(
