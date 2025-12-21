@@ -1,5 +1,5 @@
 //
-//  SOOLRA
+//  SOOLRA - Dual Carousel Home View
 //
 //  Copyright © 2025 SOOLRA. All rights reserved.
 //
@@ -10,38 +10,7 @@ import Network
 import SwiftUI
 import WebKit
 
-// Data to pass to GameView
-struct GameViewData: Equatable {
-    let name: String
-    let romPath: URL
-    let consoleManager: ConsoleCoreManager
-    let pauseViewModel: PauseGameViewModel
-
-    static func == (lhs: GameViewData, rhs: GameViewData) -> Bool {
-        return lhs.name == rhs.name && lhs.romPath == rhs.romPath
-    }
-}
-enum CurrentView: Equatable {
-    case grid
-    case gameDetail(Rom)
-    case game(GameViewData)
-    case web(WebGame)
-
-    static func == (lhs: CurrentView, rhs: CurrentView) -> Bool {
-        switch (lhs, rhs) {
-        case (.grid, .grid):
-            return true
-        case (.gameDetail(let rom1), .gameDetail(let rom2)):
-            return rom1 == rom2
-        case (.game(let data1), .game(let data2)):
-            return data1 == data2
-        case (.web(let g1), .web(let g2)):
-            return g1.id == g2.id
-        default:
-            return false
-        }
-    }
-}
+// MARK: - Enhanced HomeView with Dual Carousels
 
 struct HomeView: View {
     @EnvironmentObject var themeManager: ThemeManager
@@ -49,13 +18,11 @@ struct HomeView: View {
     @EnvironmentObject var dataController: CoreDataController
     @EnvironmentObject var consoleManager: ConsoleCoreManager
     @EnvironmentObject var saveStateManager: SaveStateManager
-    @ObservedObject private var controllerService = BluetoothControllerService
-        .shared
+    @ObservedObject private var controllerService = BluetoothControllerService.shared
 
     @StateObject private var viewModel = HomeViewModel.shared
     @StateObject private var engagementTracker = globalEngagementTracker
-    @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState
-        .shared
+    @StateObject private var defaultRomsLoadingState = DefaultRomsLoadingState.shared
 
     @StateObject private var network = NetworkMonitor()
     @State private var isOfflineDialogVisible = false
@@ -66,7 +33,6 @@ struct HomeView: View {
     @State private var currentView: CurrentView = .grid
     @State private var roms: [Rom] = []
     @State private var isLoading: Bool = false
-    //    @StateObject private var controllerViewModel = ControllerViewModel()
     @StateObject private var controllerViewModel = ControllerViewModel.shared
 
     @State private var isLoadingGame: Bool = false
@@ -76,12 +42,31 @@ struct HomeView: View {
     @State private var isShopDialogVisible: Bool = false
     @State private var isShopWebviewVisible: Bool = false
     @StateObject private var overlaystate = overlayState
+    @StateObject private var favoritesManager = FavoritesManager.shared
 
+    // Toast notification for favorites
+    @State private var showFavoriteToast: Bool = false
+    @State private var favoriteToastMessage: String = ""
+
+    // MARK: - Dual Carousel State
+    @State private var activeCarouselIndex: Int = 0 // 0 = main, 1 = secondary
+    @State private var carouselVerticalOffset: CGFloat = 0
+    @State private var isDraggingCarousel: Bool = false
+    @State private var mainCarouselFocusIndex: Int = 4 // Independent focus for main carousel
+    @State private var secondaryCarouselFocusIndex: Int = 4 // Independent focus for secondary carousel
+    
     private let dialogSpring = Animation.spring(
         response: 0.32,
         dampingFraction: 0.86,
         blendDuration: 0.15
     )
+    
+    private let carouselSpring = Animation.spring(
+        response: 0.42,
+        dampingFraction: 0.88,
+        blendDuration: 0.18
+    )
+    
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
 
     private let brandBackground = Color(
@@ -114,6 +99,7 @@ struct HomeView: View {
             if isShopDialogVisible { shopDialog }
             if isOfflineDialogVisible { offlineDialog }
             if isLoading { loadingOverlay }
+            if showFavoriteToast { favoriteToast }
         }
         .onAppear {
             viewModel.isCarouselMode = true
@@ -128,8 +114,7 @@ struct HomeView: View {
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                isShopDialogVisible = !BluetoothControllerService.shared
-                    .isControllerConnected
+                isShopDialogVisible = !BluetoothControllerService.shared.isControllerConnected
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
@@ -137,11 +122,8 @@ struct HomeView: View {
                     isShopDialogVisible = false
                 }
             }
-            BluetoothControllerService.shared.buttonTracker = {
-                action,
-                pressed in
+            BluetoothControllerService.shared.buttonTracker = { action, pressed in
                 guard pressed else { return }
-
                 switch currentView {
                 case .web:
                     engagementTracker.trackButtonPress(action: action)
@@ -151,19 +133,16 @@ struct HomeView: View {
             }
         }
         .onOpenURL { url in
-            guard
-                ["nes", "gba", "zip"].contains(url.pathExtension.lowercased())
-            else { return }
+            guard ["nes", "gba", "zip"].contains(url.pathExtension.lowercased()) else { return }
             Task {
                 print("📥 Importing ROM from external URL: \(url)")
                 isLoading = true
                 await dataController.romManager.addRom(url: url)
                 isLoading = false
                 let updatedRoms = dataController.romManager.fetchRoms()
-                let newRom =
-                    updatedRoms.first(where: {
-                        $0.url?.lastPathComponent == url.lastPathComponent
-                    }) ?? updatedRoms.first
+                let newRom = updatedRoms.first(where: {
+                    $0.url?.lastPathComponent == url.lastPathComponent
+                }) ?? updatedRoms.first
 
                 if let rom = newRom {
                     NotificationCenter.default.post(
@@ -179,7 +158,6 @@ struct HomeView: View {
                 }
             }
         }
-
         .onChange(of: defaultRomsLoadingState.isLoading) { loading in
             if !loading {
                 roms = dataController.romManager.fetchRoms()
@@ -195,7 +173,7 @@ struct HomeView: View {
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
                 let idx = index - 4
-                let vis = visibleItems()
+                let vis = activeCarouselIndex == 0 ? visibleItems() : featuredItems()
                 if idx >= 0 && idx < vis.count {
                     let (kind, _) = vis[idx].element
                     switch kind {
@@ -243,14 +221,33 @@ struct HomeView: View {
         .onChange(of: walletManager.privyUser?.id) { newID in
             engagementTracker.setPrivyId(newID)
         }
-
+        .onChange(of: viewModel.focusedButtonIndex) { newIndex in
+            // Continuously sync view model changes back to active carousel
+            if case .grid = currentView {
+                // Clamp to valid game range (4+) to prevent nav button focus
+                let clampedIndex = max(4, newIndex)
+                
+                if activeCarouselIndex == 0 {
+                    mainCarouselFocusIndex = clampedIndex
+                } else {
+                    secondaryCarouselFocusIndex = clampedIndex
+                }
+                
+                // If we had to clamp, fix the view model too
+                if clampedIndex != newIndex {
+                    DispatchQueue.main.async {
+                        viewModel.focusedButtonIndex = clampedIndex
+                    }
+                }
+            }
+        }
         .environmentObject(controllerViewModel)
         .profileOverlay(isPresented: overlaystate.isProfileOverlayVisible)
         .walletOverlay(isPresented: overlaystate.isWalletOverlayVisible)
         .marketOverlay(isPresented: overlaystate.isMarketOverlayVisible)
     }
 
-    // Add this helper function in your HomeView struct, outside of body
+    // MARK: - Controller Event Handling with Carousel Navigation
     private func handleControllerEvent(_ evt: ControllerAction) {
         if isShopDialogVisible {
             if evt.pressed {
@@ -278,10 +275,39 @@ struct HomeView: View {
 
         switch currentView {
         case .grid:
+            // Handle carousel switching with D-pad up/down
+            if evt.pressed {
+                switch evt.action {
+                case .up, .down:
+                    // Both up and down switch to the inactive carousel
+                    switchToCarousel(activeCarouselIndex == 0 ? 1 : 0)
+                    return // Don't pass to view model
+//                case .y:
+                    // Toggle favorite on focused item
+//                    if viewModel.focusedButtonIndex >= 4 {
+//                        toggleFavoriteAtCurrentIndex()
+//                        return // Don't pass to view model
+//                    }
+                default:
+                    break
+                }
+            }
+            
+            // Sync view model's focus index from active carousel BEFORE processing
+            if activeCarouselIndex == 0 {
+                viewModel.focusedButtonIndex = mainCarouselFocusIndex
+            } else {
+                viewModel.focusedButtonIndex = secondaryCarouselFocusIndex
+            }
+            
+            // Now pass all controller input to view model
             viewModel.controllerDidPress(
                 action: evt.action,
                 pressed: evt.pressed
             )
+            
+            // Note: We DON'T sync back here because onChange(of: viewModel.focusedButtonIndex) handles it
+            
         case .web:
             BluetoothControllerService.shared.delegate?.controllerDidPress(
                 action: evt.action,
@@ -291,14 +317,29 @@ struct HomeView: View {
             break
         }
     }
+    
+    private func switchToCarousel(_ index: Int) {
+        guard index != activeCarouselIndex else { return }
+        
+        withAnimation(carouselSpring) {
+            activeCarouselIndex = index
+        }
+        
+        // Ensure focus is in valid game range when switching
+        DispatchQueue.main.async {
+            if viewModel.focusedButtonIndex < 4 {
+                viewModel.focusedButtonIndex = 4
+            }
+        }
+    }
 
+    // MARK: - Grid and Detail View with Dual Carousels
     @ViewBuilder
     private var gridAndDetailView: some View {
         GeometryReader { geometry in
             let safeAreaBottom = geometry.safeAreaInsets.bottom
             let safeAreaTop = geometry.safeAreaInsets.top
-            let totalHeight =
-                geometry.size.height + safeAreaTop + safeAreaBottom
+            let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
 
             ZStack(alignment: .top) {
                 Image("horizontal-bg")
@@ -312,24 +353,127 @@ struct HomeView: View {
 
             VStack(spacing: 0) {
                 ZStack(alignment: .top) {
-                    HorizontalGameCarousel(
-                        focusedIndex: $viewModel.focusedButtonIndex,
-                        items: visibleItems().map { $0.element }
-                    ) { kind, item in
-                        switch kind {
-                        case .rom(let rom):
-                            navigateToRom(rom)
-                        case .web(let game):
-                            navigateToWeb(game)
+                    // Carousel switching container - ONLY affects top half
+                    ZStack {
+                        // Main Carousel (All Games)
+                        if activeCarouselIndex == 0 {
+                            HorizontalGameCarousel(
+                                focusedIndex: $mainCarouselFocusIndex,
+                                items: visibleItems().map { $0.element }
+                            ) { kind, item in
+                                switch kind {
+                                case .rom(let rom):
+                                    navigateToRom(rom)
+                                case .web(let game):
+                                    navigateToWeb(game)
+                                }
+                            }
+                            .id("main-\(favoritesManager.favoriteIds.count)")
+                            .transition(.identity)
+                        }
+                        
+                        // Secondary Carousel (Featured/Favorites/Recent/etc)
+                        if activeCarouselIndex == 1 {
+                            HorizontalGameCarousel(
+                                focusedIndex: $secondaryCarouselFocusIndex,
+                                items: featuredItems().map { $0.element }
+                            ) { kind, item in
+                                switch kind {
+                                case .rom(let rom):
+                                    navigateToRom(rom)
+                                case .web(let game):
+                                    navigateToWeb(game)
+                                }
+                            }
+                            .id("secondary-\(favoritesManager.favoriteIds.count)")
+                            .transition(.identity)
                         }
                     }
-                    .frame(
-                        maxWidth: .infinity,
-                        maxHeight: .infinity,
-                        alignment: .top
-                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .ignoresSafeArea(edges: .top)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 10)
+                            .onEnded { value in
+                                let verticalMovement = abs(value.translation.height)
+                                let horizontalMovement = abs(value.translation.width)
+                                
+                                // Only respond if gesture is primarily vertical
+                                guard verticalMovement > horizontalMovement * 1.5 else {
+                                    return
+                                }
+                                
+                                let translation = value.translation.height
+                                let velocity = value.predictedEndTranslation.height
+                                let threshold: CGFloat = 40 // More sensitive
+                                
+                                // Swipe up (negative translation) -> go to secondary
+                                if (translation < -threshold || velocity < -300) && activeCarouselIndex == 0 {
+                                    switchToCarousel(1)
+                                }
+                                // Swipe down (positive translation) -> go to main
+                                else if (translation > threshold || velocity > 300) && activeCarouselIndex == 1 {
+                                    switchToCarousel(0)
+                                }
+                            }
+                    )
+                    .animation(carouselSpring, value: activeCarouselIndex)
+                    
+                    // Carousel toggle - positioned at bottom, OUTSIDE carousel ZStack
+                    VStack {
+                        Spacer()
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                if activeCarouselIndex != 0 {
+                                    switchToCarousel(0)
+                                }
+                            }) {
+                                Text("All Games")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(activeCarouselIndex == 0 ? .black : .white.opacity(0.7))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        activeCarouselIndex == 0
+                                            ? Color.white
+                                            : Color.clear
+                                    )
+                                    .cornerRadius(10)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Button(action: {
+                                if activeCarouselIndex != 1 {
+                                    switchToCarousel(1)
+                                }
+                            }) {
+                                Text("Favorites")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(activeCarouselIndex == 1 ? .black : .white.opacity(0.7))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        activeCarouselIndex == 1
+                                            ? Color.white
+                                            : Color.clear
+                                    )
+                                    .cornerRadius(10)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .padding(3)
+                        .background(Color.white.opacity(0.15))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                        )
+                        .padding(.bottom, 16)
+                    }
+                    .allowsHitTesting(true)
+                    .zIndex(100) // Ensure toggle is above everything
 
+                    // Navigation overlay on top of carousels
                     HomeNavigationView(
                         isSettingsPresented: $isSettingsPresented,
                         onSettingsButtonTap: { isSettingsPresented = true },
@@ -337,12 +481,10 @@ struct HomeView: View {
                         dataController: dataController,
                         viewModel: viewModel,
                         searchQuery: $viewModel.searchQuery,
-                        isProfilePresented: overlaystate
-                            .isProfileOverlayVisible,
-                        isWalletPresented: overlaystate
-                            .isWalletOverlayVisible,
-                        isMarketplacePresented: overlaystate
-                            .isMarketOverlayVisible
+                        isProfilePresented: overlaystate.isProfileOverlayVisible,
+                        isWalletPresented: overlaystate.isWalletOverlayVisible,
+                        isMarketplacePresented: overlaystate.isMarketOverlayVisible,
+                        activeCarouselIndex: $activeCarouselIndex
                     )
                     .padding(.top, geometry.safeAreaInsets.top)
                     .padding(.horizontal, 8)
@@ -352,8 +494,10 @@ struct HomeView: View {
                     .sheet(isPresented: $isShopWebviewVisible) {
                         shopWebSheet
                     }
+                    .allowsHitTesting(true)
                 }
 
+                // BOTTOM HALF - CONTROLLER (EXACTLY AS ORIGINAL)
                 SoolraControllerView(
                     controllerViewModel: controllerViewModel,
                     currentView: $currentView,
@@ -379,15 +523,11 @@ struct HomeView: View {
         GeometryReader { geometry in
             let safeAreaBottom = geometry.safeAreaInsets.bottom
             let safeAreaTop = geometry.safeAreaInsets.top
-            let totalHeight =
-                geometry.size.height + safeAreaTop + safeAreaBottom
+            let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
 
             ZStack(alignment: .bottom) {
                 WebGameContainerView(game: webGame) {
-                    engagementTracker.setCurrentRom(
-                        "none",
-                        romScoreModifier: 0.0
-                    )
+                    engagementTracker.setCurrentRom("none", romScoreModifier: 0.0)
                     currentView = .grid
                 }
                 .frame(
@@ -414,7 +554,7 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Refactored Sheets and Overlays
+    // MARK: - Sheets and Overlays
 
     @ViewBuilder
     private var addRomSheet: some View {
@@ -649,6 +789,58 @@ struct HomeView: View {
         }
         .zIndex(1000)
     }
+    
+    @ViewBuilder
+    private var favoriteToast: some View {
+        VStack {
+            Spacer()
+            HStack(spacing: 10) {
+                Image(systemName: favoriteToastMessage.contains("Added") ? "star.fill" : "star.slash.fill")
+                    .foregroundColor(.white)
+                Text(favoriteToastMessage)
+                    .foregroundColor(.white)
+                    .font(.system(size: 15, weight: .semibold))
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(Color.black.opacity(0.85))
+            .cornerRadius(25)
+            .shadow(radius: 10)
+            .padding(.bottom, 100)
+        }
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .zIndex(2000)
+    }
+
+    // MARK: - Favorites Helper
+    
+    private func toggleFavoriteAtCurrentIndex() {
+        let items = activeCarouselIndex == 0 ? visibleItems() : featuredItems()
+        let idx = viewModel.focusedButtonIndex - 4
+        
+        guard idx >= 0 && idx < items.count else { return }
+        
+        let (_, item) = items[idx].element
+        toggleFavorite(item)
+    }
+    
+    private func toggleFavorite(_ item: LibraryItem) {
+        let wasFavorite = favoritesManager.isFavorite(item)
+        favoritesManager.toggleFavorite(item)
+        
+        // Show toast
+        favoriteToastMessage = wasFavorite ? "Removed from Favorites" : "Added to Favorites"
+        withAnimation {
+            showFavoriteToast = true
+        }
+        
+        // Auto-hide toast after 2 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation {
+                showFavoriteToast = false
+            }
+        }
+    }
 
     // MARK: - Logic and Helper Functions
 
@@ -682,9 +874,7 @@ struct HomeView: View {
         items = webItems + romItems
     }
 
-    private func visibleItems() -> [(
-        offset: Int, element: (LibraryKind, LibraryItem)
-    )] {
+    private func visibleItems() -> [(offset: Int, element: (LibraryKind, LibraryItem))] {
         Array(items.enumerated())
             .filter { pair in
                 let (_, item) = pair.element
@@ -692,6 +882,21 @@ struct HomeView: View {
                     || item.searchKey.localizedCaseInsensitiveContains(
                         viewModel.searchQuery
                     )
+            }
+    }
+    
+    // MARK: - Featured Items for Secondary Carousel
+    // Shows only favorited games
+    private func featuredItems() -> [(offset: Int, element: (LibraryKind, LibraryItem))] {
+        Array(items.enumerated())
+            .filter { pair in
+                let (_, item) = pair.element
+                let matchesSearch = viewModel.searchQuery.isEmpty
+                    || item.searchKey.localizedCaseInsensitiveContains(
+                        viewModel.searchQuery
+                    )
+                let isFavorited = favoritesManager.isFavorite(item)
+                return matchesSearch && isFavorited
             }
     }
 
@@ -792,30 +997,7 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Sub-views
-
-struct BlinkingFocusedButton<Content: View>: View {
-    @Binding var selectedIndex: Int
-    let index: Int
-    let action: () -> Void
-    let content: () -> Content
-
-    var body: some View {
-        Button(action: action) {
-            content()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(
-                            selectedIndex == index ? Color.white : Color.clear,
-                            lineWidth: 2
-                        )
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 10)
-                )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
+// MARK: - Updated HomeNavigationView with Carousel Indicator
 
 struct HomeNavigationView: View {
     @Binding var isSettingsPresented: Bool
@@ -827,6 +1009,7 @@ struct HomeNavigationView: View {
     @Binding var isProfilePresented: Bool
     @Binding var isWalletPresented: Bool
     @Binding var isMarketplacePresented: Bool
+    @Binding var activeCarouselIndex: Int // NEW: Track active carousel
     @StateObject private var manager = walletManager
 
     var body: some View {
@@ -847,7 +1030,7 @@ struct HomeNavigationView: View {
         )
         .background(Color.clear)
     }
-
+    
     @ViewBuilder
     private var logoButton: some View {
         BlinkingFocusedButton(
@@ -887,7 +1070,6 @@ struct HomeNavigationView: View {
                     },
                     content: {
                         Button(action: {
-
                             viewModel.isPresented.toggle()
                         }) {
                             Image(systemName: "plus")
@@ -947,7 +1129,6 @@ struct HomeNavigationView: View {
                         Group {
                             switch manager.authState {
                             case .authenticated:
-
                                 Button(action: {
                                     withAnimation { isWalletPresented = true }
                                 }) {
@@ -958,7 +1139,6 @@ struct HomeNavigationView: View {
                                 }
                             default:
                                 EmptyView()
-
                             }
                         }
                     }
@@ -1001,12 +1181,36 @@ struct HomeNavigationView: View {
     }
 }
 
+// MARK: - Supporting Views (unchanged from original)
+
+struct BlinkingFocusedButton<Content: View>: View {
+    @Binding var selectedIndex: Int
+    let index: Int
+    let action: () -> Void
+    let content: () -> Content
+
+    var body: some View {
+        Button(action: action) {
+            content()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(
+                            selectedIndex == index ? Color.white : Color.clear,
+                            lineWidth: 2
+                        )
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 10)
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 struct CurrentItemView: View {
     var currentRom: Rom?
     @Binding var currentView: CurrentView
     @Binding var focusedButtonIndex: Int
     var addRomAction: (() -> Void)? = nil
-
     var overrideImage: UIImage? = nil
     var overrideTitle: String? = nil
 
