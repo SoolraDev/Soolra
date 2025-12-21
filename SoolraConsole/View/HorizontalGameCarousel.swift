@@ -231,13 +231,6 @@ fileprivate struct HorizontalCarousel_iOS17: View {
         let zIndex = zFor(item.id)
         let itemID = compoundID(for: item, zIndex: zIndex)
         
-        FavoritableCarouselItem(
-            item: item,
-            isFavorite: FavoritesManager.shared.isFavorite(item),
-            onToggleFavorite: {
-                FavoritesManager.shared.toggleFavorite(item)
-            }
-        ) {
             CarouselCard(
                 kind: kind,
                 item: item,
@@ -245,7 +238,6 @@ fileprivate struct HorizontalCarousel_iOS17: View {
                 cardSizeFocused: cardSizeFocused,
                 cardSizeUnfocused: cardSizeUnfocused
             )
-        }
         .onTapGesture { onOpen(kind, item) }
         .id(itemID)
         .modifier(ScaleOnScroll(focusedScale: focusedScale, unfocusedScale: unfocusedScale))
@@ -435,8 +427,6 @@ fileprivate struct HorizontalCarousel_iOS17: View {
         }
     }
 }
-// MARK: - Card (shared)
-// MARK: - Card (shared)
 @available(iOS 17, *)
 fileprivate struct CarouselCard: View {
     let kind: LibraryKind
@@ -444,6 +434,18 @@ fileprivate struct CarouselCard: View {
     let isFocused: Bool
     let cardSizeFocused: CGSize
     let cardSizeUnfocused: CGSize
+    
+    @State private var showFavoriteDialog = false
+    @State private var isFavorite: Bool
+    
+    init(kind: LibraryKind, item: LibraryItem, isFocused: Bool, cardSizeFocused: CGSize, cardSizeUnfocused: CGSize) {
+        self.kind = kind
+        self.item = item
+        self.isFocused = isFocused
+        self.cardSizeFocused = cardSizeFocused
+        self.cardSizeUnfocused = cardSizeUnfocused
+        self._isFavorite = State(initialValue: FavoritesManager.shared.isFavorite(item))
+    }
     
     var body: some View {
         let strokeOpacity = isFocused ? 0.85 : 0.20
@@ -457,6 +459,20 @@ fileprivate struct CarouselCard: View {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .stroke(Color(red: 252/255, green: 112/255, blue: 242/255).opacity(strokeOpacity), lineWidth: strokeWidth)
                 )
+            
+            // Star indicator - top trailing
+            VStack {
+                HStack {
+                    Spacer()
+                    Image(systemName: "star.fill")
+                        .foregroundColor(.yellow)
+                        .font(.system(size: 24))
+                        .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
+                        .padding(8)
+                        .opacity(isFavorite ? 1 : 0)
+                }
+                Spacer()
+            }
             
             // Show wifi badge for web games
             if case .web = kind {
@@ -489,6 +505,20 @@ fileprivate struct CarouselCard: View {
             }
         }
         .frame(width: cardSizeFocused.height, height: cardSizeFocused.height)
+        .onLongPressGesture(minimumDuration: 0.5) {
+            showFavoriteDialog = true
+        }
+        .confirmationDialog(
+            "",
+            isPresented: $showFavoriteDialog,
+            titleVisibility: .hidden
+        ) {
+            Button(isFavorite ? "Remove from Favorites" : "Add to Favorites") {
+                isFavorite.toggle()
+                FavoritesManager.shared.toggleFavorite(item)
+            }
+            Button("Cancel", role: .cancel) {}
+        }
     }
     
     @ViewBuilder
