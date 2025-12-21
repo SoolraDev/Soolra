@@ -224,10 +224,20 @@ struct HomeView: View {
         .onChange(of: viewModel.focusedButtonIndex) { newIndex in
             // Continuously sync view model changes back to active carousel
             if case .grid = currentView {
+                // Clamp to valid game range (4+) to prevent nav button focus
+                let clampedIndex = max(4, newIndex)
+                
                 if activeCarouselIndex == 0 {
-                    mainCarouselFocusIndex = newIndex
+                    mainCarouselFocusIndex = clampedIndex
                 } else {
-                    secondaryCarouselFocusIndex = newIndex
+                    secondaryCarouselFocusIndex = clampedIndex
+                }
+                
+                // If we had to clamp, fix the view model too
+                if clampedIndex != newIndex {
+                    DispatchQueue.main.async {
+                        viewModel.focusedButtonIndex = clampedIndex
+                    }
                 }
             }
         }
@@ -308,12 +318,18 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - Carousel Switching Logic
     private func switchToCarousel(_ index: Int) {
         guard index != activeCarouselIndex else { return }
         
         withAnimation(carouselSpring) {
             activeCarouselIndex = index
+        }
+        
+        // Ensure focus is in valid game range when switching
+        DispatchQueue.main.async {
+            if viewModel.focusedButtonIndex < 4 {
+                viewModel.focusedButtonIndex = 4
+            }
         }
     }
 
