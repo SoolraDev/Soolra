@@ -268,18 +268,10 @@ struct HomeView: View {
             // Handle carousel switching with D-pad up/down
             if evt.pressed {
                 switch evt.action {
-                case .up:
-                    // Switch to secondary carousel (swipe up)
-                    if activeCarouselIndex == 0 {
-                        switchToCarousel(1)
-                        return // Don't pass to view model
-                    }
-                case .down:
-                    // Switch back to main carousel (swipe down)
-                    if activeCarouselIndex == 1 {
-                        switchToCarousel(0)
-                        return // Don't pass to view model
-                    }
+                case .up, .down:
+                    // Both up and down switch to the inactive carousel
+                    switchToCarousel(activeCarouselIndex == 0 ? 1 : 0)
+                    return // Don't pass to view model
                 case .y:
                     // Toggle favorite on focused item
                     if viewModel.focusedButtonIndex >= 4 {
@@ -292,13 +284,11 @@ struct HomeView: View {
             }
             
             // Sync view model's focus index from active carousel BEFORE processing
-            let beforeSync = viewModel.focusedButtonIndex
             if activeCarouselIndex == 0 {
                 viewModel.focusedButtonIndex = mainCarouselFocusIndex
             } else {
                 viewModel.focusedButtonIndex = secondaryCarouselFocusIndex
             }
-            print("🔄 SYNC BEFORE: viewModel.focusedButtonIndex \(beforeSync) -> \(viewModel.focusedButtonIndex) (carousel \(activeCarouselIndex))")
             
             // Now pass all controller input to view model
             viewModel.controllerDidPress(
@@ -306,14 +296,7 @@ struct HomeView: View {
                 pressed: evt.pressed
             )
             
-            // Sync back after view model processes
-            let afterVM = viewModel.focusedButtonIndex
-            if activeCarouselIndex == 0 {
-                mainCarouselFocusIndex = viewModel.focusedButtonIndex
-            } else {
-                secondaryCarouselFocusIndex = viewModel.focusedButtonIndex
-            }
-            print("🔄 SYNC AFTER: viewModel.focusedButtonIndex \(afterVM) -> carousel[\(activeCarouselIndex)] = \(activeCarouselIndex == 0 ? mainCarouselFocusIndex : secondaryCarouselFocusIndex)")
+            // Note: We DON'T sync back here because onChange(of: viewModel.focusedButtonIndex) handles it
             
         case .web:
             BluetoothControllerService.shared.delegate?.controllerDidPress(
@@ -357,38 +340,38 @@ struct HomeView: View {
                     // Carousel switching container - ONLY affects top half
                     ZStack {
                         // Main Carousel (All Games)
-                        HorizontalGameCarousel(
-                            focusedIndex: $mainCarouselFocusIndex,
-                            items: visibleItems().map { $0.element }
-                        ) { kind, item in
-                            switch kind {
-                            case .rom(let rom):
-                                navigateToRom(rom)
-                            case .web(let game):
-                                navigateToWeb(game)
+                        if activeCarouselIndex == 0 {
+                            HorizontalGameCarousel(
+                                focusedIndex: $mainCarouselFocusIndex,
+                                items: visibleItems().map { $0.element }
+                            ) { kind, item in
+                                switch kind {
+                                case .rom(let rom):
+                                    navigateToRom(rom)
+                                case .web(let game):
+                                    navigateToWeb(game)
+                                }
                             }
+                            .id("main-\(favoritesManager.favoriteIds.count)")
+                            .transition(.identity)
                         }
-                        .id("main-\(favoritesManager.favoriteIds.count)")
-                        .opacity(activeCarouselIndex == 0 ? 1 : 0)
-                        .allowsHitTesting(activeCarouselIndex == 0)
-                        .zIndex(activeCarouselIndex == 0 ? 1 : 0)
                         
                         // Secondary Carousel (Featured/Favorites/Recent/etc)
-                        HorizontalGameCarousel(
-                            focusedIndex: $secondaryCarouselFocusIndex,
-                            items: featuredItems().map { $0.element }
-                        ) { kind, item in
-                            switch kind {
-                            case .rom(let rom):
-                                navigateToRom(rom)
-                            case .web(let game):
-                                navigateToWeb(game)
+                        if activeCarouselIndex == 1 {
+                            HorizontalGameCarousel(
+                                focusedIndex: $secondaryCarouselFocusIndex,
+                                items: featuredItems().map { $0.element }
+                            ) { kind, item in
+                                switch kind {
+                                case .rom(let rom):
+                                    navigateToRom(rom)
+                                case .web(let game):
+                                    navigateToWeb(game)
+                                }
                             }
+                            .id("secondary-\(favoritesManager.favoriteIds.count)")
+                            .transition(.identity)
                         }
-                        .id("secondary-\(favoritesManager.favoriteIds.count)")
-                        .opacity(activeCarouselIndex == 1 ? 1 : 0)
-                        .allowsHitTesting(activeCarouselIndex == 1)
-                        .zIndex(activeCarouselIndex == 1 ? 1 : 0)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .ignoresSafeArea(edges: .top)
