@@ -47,6 +47,8 @@ struct HomeView: View {
     @State private var activeCarouselIndex: Int = 0 // 0 = main, 1 = secondary
     @State private var carouselVerticalOffset: CGFloat = 0
     @State private var isDraggingCarousel: Bool = false
+    @State private var mainCarouselFocusIndex: Int = 4 // Independent focus for main carousel
+    @State private var secondaryCarouselFocusIndex: Int = 4 // Independent focus for secondary carousel
     
     private let dialogSpring = Animation.spring(
         response: 0.32,
@@ -261,17 +263,33 @@ struct HomeView: View {
                         switchToCarousel(0)
                     }
                 default:
-                    // Pass other controls to the active carousel's view model
+                    // Pass other controls to the view model, but it will update the appropriate focus index
+                    // Since we're using separate indices, we need to handle this differently
+                    // The view model still handles the logic, we just sync afterwards
                     viewModel.controllerDidPress(
                         action: evt.action,
                         pressed: evt.pressed
                     )
+                    
+                    // Sync the viewModel's focusedButtonIndex to our active carousel's index
+                    if activeCarouselIndex == 0 {
+                        mainCarouselFocusIndex = viewModel.focusedButtonIndex
+                    } else {
+                        secondaryCarouselFocusIndex = viewModel.focusedButtonIndex
+                    }
                 }
             } else {
                 viewModel.controllerDidPress(
                     action: evt.action,
                     pressed: evt.pressed
                 )
+                
+                // Sync on release too
+                if activeCarouselIndex == 0 {
+                    mainCarouselFocusIndex = viewModel.focusedButtonIndex
+                } else {
+                    secondaryCarouselFocusIndex = viewModel.focusedButtonIndex
+                }
             }
         case .web:
             BluetoothControllerService.shared.delegate?.controllerDidPress(
@@ -289,8 +307,12 @@ struct HomeView: View {
         
         withAnimation(carouselSpring) {
             activeCarouselIndex = index
-            // Reset focused index when switching carousels
-            viewModel.focusedButtonIndex = 4 // Default to first game item
+            // Reset focused index to first game when switching
+            if index == 0 {
+                mainCarouselFocusIndex = 4
+            } else {
+                secondaryCarouselFocusIndex = 4
+            }
         }
     }
 
@@ -301,12 +323,6 @@ struct HomeView: View {
             let safeAreaBottom = geometry.safeAreaInsets.bottom
             let safeAreaTop = geometry.safeAreaInsets.top
             let totalHeight = geometry.size.height + safeAreaTop + safeAreaBottom
-            
-            // TOP HALF: Carousel area (55%)
-            let carouselAreaHeight = geometry.size.height * 0.55
-            
-            // BOTTOM HALF: Controller area (45%)
-            let controllerHeight = totalHeight * 0.45
 
             ZStack(alignment: .top) {
                 Image("horizontal-bg")
@@ -319,13 +335,12 @@ struct HomeView: View {
             }
 
             VStack(spacing: 0) {
-                // TOP HALF - DUAL CAROUSEL CONTAINER
                 ZStack(alignment: .top) {
                     // Carousel switching container - ONLY affects top half
                     ZStack {
                         // Main Carousel (All Games)
                         HorizontalGameCarousel(
-                            focusedIndex: $viewModel.focusedButtonIndex,
+                            focusedIndex: $mainCarouselFocusIndex,
                             items: visibleItems().map { $0.element }
                         ) { kind, item in
                             switch kind {
@@ -335,13 +350,12 @@ struct HomeView: View {
                                 navigateToWeb(game)
                             }
                         }
-                        .frame(width: geometry.size.width, height: carouselAreaHeight)
-                        .offset(y: activeCarouselIndex == 0 ? 0 : -carouselAreaHeight)
+                        .offset(y: activeCarouselIndex == 0 ? 0 : -geometry.size.height)
                         .opacity(activeCarouselIndex == 0 ? 1 : 0)
                         
                         // Secondary Carousel (Featured/Favorites/Recent/etc)
                         HorizontalGameCarousel(
-                            focusedIndex: $viewModel.focusedButtonIndex,
+                            focusedIndex: $secondaryCarouselFocusIndex,
                             items: featuredItems().map { $0.element }
                         ) { kind, item in
                             switch kind {
@@ -351,39 +365,87 @@ struct HomeView: View {
                                 navigateToWeb(game)
                             }
                         }
-                        .frame(width: geometry.size.width, height: carouselAreaHeight)
-                        .offset(y: activeCarouselIndex == 1 ? 0 : carouselAreaHeight)
+                        .offset(y: activeCarouselIndex == 1 ? 0 : geometry.size.height)
                         .opacity(activeCarouselIndex == 1 ? 1 : 0)
-                    }
-                    .frame(width: geometry.size.width, height: carouselAreaHeight)
-                    .clipped() // IMPORTANT: Clip the carousel area so animations don't overflow
-                    .ignoresSafeArea(edges: .top)
-                    .contentShape(Rectangle()) // Make entire area tappable for gestures
-                    .gesture(
-                        DragGesture(minimumDistance: 20)
-                            .onChanged { value in
-                                let translation = value.translation.height
-                                
-                                // Only track meaningful drags
-                                if abs(translation) > 20 {
-                                    isDraggingCarousel = true
+                        
+                        // Carousel toggle - positioned at bottom of carousel area
+                        VStack {
+                            Spacer()
+                            HStack(spacing: 0) {
+                                Button(action: {
+                                    if activeCarouselIndex != 0 {
+                                        switchToCarousel(0)
+                                    }
+                                }) {
+                                    Text("All Games")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(activeCarouselIndex == 0 ? .black : .white.opacity(0.7))
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(
+                                            activeCarouselIndex == 0
+                                                ? Color.white
+                                                : Color.clear
+                                        )
+                                        .cornerRadius(10)
                                 }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Button(action: {
+                                    if activeCarouselIndex != 1 {
+                                        switchToCarousel(1)
+                                    }
+                                }) {
+                                    Text("Favorites")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(activeCarouselIndex == 1 ? .black : .white.opacity(0.7))
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(
+                                            activeCarouselIndex == 1
+                                                ? Color.white
+                                                : Color.clear
+                                        )
+                                        .cornerRadius(10)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
+                            .padding(3)
+                            .background(Color.white.opacity(0.15))
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                            )
+                            .padding(.bottom, 16)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .ignoresSafeArea(edges: .top)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 10)
                             .onEnded { value in
+                                let verticalMovement = abs(value.translation.height)
+                                let horizontalMovement = abs(value.translation.width)
+                                
+                                // Only respond if gesture is primarily vertical
+                                guard verticalMovement > horizontalMovement * 1.5 else {
+                                    return
+                                }
+                                
                                 let translation = value.translation.height
                                 let velocity = value.predictedEndTranslation.height
-                                let threshold: CGFloat = 80
+                                let threshold: CGFloat = 40 // More sensitive
                                 
                                 // Swipe up (negative translation) -> go to secondary
-                                if (translation < -threshold || velocity < -500) && activeCarouselIndex == 0 {
+                                if (translation < -threshold || velocity < -300) && activeCarouselIndex == 0 {
                                     switchToCarousel(1)
                                 }
                                 // Swipe down (positive translation) -> go to main
-                                else if (translation > threshold || velocity > 500) && activeCarouselIndex == 1 {
+                                else if (translation > threshold || velocity > 300) && activeCarouselIndex == 1 {
                                     switchToCarousel(0)
                                 }
-                                
-                                isDraggingCarousel = false
                             }
                     )
                     .animation(carouselSpring, value: activeCarouselIndex)
@@ -409,11 +471,10 @@ struct HomeView: View {
                     .sheet(isPresented: $isShopWebviewVisible) {
                         shopWebSheet
                     }
-                    .allowsHitTesting(true) // Allow navigation buttons to be tapped
+                    .allowsHitTesting(true)
                 }
-                .frame(height: carouselAreaHeight)
 
-                // BOTTOM HALF - CONTROLLER (UNCHANGED)
+                // BOTTOM HALF - CONTROLLER (EXACTLY AS ORIGINAL)
                 SoolraControllerView(
                     controllerViewModel: controllerViewModel,
                     currentView: $currentView,
@@ -426,7 +487,7 @@ struct HomeView: View {
                 )
                 .frame(
                     width: geometry.size.width,
-                    height: controllerHeight
+                    height: totalHeight * 0.45
                 )
                 .edgesIgnoringSafeArea(.bottom)
             }
@@ -886,10 +947,6 @@ struct HomeNavigationView: View {
             logoButton
                 .offset(x: 8, y: -50)
 
-            // Carousel indicator dots
-            carouselIndicator
-                .offset(x: UIScreen.main.bounds.width * 0.5 - 20, y: -50)
-
             actionButtons
                 .offset(x: UIScreen.main.bounds.width * 0.32, y: -50)
 
@@ -904,22 +961,6 @@ struct HomeNavigationView: View {
         .background(Color.clear)
     }
     
-    @ViewBuilder
-    private var carouselIndicator: some View {
-        HStack(spacing: 8) {
-            Circle()
-                .fill(activeCarouselIndex == 0 ? Color.white : Color.white.opacity(0.3))
-                .frame(width: 8, height: 8)
-            Circle()
-                .fill(activeCarouselIndex == 1 ? Color.white : Color.white.opacity(0.3))
-                .frame(width: 8, height: 8)
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(Color.black.opacity(0.3))
-        .cornerRadius(12)
-    }
-
     @ViewBuilder
     private var logoButton: some View {
         BlinkingFocusedButton(
