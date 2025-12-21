@@ -65,6 +65,7 @@
 		926B75452EC601D000543101 /* Cats Curse.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B753D2EC601D000543101 /* Cats Curse.png */; };
 		926B75472EC6020200543101 /* Arcade Mania.png in Resources */ = {isa = PBXBuildFile; fileRef = 926B75462EC6020200543101 /* Arcade Mania.png */; };
 		927063782EF2EC6B002648B7 /* HexGl.png in Resources */ = {isa = PBXBuildFile; fileRef = 927063772EF2EC6B002648B7 /* HexGl.png */; };
+		9270637A2EF7E8D9002648B7 /* SharedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927063792EF7E8D9002648B7 /* SharedTypes.swift */; };
 		928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3232DC0DC0100F3C848 /* SaveState.swift */; };
 		928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 928FA3252DC0DC3400F3C848 /* SaveStateView.swift */; };
 		928FA3542DD8AEA500F3C848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */; };
@@ -289,6 +290,7 @@
 		926B753D2EC601D000543101 /* Cats Curse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Cats Curse.png"; sourceTree = "<group>"; };
 		926B75462EC6020200543101 /* Arcade Mania.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arcade Mania.png"; sourceTree = "<group>"; };
 		927063772EF2EC6B002648B7 /* HexGl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HexGl.png; sourceTree = "<group>"; };
+		927063792EF7E8D9002648B7 /* SharedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTypes.swift; sourceTree = "<group>"; };
 		928FA3232DC0DC0100F3C848 /* SaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveState.swift; sourceTree = "<group>"; };
 		928FA3252DC0DC3400F3C848 /* SaveStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateView.swift; sourceTree = "<group>"; };
 		928FA3532DD8AEA500F3C848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -636,6 +638,7 @@
 				4C0CD8BA2D54E71100B079B5 /* SoolraController */,
 				180A47A12866E4EA00A82F16 /* DocumentPicker.swift */,
 				18EBB74A2864A13A00903F43 /* HomeView.swift */,
+				927063792EF7E8D9002648B7 /* SharedTypes.swift */,
 				928FA3252DC0DC3400F3C848 /* SaveStateView.swift */,
 				70838FDB2C6BC96500B7AE46 /* SplashView.swift */,
 				7032EDC02C76059400828A41 /* SettingsView.swift */,
@@ -1253,6 +1256,7 @@
 				4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */,
 				92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */,
 				92965FED2EAA4C4000D877C3 /* VerticalGameCarousel.swift in Sources */,
+				9270637A2EF7E8D9002648B7 /* SharedTypes.swift in Sources */,
 				92267CAA2EF1693A00E56716 /* HexGlViewModel.swift in Sources */,
 				92267CA82EF168E300E56716 /* HexGlWrapper.swift in Sources */,
 				92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */,
@@ -1429,7 +1433,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.0.2;
+				MARKETING_VERSION = 7.0.3;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1481,7 +1485,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.0.2;
+				MARKETING_VERSION = 7.0.3;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
