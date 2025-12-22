@@ -9,7 +9,7 @@ final class SouerViewModel: ObservableObject, WebGameViewModel, ControllerServic
     private var mouseY: CGFloat = 0
     private var isMouseDown = false
     var dismiss: (() -> Void)?
-    private var canvasCenterX: CGFloat = 200
+    private var canvasCenterX: CGFloat = 220
     private var canvasCenterY: CGFloat = 200
     private var currentJoystickX: Float = 0
     private var currentJoystickY: Float = 0
@@ -79,22 +79,27 @@ final class SouerViewModel: ObservableObject, WebGameViewModel, ControllerServic
             joystickTimer = nil
         }
     }
+    
     private func updateMouseFromJoystick() {
-        guard currentJoystickX != 0 || currentJoystickY != 0 else { return }
-        
-        let sensitivity: CGFloat = 3
-        let deltaX = CGFloat(currentJoystickX) * sensitivity
-        let deltaY = -CGFloat(currentJoystickY) * sensitivity
-        
-        canvasCenterX += deltaX
-        canvasCenterY += deltaY
-        
-        // Clamp to canvas bounds
-        canvasCenterX = max(0, min(400, canvasCenterX))
-        canvasCenterY = max(0, min(400, canvasCenterY))
-        
-        simulateAbsoluteMouseMove(x: canvasCenterX, y: canvasCenterY)
-    }
+            guard currentJoystickX != 0 || currentJoystickY != 0 else { return }
+
+            let sensitivity: CGFloat = 3
+            let deltaX = CGFloat(currentJoystickX) * sensitivity
+            let deltaY = -CGFloat(currentJoystickY) * sensitivity
+
+            let width: CGFloat = 440
+            let height: CGFloat = 427  // adjust if your canvas isn't square
+
+            canvasCenterX += deltaX
+            canvasCenterY += deltaY
+
+            // Wrap X (infinite spin both directions)
+            if canvasCenterX < -50 { canvasCenterX += 400 }
+            if canvasCenterX >= width { canvasCenterX -= width }
+
+            simulateAbsoluteMouseMove(x: canvasCenterX, y: canvasCenterY)
+        }
+
     private func simulateAbsoluteMouseMove(x: CGFloat, y: CGFloat) {
         injectJS("""
         var canvas = document.getElementById('canvas');
@@ -196,7 +201,7 @@ final class SouerViewModel: ObservableObject, WebGameViewModel, ControllerServic
         var canvas = document.getElementById('canvas');
         if (canvas) {
             canvas.style.height = '440px';
-            canvas.style.width = '100vw';
+            canvas.style.width = '427px';
         }
         """)
     }
