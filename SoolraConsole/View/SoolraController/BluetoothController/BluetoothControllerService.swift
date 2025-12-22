@@ -15,7 +15,8 @@ class BluetoothControllerService: ObservableObject {
     static let shared = BluetoothControllerService()
     @Published private(set) var isControllerConnected: Bool = false
     weak var delegate: ControllerServiceDelegate?
-    
+    weak var joystickDelegate: JoystickControllerDelegate?
+
     var buttonTracker: ((SoolraControllerAction, Bool) -> Void)?
     
     // Separate state tracking for each stick
@@ -198,12 +199,26 @@ class BluetoothControllerService: ObservableObject {
 
         gamepad.leftThumbstick.valueChangedHandler = { [weak self] _, xAxis, yAxis in
             print("Left stick moved → x: \(xAxis), y: \(yAxis)")
-            self?.handleStickInput(xAxis: xAxis, yAxis: yAxis, isLeftStick: true)
+            
+            // If delegate supports joystick, send raw analog data
+            if self?.joystickDelegate != nil {
+                self?.joystickDelegate?.controllerDidMoveJoystick(side: .left, x: xAxis, y: yAxis)
+            } else {
+                // Otherwise use discrete directional input for other games
+                self?.handleStickInput(xAxis: xAxis, yAxis: yAxis, isLeftStick: true)
+            }
         }
 
         gamepad.rightThumbstick.valueChangedHandler = { [weak self] _, xAxis, yAxis in
             print("Right stick moved → x: \(xAxis), y: \(yAxis)")
-            self?.handleStickInput(xAxis: xAxis, yAxis: yAxis, isLeftStick: false)
+            
+            // If delegate supports joystick, send raw analog data
+            if self?.joystickDelegate != nil {
+                self?.joystickDelegate?.controllerDidMoveJoystick(side: .right, x: xAxis, y: yAxis)
+            } else {
+                // Otherwise use discrete directional input for other games
+                self?.handleStickInput(xAxis: xAxis, yAxis: yAxis, isLeftStick: false)
+            }
         }
 
     }
@@ -260,4 +275,12 @@ class BluetoothControllerService: ObservableObject {
         }
     }
     
+}
+protocol JoystickControllerDelegate: AnyObject {
+    func controllerDidMoveJoystick(side: JoystickSide, x: Float, y: Float)
+}
+
+enum JoystickSide {
+    case left
+    case right
 }
