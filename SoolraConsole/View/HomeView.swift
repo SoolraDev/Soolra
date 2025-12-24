@@ -55,6 +55,11 @@ struct HomeView: View {
     @State private var mainCarouselFocusIndex: Int = 4 // Independent focus for main carousel
     @State private var secondaryCarouselFocusIndex: Int = 4 // Independent focus for secondary carousel
     
+    // Long press tracking for favorite toggle
+    @State private var buttonPressStartTime: [String: Date] = [:]
+    @State private var isLongPressActive: [String: Bool] = [:]
+    private let longPressDuration: TimeInterval = 0.5 // 500ms
+    
     private let dialogSpring = Animation.spring(
         response: 0.32,
         dampingFraction: 0.86,
@@ -282,14 +287,40 @@ struct HomeView: View {
                     // Both up and down switch to the inactive carousel
                     switchToCarousel(activeCarouselIndex == 0 ? 1 : 0)
                     return // Don't pass to view model
-//                case .y:
-                    // Toggle favorite on focused item
-//                    if viewModel.focusedButtonIndex >= 4 {
-//                        toggleFavoriteAtCurrentIndex()
-//                        return // Don't pass to view model
-//                    }
                 default:
                     break
+                }
+            }
+            
+            // Handle long press for X, Y, B, A buttons to toggle favorites
+            let actionKey = "\(evt.action)"
+            
+            if evt.pressed {
+                // Check if this is a face button (X, Y, B, A)
+                switch evt.action {
+                case .x, .y, .b, .a:
+                    // Button pressed - record start time and DON'T pass to view model yet
+                    buttonPressStartTime[actionKey] = Date()
+                    isLongPressActive[actionKey] = false
+                    return // Don't pass button press to view model - wait to see if it's a long press
+                default:
+                    break
+                }
+            } else {
+                // Button released - check if it was a long press
+                if let startTime = buttonPressStartTime[actionKey] {
+                    let pressDuration = Date().timeIntervalSince(startTime)
+                    if pressDuration >= longPressDuration {
+                        // Long press detected - toggle favorite
+                        toggleFavoriteAtCurrentIndex()
+                        
+                        // Clean up and return early to prevent game launch
+                        buttonPressStartTime.removeValue(forKey: actionKey)
+                        isLongPressActive.removeValue(forKey: actionKey)
+                        return // Don't pass to view model
+                    }
+                    // Short press - clean up and allow it to continue to view model
+                    buttonPressStartTime.removeValue(forKey: actionKey)
                 }
             }
             
@@ -305,8 +336,6 @@ struct HomeView: View {
                 action: evt.action,
                 pressed: evt.pressed
             )
-            
-            // Note: We DON'T sync back here because onChange(of: viewModel.focusedButtonIndex) handles it
             
         case .web:
             BluetoothControllerService.shared.delegate?.controllerDidPress(
@@ -332,6 +361,7 @@ struct HomeView: View {
             }
         }
     }
+    
 
     // MARK: - Grid and Detail View with Dual Carousels
     @ViewBuilder
