@@ -368,7 +368,7 @@ struct HomeView: View {
                                     navigateToWeb(game)
                                 }
                             }
-                            .id("main-\(favoritesManager.favoriteIds.count)")
+                            .id("main")
                             .transition(.identity)
                         }
                         

@@ -436,7 +436,12 @@ fileprivate struct CarouselCard: View {
     let cardSizeUnfocused: CGSize
     
     @State private var showFavoriteDialog = false
-    @State private var isFavorite: Bool
+    @ObservedObject private var favoritesManager = FavoritesManager.shared
+    
+    // Computed property instead of @State
+    private var isFavorite: Bool {
+        favoritesManager.isFavorite(item)
+    }
     
     init(kind: LibraryKind, item: LibraryItem, isFocused: Bool, cardSizeFocused: CGSize, cardSizeUnfocused: CGSize) {
         self.kind = kind
@@ -444,7 +449,6 @@ fileprivate struct CarouselCard: View {
         self.isFocused = isFocused
         self.cardSizeFocused = cardSizeFocused
         self.cardSizeUnfocused = cardSizeUnfocused
-        self._isFavorite = State(initialValue: FavoritesManager.shared.isFavorite(item))
     }
     
     var body: some View {
@@ -464,12 +468,16 @@ fileprivate struct CarouselCard: View {
             VStack {
                 HStack {
                     Spacer()
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
-                        .font(.system(size: 24))
-                        .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
-                        .padding(8)
-                        .opacity(isFavorite ? 1 : 0)
+                    Button(action: {
+                        FavoritesManager.shared.toggleFavorite(item)
+                    }) {
+                        Image(systemName: isFavorite ? "star.fill" : "star")
+                            .foregroundColor(isFavorite ? .yellow : .white.opacity(0.6))
+                            .font(.system(size: 24))
+                            .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
+                            .padding(8)
+                    }
+                    .buttonStyle(.plain)
                 }
                 Spacer()
             }
@@ -514,7 +522,6 @@ fileprivate struct CarouselCard: View {
             titleVisibility: .hidden
         ) {
             Button(isFavorite ? "Remove from Favorites" : "Add to Favorites") {
-                isFavorite.toggle()
                 FavoritesManager.shared.toggleFavorite(item)
             }
             Button("Cancel", role: .cancel) {}
