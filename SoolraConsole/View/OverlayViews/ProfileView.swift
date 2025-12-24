@@ -20,6 +20,10 @@ struct ProfileView: View {
 
     // A unique ID to force AsyncImage to reload after an upload
     @State private var imageId = UUID()
+    
+    // MARK: - NFT State
+    @State private var nfts: [NFTMetadata] = []
+    @State private var isLoadingNFTs = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -58,13 +62,13 @@ struct ProfileView: View {
                 MetricBanner(
                     iconName: "target",
                     title: "Points Earned",
-                    value: "\(datamanager.userMetrics?.points, default: "0")"
+                    value: "\(datamanager.userMetrics?.points ?? 0)"
                 )
 
                 MetricBanner(
                     iconName: "trophy.fill",
                     title: "Time Played Ranking",
-                    value: "\(datamanager.userMetrics?.ranking, default: "0")"
+                    value: "\(datamanager.userMetrics?.ranking ?? 0)"
                 )
 
                 MetricBanner(
@@ -75,7 +79,9 @@ struct ProfileView: View {
                 )
             }.padding()
                 .task {
+                    // Fetch both metrics and NFTs when view appears
                     await datamanager.refresh()
+                    await loadNFTs()
                 }
 
             VStack {
@@ -112,6 +118,7 @@ struct ProfileView: View {
                 }
             }.comingSoon()
 
+            // MARK: - Treasures (NFTs)
             VStack {
                 Text("Treasures")
                     .font(.title2)
@@ -120,35 +127,48 @@ struct ProfileView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
 
-                ScrollView(.horizontal, showsIndicators: true) {
-                    HStack {
-                        ForEach(0..<10) { index in
-                            CachedAsyncImage(
-                                url: URL(
-                                    string:
-                                        "https://random.danielpetrica.com/api/random?format=thumb"
-                                )
-                            ) { image in
-                                image.resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 70, height: 70)
-                                    .clipShape(.circle)
-                                    .gradientBorder(
-                                        Circle(),
-                                        colors: [
-                                            Color(hex: "#FF00E1"),
-                                            Color(hex: "#FCC4FF"),
-                                        ]
-                                    )
-                            } placeholder: {
-                                ProgressView()
+                if isLoadingNFTs {
+                    ProgressView()
+                        .tint(.white)
+                        .padding()
+                } else if nfts.isEmpty {
+                    Text("No treasures yet")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.7))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(nfts) { nft in
+                                CachedAsyncImage(
+                                    url: URL(string: nft.image)
+                                ) { image in
+                                    image.resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 70, height: 70)
+                                        .clipShape(.circle)
+                                        .gradientBorder(
+                                            Circle(),
+                                            colors: [
+                                                Color(hex: "#FF00E1"),
+                                                Color(hex: "#FCC4FF"),
+                                            ]
+                                        )
+                                } placeholder: {
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.3))
+                                        .frame(width: 70, height: 70)
+                                        .overlay(ProgressView().tint(.white))
+                                }
                             }
                         }
+                        .padding(.horizontal)
                     }
-                }.padding(.horizontal)
-            }.comingSoon()
+                }
+            }
+            // Removed .comingSoon() here so it displays normally
 
-            // NOTE: Previous "Close" button was removed from here
             Spacer().frame(height: 20)
         }
         .purpleGradientBackground()
@@ -226,7 +246,24 @@ struct ProfileView: View {
             // Optionally show an error alert to the user here.
         }
     }
+    
+    /// Fetches the user's NFTs
+    private func loadNFTs() async {
+        guard let userId = walletManager.privyUser?.id else { return }
+        
+        isLoadingNFTs = true
+        let client = ApiClient()
+        
+        if let fetchedNFTs = await client.fetchUserNFTs(userId: userId) {
+            withAnimation {
+                self.nfts = fetchedNFTs
+            }
+        }
+        
+        isLoadingNFTs = false
+    }
 }
+
 #Preview {
     struct PreviewContainer: View {
         @State private var isPresented: Bool = true
