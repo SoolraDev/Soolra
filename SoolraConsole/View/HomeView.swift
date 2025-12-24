@@ -57,8 +57,9 @@ struct HomeView: View {
     
     // Long press tracking for favorite toggle
     @State private var buttonPressStartTime: [String: Date] = [:]
-    @State private var isLongPressActive: [String: Bool] = [:]
-    private let longPressDuration: TimeInterval = 0.5 // 500ms
+    @State private var longPressTimers: [String: DispatchWorkItem] = [:]
+    @State private var hasTriggeredLongPress: [String: Bool] = [:]
+    private let longPressDuration: TimeInterval = 0.7 // 2 seconds
     
     private let dialogSpring = Animation.spring(
         response: 0.32,
@@ -299,28 +300,65 @@ struct HomeView: View {
                 // Check if this is a face button (X, Y, B, A)
                 switch evt.action {
                 case .x, .y, .b, .a:
-                    // Button pressed - record start time and DON'T pass to view model yet
-                    buttonPressStartTime[actionKey] = Date()
-                    isLongPressActive[actionKey] = false
-                    return // Don't pass button press to view model - wait to see if it's a long press
+                    // Button pressed - start a timer to trigger favorite toggle after 2 seconds
+                    hasTriggeredLongPress[actionKey] = false
+                    
+                    let workItem = DispatchWorkItem {
+                        // Timer fired - this is a long press
+                        self.hasTriggeredLongPress[actionKey] = true
+                        self.toggleFavoriteAtCurrentIndex()
+                    }
+                    
+                    longPressTimers[actionKey] = workItem
+                    DispatchQueue.main.asyncAfter(deadline: .now() + longPressDuration, execute: workItem)
+                    
+                    return // DON'T pass press event - wait to see if it's long or short
                 default:
                     break
                 }
             } else {
-                // Button released - check if it was a long press
-                if let startTime = buttonPressStartTime[actionKey] {
-                    let pressDuration = Date().timeIntervalSince(startTime)
-                    if pressDuration >= longPressDuration {
-                        // Long press detected - toggle favorite
-                        toggleFavoriteAtCurrentIndex()
-                        
-                        // Clean up and return early to prevent game launch
-                        buttonPressStartTime.removeValue(forKey: actionKey)
-                        isLongPressActive.removeValue(forKey: actionKey)
-                        return // Don't pass to view model
+                // Button released
+                switch evt.action {
+                case .x, .y, .b, .a:
+                    // Check if we even have a timer for this button
+                    // If not, this release happened without a press in grid view (e.g., from pause dialog)
+                    let hasTimer = longPressTimers[actionKey] != nil
+                    let wasTriggered = hasTriggeredLongPress[actionKey] == true
+                    
+                    // Cancel the timer if it exists
+                    if let timer = longPressTimers[actionKey] {
+                        timer.cancel()
+                        longPressTimers.removeValue(forKey: actionKey)
                     }
-                    // Short press - clean up and allow it to continue to view model
-                    buttonPressStartTime.removeValue(forKey: actionKey)
+                    
+                    // If long press was triggered, don't do anything (already toggled favorite)
+                    if wasTriggered {
+                        hasTriggeredLongPress.removeValue(forKey: actionKey)
+                        return // Don't pass anything to view model
+                    }
+                    
+                    // If we didn't have a timer, this is a stray release (from another view like pause dialog)
+                    if !hasTimer {
+                        return // Ignore stray releases
+                    }
+                    
+                    // Short press - simulate both press and release events
+                    hasTriggeredLongPress.removeValue(forKey: actionKey)
+                    
+                    // Sync focus before simulating press
+                    if activeCarouselIndex == 0 {
+                        viewModel.focusedButtonIndex = mainCarouselFocusIndex
+                    } else {
+                        viewModel.focusedButtonIndex = secondaryCarouselFocusIndex
+                    }
+                    
+                    // Send press event
+                    viewModel.controllerDidPress(action: evt.action, pressed: true)
+                    // Send release event
+                    viewModel.controllerDidPress(action: evt.action, pressed: false)
+                    return // Don't fall through to normal processing
+                default:
+                    break
                 }
             }
             
@@ -823,7 +861,6 @@ struct HomeView: View {
     @ViewBuilder
     private var favoriteToast: some View {
         VStack {
-            Spacer()
             HStack(spacing: 10) {
                 Image(systemName: favoriteToastMessage.contains("Added") ? "star.fill" : "star.slash.fill")
                     .foregroundColor(.white)
@@ -836,9 +873,11 @@ struct HomeView: View {
             .background(Color.black.opacity(0.85))
             .cornerRadius(25)
             .shadow(radius: 10)
-            .padding(.bottom, 100)
+            .padding(.top, 80)
+            Spacer()
         }
-        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .frame(maxHeight: .infinity, alignment: .top)
+        .transition(.move(edge: .top).combined(with: .opacity))
         .zIndex(2000)
     }
 
@@ -859,17 +898,17 @@ struct HomeView: View {
         favoritesManager.toggleFavorite(item)
         
         // Show toast
-        favoriteToastMessage = wasFavorite ? "Removed from Favorites" : "Added to Favorites"
-        withAnimation {
-            showFavoriteToast = true
-        }
-        
-        // Auto-hide toast after 2 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation {
-                showFavoriteToast = false
-            }
-        }
+//        favoriteToastMessage = wasFavorite ? "Removed from Favorites" : "Added to Favorites"
+//        withAnimation {
+//            showFavoriteToast = true
+//        }
+//        
+//        // Auto-hide toast after 2 seconds
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            withAnimation {
+//                showFavoriteToast = false
+//            }
+//        }
     }
 
     // MARK: - Logic and Helper Functions
