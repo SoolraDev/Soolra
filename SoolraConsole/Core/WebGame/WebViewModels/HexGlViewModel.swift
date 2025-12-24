@@ -11,7 +11,15 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
     init(startURL: URL) { self.startURL = startURL }
     
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {
-
+        // Check if we should trigger start button on d-pad or start button press
+        if pressed {
+            switch action {
+            case .a, .y, .b, .start:
+                tryClickStartButton()
+            default:
+                break
+            }
+        }
         
         func handle(_ which: Int, _ key: String, _ code: String) {
             pressed ? keyDown(which: which, key: key, codeName: code)
@@ -27,11 +35,9 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
         case .y:
             print("pressed \(action)")
             handle(65, "a", "KeyA")
-
         case .a:
             print("pressed \(action)")
             handle(68, "d", "KeyD")
-
         case .right:
             handle(39, "ArrowRight", "ArrowRight")
         case .down:
@@ -40,6 +46,32 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
             if pressed { DispatchQueue.main.async { [weak self] in self?.dismiss?() } }
         default:
             break
+        }
+    }
+    
+    private func tryClickStartButton() {
+        injectJS("""
+        var step1 = document.getElementById('step-1');
+        var startButton = document.getElementById('start');
+        
+        if (step1 && startButton) {
+            var step1Style = window.getComputedStyle(step1);
+            if (step1Style.display !== 'none') {
+                startButton.click();
+                'clicked';
+            } else {
+                'not visible';
+            }
+        } else {
+            'not found';
+        }
+        """) { result, error in
+            if let resultString = result as? String {
+                print("Start button click result: \(resultString)")
+            }
+            if let error = error {
+                print("Start button click error: \(error)")
+            }
         }
     }
     
@@ -69,9 +101,10 @@ final class HexGlViewModel: ObservableObject, WebGameViewModel, ControllerServic
             bubbles: true,
             cancelable: true
         });
-        document.dispatchEvent(e);x
+        document.dispatchEvent(e);
         """)
     }
+    
     private func triggerStart() {
         injectJS("""
         var step2 = document.getElementById('step-2');
