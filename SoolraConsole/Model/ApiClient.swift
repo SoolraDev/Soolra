@@ -5,8 +5,6 @@
 //  Created by Michael Essiet on 17/11/2025.
 //
 
-// A simple singleton to hold the user's authentication credentials.
-// This is populated by WalletManager and used by ApiClient.
 import Foundation
 
 // A simple singleton to hold the user's authentication credentials.
@@ -117,6 +115,40 @@ class ApiClient {
             return false
         }
     }
+    
+    // Fetches the user's NFTs from the backend
+    func fetchUserNFTs(userId: String) async -> [NFTMetadata]? {
+        guard let headers = AuthManager.shared.getAuthHeaders() else {
+            return nil
+        }
+        
+        let url = baseURL.appendingPathComponent("/v1/users/\(userId)/nfts")
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                print("🚨 Fetch NFTs failed: Invalid response")
+                // Optional: Try to read server error message
+                if let errorJson = try? JSONSerialization.jsonObject(with: data) {
+                    print("Server Error: \(errorJson)")
+                }
+                return nil
+            }
+
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            
+            let nfts = try decoder.decode([NFTMetadata].self, from: data)
+            return nfts
+        } catch {
+            print("🚨 Error fetching NFTs: \(error)")
+            return nil
+        }
+    }
 }
 
 // MARK: JSON models
@@ -154,4 +186,52 @@ struct Game: Codable {
     let gameName: String
     let score: Int
     let duration: TimeInterval
+}
+
+// MARK: - NFT Models
+
+struct NFTAttribute: Codable {
+    let trait_type: String
+    let value: AnyCodable
+}
+
+struct NFTMetadata: Codable, Identifiable {
+    let tokenId: Int
+    let name: String
+    let description: String
+    let image: String
+    let attributes: [NFTAttribute]
+    let txHash: String
+    let mintedAt: Date
+    
+    var id: Int { tokenId }
+}
+
+// Helper to handle mixed types (String or Int) in JSON "value" fields
+struct AnyCodable: Codable {
+    let value: Any
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let intVal = try? container.decode(Int.self) {
+            value = intVal
+        } else if let stringVal = try? container.decode(String.self) {
+            value = stringVal
+        } else if let doubleVal = try? container.decode(Double.self) {
+            value = doubleVal
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "AnyCodable value cannot be decoded")
+        }
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        if let intVal = value as? Int {
+            try container.encode(intVal)
+        } else if let stringVal = value as? String {
+            try container.encode(stringVal)
+        } else if let doubleVal = value as? Double {
+            try container.encode(doubleVal)
+        }
+    }
 }

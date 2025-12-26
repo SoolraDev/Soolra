@@ -88,6 +88,8 @@
 		<key>UIColorName</key>
 		<string></string>
 	</dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>save images of your treasures to your photo library</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
