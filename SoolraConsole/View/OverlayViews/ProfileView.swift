@@ -215,11 +215,6 @@ struct ProfileView: View {
         // STYLING SPECIFIC TO THE CARD IS APPLIED HERE
         .purpleGradientBackground()
         .background(.ultraThinMaterial)
-        .cornerRadius(20)
-        .frame(maxWidth: 400) // Limit width of card only
-        .frame(maxHeight: .infinity) // Allow card to be tall
-        .padding() // Padding from screen edges
-        // Close Button
         .overlay(alignment: .topTrailing) {
             if selectedNFT == nil {
                 Button {
@@ -231,8 +226,14 @@ struct ProfileView: View {
                         .padding()
                         .shadow(radius: 2)
                 }
+                .padding(12) // Internal padding for touch target
+                .offset(x: 20, y: -20)
             }
         }
+        .cornerRadius(20)
+        .frame(maxWidth: 400) // Limit width of card only
+        .frame(maxHeight: .infinity) // Allow card to be tall
+        .padding() // Padding from screen edges
     }
 
     /// A computed property for the user's profile image view.
