@@ -28,174 +28,198 @@ struct ProfileView: View {
 
     var body: some View {
         ZStack {
-            // MARK: Main Content
-            VStack(spacing: 16) {
-                // MARK: banner
-                ZStack {
-                    Image("profile-view-banner")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 120)
-                        .clipped()
+            // Layer 1: The Main Profile Card
+            // We verify selectedNFT is nil so the card sits behind the overlay,
+            // or we can keep it visible. Let's keep it visible but obscured by the dimmer.
+            mainProfileCard
+                .zIndex(1)
 
-                    Button(action: {
-                        isShowingImagePicker = true
-                    }) {
-                        profileImageView
-                            .overlay {
-                                if isUploading {
-                                    ZStack {
-                                        Color.black.opacity(0.4)
-                                        ProgressView()
-                                            .tint(.white)
-                                            .foregroundStyle(.white)
-                                    }
-                                    .clipShape(.circle)
-                                    .ignoresSafeArea()
-                                }
-                            }
-                    }
-                    .offset(x: -120, y: 60)
-                }
-                .padding(.bottom, 40)
-
-                // MARK: profile info
-                VStack(spacing: 16) {
-                    MetricBanner(
-                        iconName: "target",
-                        title: "Points Earned",
-                        value: "\(datamanager.userMetrics?.points ?? 0)"
-                    )
-
-                    MetricBanner(
-                        iconName: "trophy.fill",
-                        title: "Time Played Ranking",
-                        value: "\(datamanager.userMetrics?.ranking ?? 0)"
-                    )
-
-                    MetricBanner(
-                        iconName: "hourglass",
-                        title: "Total Time Played",
-                        value: datamanager.userMetrics?.totalTimePlayed
-                            .toWordedString() ?? "0"
-                    )
-                }.padding()
-                    .task {
-                        await datamanager.refresh()
-                        await loadNFTs()
-                    }
-
-                VStack {
-                    Text("Top 3 games")
-                        .font(.title2)
-                        .foregroundStyle(.white)
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-
-                    HStack {
-                        ForEach(0..<3) { index in
-                            CachedAsyncImage(
-                                url: URL(string: "https://random.danielpetrica.com/api/random?format=thumb")
-                            ) { image in
-                                image.resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 111, height: 97)
-                                    .cornerRadius(10)
-                                    .gradientBorder(
-                                        RoundedRectangle(cornerRadius: 10),
-                                        colors: [Color(hex: "#FF00E1"), Color(hex: "#FCC4FF")]
-                                    )
-                            } placeholder: {
-                                ProgressView()
-                            }
-                        }
-                    }
-                }.comingSoon()
-
-                // MARK: - Treasures (NFTs)
-                VStack {
-                    Text("Treasures")
-                        .font(.title2)
-                        .foregroundStyle(.white)
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-
-                    if isLoadingNFTs {
-                        ProgressView()
-                            .tint(.white)
-                            .padding()
-                    } else if nfts.isEmpty {
-                        Text("No treasures yet")
-                            .font(.caption)
-                            .foregroundStyle(.white.opacity(0.7))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
-                    } else {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 12) {
-                                ForEach(nfts) { nft in
-                                    Button {
-                                        withAnimation(.spring()) {
-                                            selectedNFT = nft
-                                        }
-                                    } label: {
-                                        CachedAsyncImage(url: URL(string: nft.image)) { image in
-                                            image.resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 70, height: 70)
-                                                .clipShape(.circle)
-                                                .gradientBorder(
-                                                    Circle(),
-                                                    colors: [Color(hex: "#FF00E1"), Color(hex: "#FCC4FF")]
-                                                )
-                                        } placeholder: {
-                                            Circle()
-                                                .fill(Color.gray.opacity(0.3))
-                                                .frame(width: 70, height: 70)
-                                                .overlay(ProgressView().tint(.white))
-                                        }
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                }
-                Spacer().frame(height: 20)
-            }
-            
-            // MARK: - NFT Detail Overlay
+            // Layer 2: NFT Detail Overlay (Global)
             if let nft = selectedNFT {
-                Color.black.opacity(0.6)
+                // Dimmer for the whole screen
+                Color.black.opacity(0.7)
                     .ignoresSafeArea()
                     .onTapGesture {
                         withAnimation { selectedNFT = nil }
                     }
-                    .zIndex(100)
+                    .zIndex(2) // Higher than card
+                    .transition(.opacity)
                 
+                // The Detail Card
                 NFTDetailOverlay(
                     nft: nft,
                     onClose: {
                         withAnimation { selectedNFT = nil }
                     },
                     onSetProfile: { image in
-                        // Close the overlay
                         withAnimation { selectedNFT = nil }
-                        // Trigger upload
                         Task { await uploadImage(image) }
                     }
                 )
-                .transition(.scale.combined(with: .opacity))
-                .zIndex(101)
-                .padding()
+                .zIndex(3) // Topmost
+                .transition(.scale(scale: 0.9).combined(with: .opacity))
             }
         }
+        // These modifiers apply to the CONTAINER, allowing the overlay to be full screen
+        // while the card inside manages its own size.
+        .sheet(isPresented: $isShowingImagePicker) {
+            ImagePicker(image: $selectedImage)
+        }
+        .onChange(of: selectedImage) { _ in
+            guard let image = selectedImage else { return }
+            Task {
+                await uploadImage(image)
+            }
+        }
+    }
+
+    // MARK: - Main Profile Card Content
+    var mainProfileCard: some View {
+        VStack(spacing: 16) {
+            // MARK: banner
+            ZStack {
+                Image("profile-view-banner")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 120)
+                    .clipped()
+
+                Button(action: {
+                    isShowingImagePicker = true
+                }) {
+                    profileImageView
+                        .overlay {
+                            if isUploading {
+                                ZStack {
+                                    Color.black.opacity(0.4)
+                                    ProgressView()
+                                        .tint(.white)
+                                        .foregroundStyle(.white)
+                                }
+                                .clipShape(.circle)
+                                .ignoresSafeArea()
+                            }
+                        }
+                }
+                .offset(x: -120, y: 60)
+            }
+            .padding(.bottom, 40)
+
+            // MARK: profile info
+            VStack(spacing: 16) {
+                MetricBanner(
+                    iconName: "target",
+                    title: "Points Earned",
+                    value: "\(datamanager.userMetrics?.points ?? 0)"
+                )
+
+                MetricBanner(
+                    iconName: "trophy.fill",
+                    title: "Time Played Ranking",
+                    value: "\(datamanager.userMetrics?.ranking ?? 0)"
+                )
+
+                MetricBanner(
+                    iconName: "hourglass",
+                    title: "Total Time Played",
+                    value: datamanager.userMetrics?.totalTimePlayed
+                        .toWordedString() ?? "0"
+                )
+            }.padding()
+                .task {
+                    await datamanager.refresh()
+                    await loadNFTs()
+                }
+
+            VStack {
+                Text("Top 3 games")
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+
+                HStack {
+                    ForEach(0..<3) { index in
+                        CachedAsyncImage(
+                            url: URL(string: "https://random.danielpetrica.com/api/random?format=thumb")
+                        ) { image in
+                            image.resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 111, height: 97)
+                                .cornerRadius(10)
+                                .gradientBorder(
+                                    RoundedRectangle(cornerRadius: 10),
+                                    colors: [Color(hex: "#FF00E1"), Color(hex: "#FCC4FF")]
+                                )
+                        } placeholder: {
+                            ProgressView()
+                        }
+                    }
+                }
+            }.comingSoon()
+
+            // MARK: - Treasures (NFTs)
+            VStack {
+                Text("Treasures")
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+
+                if isLoadingNFTs {
+                    ProgressView()
+                        .tint(.white)
+                        .padding()
+                } else if nfts.isEmpty {
+                    Text("No treasures yet")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.7))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(nfts) { nft in
+                                Button {
+                                    withAnimation(.spring()) {
+                                        selectedNFT = nft
+                                    }
+                                } label: {
+                                    CachedAsyncImage(url: URL(string: nft.image)) { image in
+                                        image.resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 70, height: 70)
+                                            .clipShape(.circle)
+                                            .gradientBorder(
+                                                Circle(),
+                                                colors: [Color(hex: "#FF00E1"), Color(hex: "#FCC4FF")]
+                                            )
+                                    } placeholder: {
+                                        Circle()
+                                            .fill(Color.gray.opacity(0.3))
+                                            .frame(width: 70, height: 70)
+                                            .overlay(ProgressView().tint(.white))
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+            }
+            Spacer().frame(height: 20)
+        }
+        // STYLING SPECIFIC TO THE CARD IS APPLIED HERE
         .purpleGradientBackground()
         .background(.ultraThinMaterial)
         .cornerRadius(20)
+        .frame(maxWidth: 400) // Limit width of card only
+        .frame(maxHeight: .infinity) // Allow card to be tall
+        .padding() // Padding from screen edges
+        // Close Button
         .overlay(alignment: .topTrailing) {
             if selectedNFT == nil {
                 Button {
@@ -209,21 +233,9 @@ struct ProfileView: View {
                 }
             }
         }
-        .frame(maxWidth: 400, maxHeight: .infinity)
-        .padding()
-        .edgesIgnoringSafeArea(.all)
-        .background(.gray.opacity(0.5))
-        .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(image: $selectedImage)
-        }
-        .onChange(of: selectedImage) { _ in
-            guard let image = selectedImage else { return }
-            Task {
-                await uploadImage(image)
-            }
-        }
     }
 
+    /// A computed property for the user's profile image view.
     @ViewBuilder
     private var profileImageView: some View {
         let imageUrlString =
@@ -299,7 +311,7 @@ struct NFTDetailOverlay: View {
                         .overlay(ProgressView().tint(.white))
                 }
             }
-            .frame(height: 250)
+            .frame(maxWidth: 350, maxHeight: 250)
             .clipped()
             
             // Info Content
@@ -475,6 +487,7 @@ class ImageSaver: NSObject {
     return PreviewContainer()
 }
 
+// NOTE: Ensure your ProfileViewModifier uses .ignoresSafeArea() if you want the dim background everywhere
 struct ProfileViewModifier: ViewModifier {
     @Binding var isPresented: Bool
 
@@ -485,7 +498,8 @@ struct ProfileViewModifier: ViewModifier {
                     ProfileView(
                         isPresented: $isPresented
                     )
-                    .overlayBackground(isPresented: $isPresented)
+                    // Ensure the view itself ignores safe area for the dimmer to work
+                    .ignoresSafeArea()
                 }
             }
     }
@@ -504,8 +518,6 @@ extension View {
 }
 
 extension View {
-    /// Applies a custom purple vertical gradient as the background of a view.
-    /// The gradient ignores safe areas to fill the entire screen.
     func purpleGradientBackground() -> some View {
         self.background(
             LinearGradient(
