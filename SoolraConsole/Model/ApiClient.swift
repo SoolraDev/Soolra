@@ -383,15 +383,12 @@ struct NFTAttribute: Codable {
 }
 
 struct NFTMetadata: Codable, Identifiable {
-    let tokenId: Int
     let name: String
     let description: String
     let image: String
     let attributes: [NFTAttribute]
-    let txHash: String?
-    let mintedAt: Date?
 
-    var id: Int { tokenId }
+    var id: String { name }
 }
 
 // MARK: - Marketplace Models
