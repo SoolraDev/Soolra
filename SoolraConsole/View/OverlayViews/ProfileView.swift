@@ -280,7 +280,7 @@ struct ProfileView: View {
         guard let userId = walletManager.privyUser?.id else { return }
         isLoadingNFTs = true
         let client = ApiClient()
-        if let fetchedNFTs = await client.fetchUserNFTs(userId: userId) {
+        if let fetchedNFTs = await client.fetchUserNFTs(userId: "did:privy:cmj1kndw601rijl0dhu97qp86") {
             withAnimation {
                 self.nfts = fetchedNFTs
             }
@@ -298,6 +298,7 @@ struct NFTDetailOverlay: View {
     
     @State private var loadedImage: UIImage?
     @State private var showingSaveAlert = false
+    @State private var showingListingSheet = false // New State
     
     var body: some View {
         VStack(spacing: 0) {
@@ -339,39 +340,51 @@ struct NFTDetailOverlay: View {
                 
                 Divider().background(Color.white.opacity(0.2))
                 
-                // Action Buttons
-                HStack(spacing: 12) {
-                    Button(action: saveToPhotos) {
-                        Label("Download", systemImage: "arrow.down.circle")
-                            .font(.subheadline.bold())
-                            .foregroundColor(.white)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white.opacity(0.2))
-                            .cornerRadius(8)
-                    }
-                    .disabled(loadedImage == nil)
-                    
-                    Button(action: {
-                        if let img = loadedImage {
-                            onSetProfile(img)
+                // --- ACTION BUTTONS ---
+                VStack(spacing: 10) {
+                    HStack(spacing: 12) {
+                        Button(action: saveToPhotos) {
+                            Label("Save", systemImage: "arrow.down.circle")
+                                .font(.subheadline.bold())
+                                .foregroundColor(.white)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white.opacity(0.2))
+                                .cornerRadius(8)
                         }
-                    }) {
-                        Label("Set as Avatar", systemImage: "person.crop.circle")
-                            .font(.subheadline.bold())
-                            .foregroundColor(.white)
-                            .padding(.vertical, 8)
+                        .disabled(loadedImage == nil)
+                        
+                        Button(action: {
+                            if let img = loadedImage {
+                                onSetProfile(img)
+                            }
+                        }) {
+                            Label("Profile", systemImage: "person.crop.circle")
+                                .font(.subheadline.bold())
+                                .foregroundColor(.white)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.purple)
+                                .cornerRadius(8)
+                        }
+                        .disabled(loadedImage == nil)
+                    }
+                    
+                    // NEW: List for Sale Button
+                    Button(action: { showingListingSheet = true }) {
+                        Label("List on Market", systemImage: "tag.fill")
+                            .font(.headline.bold())
+                            .foregroundColor(.black)
+                            .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
-                            .background(Color.purple)
+                            .background(Color.yellow)
                             .cornerRadius(8)
                     }
-                    .disabled(loadedImage == nil)
                 }
                 .padding(.vertical, 4)
 
                 Divider().background(Color.white.opacity(0.2))
 
-                
                 // Attributes Grid
                 Text("Attributes")
                     .font(.headline)
@@ -408,7 +421,6 @@ struct NFTDetailOverlay: View {
         .shadow(radius: 20)
         .frame(maxWidth: 350)
         .task {
-            // Load the actual UIImage object for processing
             await loadImageData()
         }
         .alert("Image Saved", isPresented: $showingSaveAlert) {
@@ -416,38 +428,32 @@ struct NFTDetailOverlay: View {
         } message: {
             Text("The image has been saved to your photos.")
         }
+        // --- LISTING SHEET ---
+        .sheet(isPresented: $showingListingSheet) {
+            ListingConfigView(nft: nft, isPresented: $showingListingSheet)
+        }
     }
     
+    // ... (Keep existing loadImageData, saveToPhotos, attributeValueString) ...
     private func loadImageData() async {
         guard let url = URL(string: nft.image) else { return }
-        
-        // 1. Try Cache
         if let cached = ImageCache.shared.get(for: url) {
             self.loadedImage = cached
             return
         }
-        
-        // 2. Download
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             if let image = UIImage(data: data) {
                 ImageCache.shared.set(image: image, for: url)
                 self.loadedImage = image
             }
-        } catch {
-            print("Failed to load NFT image data: \(error)")
-        }
+        } catch { print("Failed load: \(error)") }
     }
     
     private func saveToPhotos() {
         guard let image = loadedImage else { return }
         let saver = ImageSaver()
-        saver.onSuccess = {
-            showingSaveAlert = true
-        }
-        saver.onError = { error in
-            print("Error saving to photos: \(error.localizedDescription)")
-        }
+        saver.onSuccess = { showingSaveAlert = true }
         saver.writeToPhotoAlbum(image: image)
     }
     
@@ -456,6 +462,115 @@ struct NFTDetailOverlay: View {
         if let int = value.value as? Int { return String(int) }
         if let dbl = value.value as? Double { return String(dbl) }
         return "Unknown"
+    }
+}
+
+struct ListingConfigView: View {
+    let nft: NFTMetadata
+    @Binding var isPresented: Bool
+    @StateObject private var viewModel = ListNFTViewModel()
+    
+    var body: some View {
+        ZStack {
+            Color(hex: "#1a1a2e").ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                Text("List Item for Sale")
+                    .font(.title2.bold())
+                    .foregroundStyle(.white)
+                    .padding(.top)
+                
+                // Preview
+                HStack {
+                    CachedAsyncImage(url: URL(string: nft.image)) { img in
+                        img.resizable().scaledToFit()
+                    } placeholder: {
+                        Color.gray
+                    }
+                    .frame(width: 80, height: 80)
+                    .cornerRadius(8)
+                    
+                    VStack(alignment: .leading) {
+                        Text(nft.name).bold().foregroundStyle(.white)
+                        Text("Set your price").font(.caption).foregroundStyle(.gray)
+                    }
+                    Spacer()
+                }
+                .padding()
+                .background(Color.white.opacity(0.05))
+                .cornerRadius(12)
+                
+                // Inputs
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Price").foregroundStyle(.white)
+                    
+                    HStack {
+                        TextField("Amount", text: $viewModel.priceInput)
+                            .keyboardType(.decimalPad)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .foregroundColor(.black)
+                        
+                        Picker("Token", selection: $viewModel.selectedPaymentToken) {
+                            Text("SOOL").tag(PaymentToken.SOOL)
+                            Text("USDC").tag(PaymentToken.USDC)
+                            Text("USDT").tag(PaymentToken.USDT)
+                        }
+                        .tint(.white)
+                        .labelsHidden()
+                        .padding(.horizontal)
+                        .background(Color.purple)
+                        .cornerRadius(8)
+                    }
+                }
+                .padding()
+                
+                if let error = viewModel.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                
+                Spacer()
+                
+                // Action
+                Button(action: {
+                    Task {
+                        await viewModel.listNFT(nft: nft) {
+                            isPresented = false
+                        }
+                    }
+                }) {
+                    HStack {
+                        if viewModel.isListing {
+                            ProgressView().tint(.black)
+                        } else {
+                            Text("Confirm Listing")
+                                .bold()
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.yellow)
+                    .foregroundColor(.black)
+                    .cornerRadius(12)
+                }
+                .disabled(viewModel.isListing || viewModel.priceInput.isEmpty)
+                .padding()
+            }
+        }
+        .overlay(alignment: .top) {
+            if viewModel.showSuccessToast {
+                Text("Listed Successfully!")
+                    .padding()
+                    .background(Color.green)
+                    .foregroundStyle(.white)
+                    .cornerRadius(20)
+                    .transition(.move(edge: .top))
+                    .padding(.top, 50)
+            }
+        }
     }
 }
 
