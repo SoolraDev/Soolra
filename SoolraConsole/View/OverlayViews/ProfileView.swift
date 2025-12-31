@@ -280,7 +280,7 @@ struct ProfileView: View {
         guard let userId = walletManager.privyUser?.id else { return }
         isLoadingNFTs = true
         let client = ApiClient()
-        if let fetchedNFTs = await client.fetchUserNFTs(userId: "did:privy:cmj1kndw601rijl0dhu97qp86") {
+        if let fetchedNFTs = await client.fetchUserNFTs(userId: userId) {
             withAnimation {
                 self.nfts = fetchedNFTs
             }
