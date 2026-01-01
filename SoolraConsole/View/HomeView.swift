@@ -75,32 +75,34 @@ struct HomeView: View {
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 4)
 
-    private let brandBackground = Color(
-        red: 41.0 / 255.0,
-        green: 3.0 / 255.0,
-        blue: 135.0 / 255.0
-    )
+    private static var brandBackgroundColor: Color { Color(red: 41.0/255.0, green: 3.0/255.0, blue: 135.0/255.0) }
+    private let brandBackground: Color = HomeView.brandBackgroundColor
+
+    @ViewBuilder
+    private var mainContent: some View {
+        switch currentView {
+        case .grid, .gameDetail:
+            AnyView(gridAndDetailView)
+        case .game(let gameData):
+            AnyView(
+                GameView(
+                    data: gameData,
+                    currentView: $currentView,
+                    pauseViewModel: gameData.pauseViewModel
+                )
+                .environmentObject(gameData.consoleManager)
+            )
+        case .web(let webGame):
+            AnyView(webViewContainer(webGame))
+        }
+    }
 
     var body: some View {
         ZStack(alignment: .top) {
-            brandBackground.edgesIgnoringSafeArea(.all)
+            brandBackground.ignoresSafeArea()
 
-            Group {
-                switch currentView {
-                case .grid, .gameDetail:
-                    gridAndDetailView
-                case .game(let gameData):
-                    GameView(
-                        data: gameData,
-                        currentView: $currentView,
-                        pauseViewModel: gameData.pauseViewModel
-                    )
-                    .environmentObject(gameData.consoleManager)
-                case .web(let webGame):
-                    webViewContainer(webGame)
-                }
-            }
-            .allowsHitTesting(!isShopDialogVisible && !isOfflineDialogVisible)
+            mainContent
+                .allowsHitTesting(!isShopDialogVisible && !isOfflineDialogVisible)
 
             if isShopDialogVisible { shopDialog }
             if isOfflineDialogVisible { offlineDialog }
@@ -1427,3 +1429,4 @@ final class NetworkMonitor: ObservableObject {
 
     deinit { monitor.cancel() }
 }
+

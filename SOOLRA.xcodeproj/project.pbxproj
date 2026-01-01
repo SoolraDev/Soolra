@@ -31,6 +31,8 @@
 		2FA242B32EBAA47B0073C2BF /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242B22EBAA4750073C2BF /* View.swift */; };
 		2FA242B52EBAA7340073C2BF /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242B42EBAA7310073C2BF /* Color.swift */; };
 		2FA242B72EBEA10E0073C2BF /* OverlayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA242B62EBEA1040073C2BF /* OverlayState.swift */; };
+		2FEAC4952F0344EB002EB293 /* MarketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEAC4942F0344E7002EB293 /* MarketViewModel.swift */; };
+		2FEAC4972F0483DD002EB293 /* ListNFTViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEAC4962F0483D9002EB293 /* ListNFTViewModel.swift */; };
 		4C9253D42D47ED2B00E38366 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9253D32D47ED2B00E38366 /* HapticManager.swift */; };
 		4CB5AA5F2D61B206003E1677 /* MetalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB5AA5E2D61B206003E1677 /* MetalManager.swift */; };
 		4CC26D9A2D4BABC600F3D262 /* ConsoleCoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC26D992D4BABC300F3D262 /* ConsoleCoreManager.swift */; };
@@ -256,6 +258,8 @@
 		2FA242B22EBAA4750073C2BF /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		2FA242B42EBAA7310073C2BF /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		2FA242B62EBEA1040073C2BF /* OverlayState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayState.swift; sourceTree = "<group>"; };
+		2FEAC4942F0344E7002EB293 /* MarketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketViewModel.swift; sourceTree = "<group>"; };
+		2FEAC4962F0483D9002EB293 /* ListNFTViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNFTViewModel.swift; sourceTree = "<group>"; };
 		3CB0528C3BB2271EEE7EDD3D /* Pods-SOOLRA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SOOLRA.release.xcconfig"; path = "Target Support Files/Pods-SOOLRA/Pods-SOOLRA.release.xcconfig"; sourceTree = "<group>"; };
 		4C23EA0A2D50048400039871 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4C9253D32D47ED2B00E38366 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
@@ -613,6 +617,8 @@
 		183DF1D32862E1780088FE1C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				2FEAC4962F0483D9002EB293 /* ListNFTViewModel.swift */,
+				2FEAC4942F0344E7002EB293 /* MarketViewModel.swift */,
 				9270637B2EF809F4002648B7 /* FavoritableCarouselItem.swift */,
 				9270637D2EF80AA0002648B7 /* FavoritesManager.swift */,
 				2F8AFD192ECE682B00F3A2D4 /* ImagePicker.swift */,
@@ -1252,6 +1258,8 @@
 				92E02F612E3F6E220002B6E6 /* WebViewContainer.swift in Sources */,
 				92E04DD42E5C6CA40002B6E6 /* YabalaliViewModel.swift in Sources */,
 				92E04DD22E5C6C9A0002B6E6 /* KrunkerWrapper2.swift in Sources */,
+				2FEAC4952F0344EB002EB293 /* MarketViewModel.swift in Sources */,
+				2FEAC4972F0483DD002EB293 /* ListNFTViewModel.swift in Sources */,
 				18EBB74B2864A13A00903F43 /* HomeView.swift in Sources */,
 				92E039862E49017C0002B6E6 /* WebGameCatalog.swift in Sources */,
 				92E039842E49014C0002B6E6 /* WebGame.swift in Sources */,
