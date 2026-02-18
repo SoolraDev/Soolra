@@ -97,6 +97,12 @@
 		92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */; };
 		92E07B592EA0FD970002B6E6 /* TowerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */; };
 		92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */; };
+		92EA6B0A2F330E9A00F94189 /* UnityGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EA6B092F330E9A00F94189 /* UnityGameViewModel.swift */; };
+		92EA6B0C2F330F7200F94189 /* UnityGameWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EA6B0B2F330F7200F94189 /* UnityGameWrapper.swift */; };
+		92EA70482F45F46800F94189 /* Tank Arcade.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA70452F45F46800F94189 /* Tank Arcade.png */; };
+		92EA70492F45F46800F94189 /* Video Poker.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA70472F45F46800F94189 /* Video Poker.png */; };
+		92EA704A2F45F46800F94189 /* Animal Puzzle.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA70442F45F46800F94189 /* Animal Puzzle.png */; };
+		92EA704B2F45F46800F94189 /* Video Blackjack.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA70462F45F46800F94189 /* Video Blackjack.png */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */; };
 		92EF61DE2E31050F008D609E /* Hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616C2E31050F008D609E /* Hearts.png */; };
@@ -197,7 +203,6 @@
 		92EF62442E31050F008D609E /* NovaTheSquirrel.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61792E31050F008D609E /* NovaTheSquirrel.png */; };
 		92EF62452E31050F008D609E /* Radicorn.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61C82E31050F008D609E /* Radicorn.gba */; };
 		92EF62462E31050F008D609E /* WhereIsTheBall.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61922E31050F008D609E /* WhereIsTheBall.png */; };
-		92EF62472E31050F008D609E /* Derelict.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF615F2E31050F008D609E /* Derelict.png */; };
 		92EF62482E31050F008D609E /* Cats Curse.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF619C2E31050F008D609E /* Cats Curse.gba */; };
 		92EF62492E31050F008D609E /* Super Tilt Bro.nes in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61D02E31050F008D609E /* Super Tilt Bro.nes */; };
 		92EF624A2E31050F008D609E /* Titei Senki.gba in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61D62E31050F008D609E /* Titei Senki.gba */; };
@@ -326,6 +331,12 @@
 		92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HextrisViewModel.swift; sourceTree = "<group>"; };
 		92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerWrapper.swift; sourceTree = "<group>"; };
 		92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerViewModel.swift; sourceTree = "<group>"; };
+		92EA6B092F330E9A00F94189 /* UnityGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnityGameViewModel.swift; sourceTree = "<group>"; };
+		92EA6B0B2F330F7200F94189 /* UnityGameWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnityGameWrapper.swift; sourceTree = "<group>"; };
+		92EA70442F45F46800F94189 /* Animal Puzzle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Animal Puzzle.png"; sourceTree = "<group>"; };
+		92EA70452F45F46800F94189 /* Tank Arcade.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Tank Arcade.png"; sourceTree = "<group>"; };
+		92EA70462F45F46800F94189 /* Video Blackjack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Video Blackjack.png"; sourceTree = "<group>"; };
+		92EA70472F45F46800F94189 /* Video Poker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Video Poker.png"; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
 		92EF61562E31050F008D609E /* Chase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chase.png; sourceTree = "<group>"; };
 		92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Chocolate Hunter Runa.png"; sourceTree = "<group>"; };
@@ -335,7 +346,6 @@
 		92EF615C2E31050F008D609E /* Covid Adventure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Covid Adventure.png"; sourceTree = "<group>"; };
 		92EF615D2E31050F008D609E /* dabg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dabg.png; sourceTree = "<group>"; };
 		92EF615E2E31050F008D609E /* DCPR.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DCPR.png; sourceTree = "<group>"; };
-		92EF615F2E31050F008D609E /* Derelict.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Derelict.png; sourceTree = "<group>"; };
 		92EF61602E31050F008D609E /* Dungeon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Dungeon.png; sourceTree = "<group>"; };
 		92EF61612E31050F008D609E /* Dungeon Puzzlers Lament.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dungeon Puzzlers Lament.png"; sourceTree = "<group>"; };
 		92EF61622E31050F008D609E /* Falling.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Falling.png; sourceTree = "<group>"; };
@@ -704,6 +714,7 @@
 		92E0398B2E4901FD0002B6E6 /* WebViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				92EA6B092F330E9A00F94189 /* UnityGameViewModel.swift */,
 				92E07B5A2EA0FEBE0002B6E6 /* TowerViewModel.swift */,
 				92267CA92EF1693A00E56716 /* HexGlViewModel.swift */,
 				92E057F52E5DC70F0002B6E6 /* HextrisViewModel.swift */,
@@ -717,6 +728,7 @@
 		92E0398C2E49020F0002B6E6 /* WebViewWrappers */ = {
 			isa = PBXGroup;
 			children = (
+				92EA6B0B2F330F7200F94189 /* UnityGameWrapper.swift */,
 				92E07B582EA0FD970002B6E6 /* TowerWrapper.swift */,
 				92A582932EA652E30044FE05 /* StackerWrapper.swift */,
 				92267CA72EF168E300E56716 /* HexGlWrapper.swift */,
@@ -741,7 +753,6 @@
 				92EF615D2E31050F008D609E /* dabg.png */,
 				92EF615E2E31050F008D609E /* DCPR.png */,
 				92965FF22EAA6DE200D877C3 /* Codemaster.png */,
-				92EF615F2E31050F008D609E /* Derelict.png */,
 				92EF61602E31050F008D609E /* Dungeon.png */,
 				92EF61612E31050F008D609E /* Dungeon Puzzlers Lament.png */,
 				92EF61622E31050F008D609E /* Falling.png */,
@@ -777,6 +788,10 @@
 				92EF617F2E31050F008D609E /* Pong.png */,
 				92EF61802E31050F008D609E /* Quantum Survival.png */,
 				92EF61812E31050F008D609E /* Radicorn.png */,
+				92EA70442F45F46800F94189 /* Animal Puzzle.png */,
+				92EA70452F45F46800F94189 /* Tank Arcade.png */,
+				92EA70462F45F46800F94189 /* Video Blackjack.png */,
+				92EA70472F45F46800F94189 /* Video Poker.png */,
 				92EF61822E31050F008D609E /* RavenX.png */,
 				92EF61832E31050F008D609E /* SeSnake.png */,
 				926B75202EC6010000543101 /* Crane.png */,
@@ -1016,6 +1031,10 @@
 				92EF61EC2E31050F008D609E /* CodeMaster.nes in Resources */,
 				92EF61ED2E31050F008D609E /* Pong.png in Resources */,
 				92EF61EE2E31050F008D609E /* Dungeon.gba in Resources */,
+				92EA70482F45F46800F94189 /* Tank Arcade.png in Resources */,
+				92EA70492F45F46800F94189 /* Video Poker.png in Resources */,
+				92EA704A2F45F46800F94189 /* Animal Puzzle.png in Resources */,
+				92EA704B2F45F46800F94189 /* Video Blackjack.png in Resources */,
 				92EF61EF2E31050F008D609E /* PipeSpin.gba in Resources */,
 				92EF61F02E31050F008D609E /* Falling.png in Resources */,
 				92EF61F12E31050F008D609E /* Hearts.gba in Resources */,
@@ -1116,7 +1135,6 @@
 				92EF62442E31050F008D609E /* NovaTheSquirrel.png in Resources */,
 				92EF62452E31050F008D609E /* Radicorn.gba in Resources */,
 				92EF62462E31050F008D609E /* WhereIsTheBall.png in Resources */,
-				92EF62472E31050F008D609E /* Derelict.png in Resources */,
 				92EF62482E31050F008D609E /* Cats Curse.gba in Resources */,
 				92EF62492E31050F008D609E /* Super Tilt Bro.nes in Resources */,
 				92EF624A2E31050F008D609E /* Titei Senki.gba in Resources */,
@@ -1279,6 +1297,7 @@
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
 				928FA3242DC0DC0100F3C848 /* SaveState.swift in Sources */,
 				928FA3262DC0DC3400F3C848 /* SaveStateView.swift in Sources */,
+				92EA6B0A2F330E9A00F94189 /* UnityGameViewModel.swift in Sources */,
 				2F37A8922EC2991400273992 /* Constants.swift in Sources */,
 				2F50B7D22EB2A5A900E250EA /* WalletManager.swift in Sources */,
 				2F50B7E22EB3FB5F00E250EA /* DataManager.swift in Sources */,
@@ -1292,6 +1311,7 @@
 				2FA242AE2EB77C9F0073C2BF /* TimeInterval.swift in Sources */,
 				2FA242B32EBAA47B0073C2BF /* View.swift in Sources */,
 				2FA242B72EBEA10E0073C2BF /* OverlayState.swift in Sources */,
+				92EA6B0C2F330F7200F94189 /* UnityGameWrapper.swift in Sources */,
 				4CEF41C82D21A46A0068BC5B /* RomManager.swift in Sources */,
 				92E057F62E5DC70F0002B6E6 /* HextrisViewModel.swift in Sources */,
 				92E057F42E5DB76C0002B6E6 /* HextrisWrapper.swift in Sources */,
