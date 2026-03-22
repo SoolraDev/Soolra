@@ -11,9 +11,10 @@ struct WalletView: View {
     @StateObject var walletmanager = walletManager
     //    @State var usdcBalance: String = "0.00"
     //    @State var usdtBalance: String = "0.00"
-    @State var soolBalance: String = "0.00"
+    //    @State var soolBalance: String = "0.00"
     @State private var notificationsEnabled: Bool = false
     @State private var isWebviewPresented: Bool = false
+    @State private var isSendTokenPresented: Bool = false
     @State private var overlaystate = overlayState
 
     var body: some View {
@@ -54,6 +55,16 @@ struct WalletView: View {
             }
             .padding(.horizontal)
             .frame(maxWidth: 400)
+
+            Button {
+                isSendTokenPresented = true
+            } label: {
+                AngledBanner {
+                    Text("Send Tokens")
+                        .frame(maxWidth: 400)
+                }
+            }
+            .padding(.horizontal)
 
             AngledBanner {
                 // TODO: Implement
@@ -130,6 +141,9 @@ struct WalletView: View {
         .background(.gray.opacity(0.5))
         .task {
             await walletmanager.getBalances()
+        }
+        .fullScreenCover(isPresented: $isSendTokenPresented) {
+            SendTokenView(isPresented: $isSendTokenPresented)
         }
     }
 }

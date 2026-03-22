@@ -305,6 +305,108 @@ class ApiClient {
         }
     }
 
+    // MARK: - Token Transfers
+
+    func getTransferPayload(
+        to: String,
+        token: String,
+        walletId: String,
+        amount: String
+    ) async -> TransferPayloadResponse? {
+        guard let headers = AuthManager.shared.getAuthHeaders() else {
+            return nil
+        }
+        let url = baseURL.appendingPathComponent("/v1/transfers/get-payload")
+
+        let body = GetTransferPayloadRequest(
+            to: to,
+            token: token,
+            walletId: walletId,
+            amount: amount
+        )
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = headers
+
+        do {
+            request.httpBody = try JSONEncoder().encode(body)
+            let (data, response) = try await URLSession.shared.data(
+                for: request
+            )
+            guard let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200
+            else {
+                if let httpResponse = response as? HTTPURLResponse {
+                    print(
+                        "🚨 Get transfer payload failed with status: \(httpResponse.statusCode)"
+                    )
+                }
+                return nil
+            }
+            return try JSONDecoder().decode(
+                TransferPayloadResponse.self,
+                from: data
+            )
+        } catch {
+            print("🚨 Error getting transfer payload: \(error)")
+            return nil
+        }
+    }
+
+    func sendTransfer(
+        walletId: String,
+        payload: TransferPayloadResponse,
+        signature: String
+    ) async -> SendTransferResponse? {
+        guard let headers = AuthManager.shared.getAuthHeaders() else {
+            return nil
+        }
+        let url = baseURL.appendingPathComponent("/v1/transfers/send")
+
+        let body = SendTransferRequest(
+            payload: payload,
+            signature: signature,
+            walletId: walletId
+        )
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = headers
+
+        do {
+            request.httpBody = try JSONEncoder().encode(body)
+
+            let sessionConfig = URLSessionConfiguration.default
+            sessionConfig.timeoutIntervalForRequest = 120.0
+            let session = URLSession(configuration: sessionConfig)
+
+            let (data, response) = try await session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200
+            else {
+                if let httpResponse = response as? HTTPURLResponse,
+                    let errorBody = try? JSONSerialization.jsonObject(
+                        with: data
+                    ) as? [String: Any],
+                    let message = errorBody["message"] as? String
+                {
+                    print(
+                        "🚨 Send transfer failed (\(httpResponse.statusCode)): \(message)"
+                    )
+                }
+                return nil
+            }
+            return try JSONDecoder().decode(
+                SendTransferResponse.self,
+                from: data
+            )
+        } catch {
+            print("🚨 Error sending transfer: \(error)")
+            return nil
+        }
+    }
+
     /// Triggers a delisting. The backend handles execution.
     func delistItem(listingId: String) async -> TransactionActionResponse? {
         guard let headers = AuthManager.shared.getAuthHeaders() else {
@@ -464,6 +566,52 @@ struct TransactionActionResponse: Codable {
     let purchaseTransactionHash: String?
     let delistTransactionHash: String?
     let listingTransactionHash: String?
+}
+
+// MARK: - Transfer Models
+
+struct GetTransferPayloadRequest: Codable {
+    let to: String
+    let token: String
+    let walletId: String
+    let amount: String
+}
+
+struct TransferPayloadResponse: Codable {
+    let version: Int
+    let url: String
+    let method: String
+    let headers: [String: String]
+    let body: TransferPayloadBody
+}
+
+struct TransferPayloadBody: Codable {
+    let method: String
+    let caip2: String
+    let chain_type: String
+    let sponsor: Bool
+    let params: TransferPayloadParams
+}
+
+struct TransferPayloadParams: Codable {
+    let transaction: TransferPayloadTransaction
+}
+
+struct TransferPayloadTransaction: Codable {
+    let to: String
+    let data: String
+    let value: String
+}
+
+struct SendTransferRequest: Codable {
+    let payload: TransferPayloadResponse
+    let signature: String
+    let walletId: String
+}
+
+struct SendTransferResponse: Codable {
+    let message: String
+    let transactionHash: String?
 }
 
 // Helper to handle mixed types (String or Int) in JSON "value" fields
