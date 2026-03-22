@@ -478,51 +478,71 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2F50B7E32EB408B500E250EA /* OverlayViews */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = OverlayViews;
 			sourceTree = "<group>";
 		};
 		2FA242A62EB775790073C2BF /* SharedViews */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = SharedViews;
 			sourceTree = "<group>";
 		};
 		4C0CD8AE2D54E31F00B079B5 /* Protocols */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Protocols;
 			sourceTree = "<group>";
 		};
 		4C0CD8BA2D54E71100B079B5 /* SoolraController */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = SoolraController;
 			sourceTree = "<group>";
 		};
 		4C0CD8CE2D54E72800B079B5 /* Game */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Game;
 			sourceTree = "<group>";
 		};
 		4CC26D9F2D4BAF8000F3D262 /* ConsoleCores */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = ConsoleCores;
 			sourceTree = "<group>";
 		};
 		4CCFFDAD2D4D2B4B002B9F4A /* nes */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = nes;
 			sourceTree = "<group>";
 		};
 		4CE85E512D55201F004A3CC2 /* gba */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = gba;
 			sourceTree = "<group>";
 		};
 		4CF12CD52D4293CA004B7CD7 /* Boxart */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Boxart;
 			sourceTree = "<group>";
 		};
 		92678D5C2DA805B4001CEDD6 /* Cheats */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Cheats;
 			sourceTree = "<group>";
 		};
@@ -997,9 +1017,9 @@
 			mainGroup = 183DF1612862C99E0088FE1C;
 			packageReferences = (
 				4CEF41C92D21A4E40068BC5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
-				92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite" */,
+				92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				2F50B7D32EB2A5E000E250EA /* XCRemoteSwiftPackageReference "privy-ios" */,
-				2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */,
+				2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3.swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 183DF16B2862C99E0088FE1C /* Products */;
@@ -1237,13 +1257,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SOOLRA/Pods-SOOLRA-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SOOLRA/Pods-SOOLRA-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1575,7 +1591,7 @@
 				minimumVersion = 2.5.0;
 			};
 		};
-		2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */ = {
+		2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/chainnodesorg/Web3.swift";
 			requirement = {
@@ -1591,7 +1607,7 @@
 				minimumVersion = 0.9.19;
 			};
 		};
-		92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite" */ = {
+		92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
 			requirement = {
@@ -1609,17 +1625,17 @@
 		};
 		2F50B7DB2EB2B22F00E250EA /* Web3 */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */;
+			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3.swift" */;
 			productName = Web3;
 		};
 		2F50B7DD2EB2B22F00E250EA /* Web3ContractABI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */;
+			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3.swift" */;
 			productName = Web3ContractABI;
 		};
 		2F50B7DF2EB2B22F00E250EA /* Web3PromiseKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3" */;
+			package = 2F50B7DA2EB2B22F00E250EA /* XCRemoteSwiftPackageReference "Web3.swift" */;
 			productName = Web3PromiseKit;
 		};
 		4CEF41CA2D21A4E40068BC5B /* ZIPFoundation */ = {
@@ -1629,7 +1645,7 @@
 		};
 		92678D762DAA70E6001CEDD6 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite" */;
+			package = 92678D752DAA70E6001CEDD6 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
 			productName = SQLite;
 		};
 /* End XCSwiftPackageProductDependency section */

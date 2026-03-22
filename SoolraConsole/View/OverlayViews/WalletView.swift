@@ -45,15 +45,15 @@ struct WalletView: View {
             .padding(.horizontal)
             .frame(maxWidth: 400)
 
-            //            HStack {
-            //                Text("SOOL").foregroundStyle(.white).fontWeight(.semibold)
-            //                Spacer()
-            //                AngledBanner {
-            //                    Text(soolBalance)
-            //                }
-            //            }
-            //            .padding(.horizontal)
-            //            .frame(maxWidth: 400)
+            HStack {
+                Text("SOOL").foregroundStyle(.white).fontWeight(.semibold)
+                Spacer()
+                AngledBanner {
+                    Text(walletmanager.balances["sool"] ?? "0.0")
+                }
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: 400)
 
             AngledBanner {
                 // TODO: Implement

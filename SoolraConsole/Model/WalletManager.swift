@@ -44,7 +44,7 @@ public class WalletManager: ObservableObject {
     @Published public var isLoading: Bool = false
     @Published public var errorMessage: String?
     @Published public var balances: [String: String] = [
-        "usdc": "0.0", "usdt": "0.0",
+        "usdc": "0.0", "usdt": "0.0", "sool": "0.0"
     ]
 
     public let privyClient: Privy
@@ -179,7 +179,7 @@ public class WalletManager: ObservableObject {
     }
 
     public func getBalances() async {
-        let defaultBalances = ["usdc": "0.0", "usdt": "0.0"]
+        let defaultBalances = ["usdc": "0.0", "usdt": "0.0", "sool": "0.0"]
 
         // The ApiClient will now get the token from AuthManager, so this function
         // no longer needs to fetch it directly. We just need the user ID.
