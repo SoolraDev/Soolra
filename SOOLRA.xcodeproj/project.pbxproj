@@ -103,6 +103,9 @@
 		92EA70492F45F46800F94189 /* Video Poker.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA70472F45F46800F94189 /* Video Poker.png */; };
 		92EA704A2F45F46800F94189 /* Animal Puzzle.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA70442F45F46800F94189 /* Animal Puzzle.png */; };
 		92EA704B2F45F46800F94189 /* Video Blackjack.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA70462F45F46800F94189 /* Video Blackjack.png */; };
+		92EA7FB22F73B67900F94189 /* Platformer.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EA7FB12F73B67900F94189 /* Platformer.png */; };
+		92EA7FB42F73B8A000F94189 /* PlatformerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EA7FB32F73B8A000F94189 /* PlatformerWrapper.swift */; };
+		92EA7FB62F73B8B000F94189 /* PlatformerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EA7FB52F73B8B000F94189 /* PlatformerViewModel.swift */; };
 		92EF51852E2693B0008D609E /* LicenseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EF51842E2693B0008D609E /* LicenseListView.swift */; };
 		92EF61DD2E31050F008D609E /* Chocolate Hunter Runa.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */; };
 		92EF61DE2E31050F008D609E /* Hearts.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EF616C2E31050F008D609E /* Hearts.png */; };
@@ -337,6 +340,9 @@
 		92EA70452F45F46800F94189 /* Tank Arcade.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Tank Arcade.png"; sourceTree = "<group>"; };
 		92EA70462F45F46800F94189 /* Video Blackjack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Video Blackjack.png"; sourceTree = "<group>"; };
 		92EA70472F45F46800F94189 /* Video Poker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Video Poker.png"; sourceTree = "<group>"; };
+		92EA7FB12F73B67900F94189 /* Platformer.png */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Platformer.png; sourceTree = "<group>"; };
+		92EA7FB32F73B8A000F94189 /* PlatformerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformerWrapper.swift; sourceTree = "<group>"; };
+		92EA7FB52F73B8B000F94189 /* PlatformerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformerViewModel.swift; sourceTree = "<group>"; };
 		92EF51842E2693B0008D609E /* LicenseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseListView.swift; sourceTree = "<group>"; };
 		92EF61562E31050F008D609E /* Chase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chase.png; sourceTree = "<group>"; };
 		92EF61572E31050F008D609E /* Chocolate Hunter Runa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Chocolate Hunter Runa.png"; sourceTree = "<group>"; };
@@ -721,6 +727,7 @@
 				92A582912EA652C50044FE05 /* StackerViewModel.swift */,
 				92E04DD32E5C6CA40002B6E6 /* YabalaliViewModel.swift */,
 				92E02F642E40CF2D0002B6E6 /* Game2048ViewModel.swift */,
+				92EA7FB52F73B8B000F94189 /* PlatformerViewModel.swift */,
 			);
 			path = WebViewModels;
 			sourceTree = "<group>";
@@ -736,6 +743,7 @@
 				92E057EF2E5C94290002B6E6 /* YabalaliWrapper.swift */,
 				92E02F662E40CF3E0002B6E6 /* Game2048Wrapper.swift */,
 				92E057F32E5DB76C0002B6E6 /* HextrisWrapper.swift */,
+				92EA7FB32F73B8A000F94189 /* PlatformerWrapper.swift */,
 			);
 			path = WebViewWrappers;
 			sourceTree = "<group>";
@@ -820,6 +828,7 @@
 				926B75392EC601D000543101 /* Battleship.png */,
 				926B753A2EC601D000543101 /* Blast Arena.png */,
 				926B753B2EC601D000543101 /* Blind Jump.png */,
+				92EA7FB12F73B67900F94189 /* Platformer.png */,
 				926B753C2EC601D000543101 /* Blowhole.png */,
 				926B753D2EC601D000543101 /* Cats Curse.png */,
 			);
@@ -1099,6 +1108,7 @@
 				92965FF52EAA70A800D877C3 /* Codemaster.png in Resources */,
 				92EF62242E31050F008D609E /* Arcade Mania.gba in Resources */,
 				926B75232EC6010000543101 /* Hextris.png in Resources */,
+				92EA7FB22F73B67900F94189 /* Platformer.png in Resources */,
 				926B75242EC6010000543101 /* Crane.png in Resources */,
 				926B75252EC6010000543101 /* Tower.png in Resources */,
 				92EF62252E31050F008D609E /* RavenX.gba in Resources */,
@@ -1292,6 +1302,8 @@
 				9270637E2EF80AA0002648B7 /* FavoritesManager.swift in Sources */,
 				9270637C2EF809F4002648B7 /* FavoritableCarouselItem.swift in Sources */,
 				92267CAA2EF1693A00E56716 /* HexGlViewModel.swift in Sources */,
+				92EA7FB42F73B8A000F94189 /* PlatformerWrapper.swift in Sources */,
+				92EA7FB62F73B8B000F94189 /* PlatformerViewModel.swift in Sources */,
 				92267CA82EF168E300E56716 /* HexGlWrapper.swift in Sources */,
 				92E07B5B2EA0FEBE0002B6E6 /* TowerViewModel.swift in Sources */,
 				928FA35F2DD8E88700F3C848 /* EngagementTracker.swift in Sources */,
@@ -1446,7 +1458,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
@@ -1460,6 +1472,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "save images of your treasures to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
@@ -1469,7 +1482,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.0.4;
+				MARKETING_VERSION = 7.0.6;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",
@@ -1499,7 +1512,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				DEVELOPMENT_TEAM = 3W96UGQFB7;
 				ENABLE_PREVIEWS = YES;
@@ -1512,6 +1525,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "save images of your treasures to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
@@ -1521,7 +1535,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.0.4;
+				MARKETING_VERSION = 7.0.6;
 				OTHER_CFLAGS = (
 					"-Wno-narrowing",
 					"-DC_CORE",

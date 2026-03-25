@@ -26,6 +26,7 @@ enum WebGameCatalog {
         let utvpoker = URL(string: "http://128.140.121.129/tv-poker/")!
         let uTanks = URL(string: "http://128.140.121.129/tank-arcade/")!
         let uBlackjack = URL(string: "http://128.140.121.129/blackJack3/")!
+        let uPlatformer = URL(string: "http://128.140.121.129/mario/")!
 
 
         return [
@@ -100,6 +101,15 @@ enum WebGameCatalog {
                 makeViewModel: { UnityGameViewModel(startURL: uTanks) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Platformer",
+                url: uPlatformer,
+                icon: UIImage(named: "Platformer"),
+                makeViewModel: { PlatformerViewModel(startURL: uPlatformer) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(PlatformerWrapper(viewModel: vm as! PlatformerViewModel, onClose: onClose))
                 }
             ),
 //            WebGame(
