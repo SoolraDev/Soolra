@@ -1,14 +1,20 @@
 import Foundation
 import WebKit
 
-final class UnityGameViewModel: ObservableObject, WebGameViewModel, ControllerServiceDelegate {
+final class UnityGameViewModel: NSObject, ObservableObject, WebGameViewModel, ControllerServiceDelegate, WKNavigationDelegate {
     let startURL: URL
     weak var webView: WKWebView?
     private var keyState = Set<Int>()
     var dismiss: (() -> Void)?
-    
+    @Published var isLoading = true
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        DispatchQueue.main.async { self.isLoading = false }
+    }
+
     init(startURL: URL) {
         self.startURL = startURL
+        super.init()
     }
     
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {

@@ -22,12 +22,26 @@ struct UnityGameWrapper: View {
                     },
                     onWebViewReady: { web in
                         viewModel.webView = web
+                        web.navigationDelegate = viewModel
                     }
                 )
 //                .frame(width: geo.size.width, height: geo.size.height * 0.5)
 //                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .clipped()
                 .background(Color.black)
+
+                if viewModel.isLoading {
+                    ZStack(alignment: .top) {
+                        Rectangle().fill(.ultraThinMaterial)
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.white)
+                            .scaleEffect(1.5)
+                            .padding(.top, geo.size.height * 0.30)
+                    }
+                    .ignoresSafeArea()
+                    .transition(.opacity.animation(.easeOut(duration: 0.4)))
+                }
 
                 Text("Press X to close")
                     .font(.system(size: 10, weight: .semibold))

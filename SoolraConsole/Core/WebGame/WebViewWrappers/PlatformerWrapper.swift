@@ -29,12 +29,13 @@ struct PlatformerWrapper: View {
                 .background(Color.black)
 
                 if viewModel.isLoading {
-                    ZStack {
+                    ZStack(alignment: .top) {
                         Rectangle().fill(.ultraThinMaterial)
                         ProgressView()
                             .progressViewStyle(.circular)
                             .tint(.white)
                             .scaleEffect(1.5)
+                            .padding(.top, geo.size.height * 0.30)
                     }
                     .ignoresSafeArea()
                     .transition(.opacity.animation(.easeOut(duration: 0.4)))
