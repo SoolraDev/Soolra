@@ -22,10 +22,23 @@ struct PlatformerWrapper: View {
                     },
                     onWebViewReady: { web in
                         viewModel.webView = web
+                        web.navigationDelegate = viewModel
                     }
                 )
                 .clipped()
                 .background(Color.black)
+
+                if viewModel.isLoading {
+                    ZStack {
+                        Rectangle().fill(.ultraThinMaterial)
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.white)
+                            .scaleEffect(1.5)
+                    }
+                    .ignoresSafeArea()
+                    .transition(.opacity.animation(.easeOut(duration: 0.4)))
+                }
 
                 Text("Press X to close")
                     .font(.system(size: 10, weight: .semibold))
