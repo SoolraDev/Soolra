@@ -93,15 +93,15 @@ enum WebGameCatalog {
                     AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
                 }
             ),
-            WebGame(
-                name: "Video Poker",
-                url: utvpoker,
-                icon: UIImage(named: "Video Poker"),
-                makeViewModel: { UnityGameViewModel(startURL: utvpoker) as any WebGameViewModel },
-                makeWrapper: { vm, onClose in
-                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
-                }
-            ),
+//            WebGame(
+//                name: "Video Poker",
+//                url: utvpoker,
+//                icon: UIImage(named: "Video Poker"),
+//                makeViewModel: { UnityGameViewModel(startURL: utvpoker) as any WebGameViewModel },
+//                makeWrapper: { vm, onClose in
+//                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+//                }
+//            ),
 //            WebGame(
 //                name: "Tank Arcade",
 //                url: uTanks,
