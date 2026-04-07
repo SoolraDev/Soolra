@@ -589,6 +589,7 @@ struct TransferPayloadBody: Codable {
     let method: String
     let caip2: String
     let chain_type: String
+    let address: String
     let sponsor: Bool
     let params: TransferPayloadParams
 }
