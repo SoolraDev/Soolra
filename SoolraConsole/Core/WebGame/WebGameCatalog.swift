@@ -31,9 +31,9 @@ enum WebGameCatalog {
 
         return [
             WebGame(
-                name: "Platformer",
+                name: "Kitty Adventure",
                 url: uPlatformer,
-                icon: UIImage(named: "Platformer"),
+                icon: UIImage(named: "Kitty Adventure"),
                 makeViewModel: { PlatformerViewModel(startURL: uPlatformer) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(PlatformerWrapper(viewModel: vm as! PlatformerViewModel, onClose: onClose))
@@ -111,7 +111,7 @@ enum WebGameCatalog {
 //                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
 //                }
 //            )
-
+//
 //            WebGame(
 //                name: "Video Blackjack",
 //                url: uBlackjack,

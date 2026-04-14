@@ -28,8 +28,13 @@ final class PlatformerViewModel: NSObject, ObservableObject, WebGameViewModel, C
             handle(37, "ArrowLeft", "ArrowLeft")
         case .right:
             handle(39, "ArrowRight", "ArrowRight")
-        case .up, .a, .b:
+        case .up:
             handle(38, "ArrowUp", "ArrowUp")
+        case .a:
+            handle(38, "ArrowUp", "ArrowUp")
+            handle(13, "Enter", "Enter")
+        case .b:
+            handle(32, " ", "Space")
         case .down:
             handle(40, "ArrowDown", "ArrowDown")
         case .l:
