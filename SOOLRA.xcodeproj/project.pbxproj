@@ -52,6 +52,7 @@
 		70BD24A02C6BF6F10070B5F9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BD249F2C6BF6F10070B5F9 /* Colors.swift */; };
 		92267CA82EF168E300E56716 /* HexGlWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92267CA72EF168E300E56716 /* HexGlWrapper.swift */; };
 		92267CAA2EF1693A00E56716 /* HexGlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92267CA92EF1693A00E56716 /* HexGlViewModel.swift */; };
+		925823662F8EC035000227D3 /* Kitty Adventure.png in Resources */ = {isa = PBXBuildFile; fileRef = 925823652F8EC035000227D3 /* Kitty Adventure.png */; };
 		92678D772DAA70E6001CEDD6 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 92678D762DAA70E6001CEDD6 /* SQLite */; };
 		92678D812DAA76F5001CEDD6 /* Cheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92678D802DAA76F5001CEDD6 /* Cheat.swift */; };
 		926B60EB2EC5CDD100543101 /* ZalandoSansExpanded.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */; };
@@ -290,6 +291,7 @@
 		70BD249F2C6BF6F10070B5F9 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		92267CA72EF168E300E56716 /* HexGlWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexGlWrapper.swift; sourceTree = "<group>"; };
 		92267CA92EF1693A00E56716 /* HexGlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexGlViewModel.swift; sourceTree = "<group>"; };
+		925823652F8EC035000227D3 /* Kitty Adventure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Kitty Adventure.png"; sourceTree = "<group>"; };
 		92678D802DAA76F5001CEDD6 /* Cheat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheat.swift; sourceTree = "<group>"; };
 		926B60EA2EC5CDD100543101 /* ZalandoSansExpanded.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ZalandoSansExpanded.ttf; sourceTree = "<group>"; };
 		926B75202EC6010000543101 /* Crane.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Crane.png; sourceTree = "<group>"; };
@@ -774,6 +776,7 @@
 				92EF61682E31050F008D609E /* GBATactics.png */,
 				92EF61692E31050F008D609E /* Ghosts_And_Graves.png */,
 				92EF616A2E31050F008D609E /* Glacia Dungeon.png */,
+				925823652F8EC035000227D3 /* Kitty Adventure.png */,
 				92EF616B2E31050F008D609E /* GO.png */,
 				92EF616C2E31050F008D609E /* Hearts.png */,
 				92EF616D2E31050F008D609E /* Hearts Cafe.png */,
@@ -1114,6 +1117,7 @@
 				926B75252EC6010000543101 /* Tower.png in Resources */,
 				92EF62252E31050F008D609E /* RavenX.gba in Resources */,
 				92EF62262E31050F008D609E /* Ghosts_And_Graves.nes in Resources */,
+				925823662F8EC035000227D3 /* Kitty Adventure.png in Resources */,
 				92EF62272E31050F008D609E /* Solar Guard.png in Resources */,
 				92EF62282E31050F008D609E /* Pnakys.png in Resources */,
 				92EF62292E31050F008D609E /* Gba Microjam 23.gba in Resources */,
@@ -1464,7 +1468,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
@@ -1517,7 +1521,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"SoolraConsole/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
