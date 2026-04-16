@@ -108,6 +108,35 @@ class ApiClient {
         }
     }
 
+    // MARK: - Top Games
+
+    func fetchTopGames(userId: String) async -> [TopGame]? {
+        guard let headers = AuthManager.shared.getAuthHeaders() else {
+            return nil
+        }
+        let url = baseURL.appendingPathComponent("/v1/users/\(userId)/top-games")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+
+        do {
+            let (data, response) = try await URLSession.shared.data(
+                for: request
+            )
+            guard let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200
+            else {
+                print("🚨 Fetch top games failed")
+                return nil
+            }
+            return try JSONDecoder().decode([TopGame].self, from: data)
+        } catch {
+            print("🚨 Error fetching top games: \(error)")
+            return nil
+        }
+    }
+
     // MARK: - User NFTs
 
     // Fetches the user's NFTs from the backend
@@ -475,6 +504,16 @@ struct Game: Codable {
     let gameName: String
     let score: Int
     let duration: TimeInterval
+}
+
+struct TopGame: Codable, Identifiable {
+    let gameName: String
+    let timesPlayed: Int
+    let totalScore: Int
+    let totalDuration: Int
+    let imageUrl: String?
+
+    var id: String { gameName }
 }
 
 // MARK: - NFT Models

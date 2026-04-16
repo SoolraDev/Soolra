@@ -4,6 +4,8 @@
 //
 //  Created by Michael Essiet on 30/10/2025.
 //
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import SwiftUI
 
 struct WalletView: View {
@@ -16,6 +18,7 @@ struct WalletView: View {
     @State private var isWebviewPresented: Bool = false
     @State private var isSendTokenPresented: Bool = false
     @State private var overlaystate = overlayState
+    @State private var isQRCodePresented: Bool = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -66,14 +69,15 @@ struct WalletView: View {
             }
             .padding(.horizontal)
 
-            AngledBanner {
-                // TODO: Implement
-                Button("Get SOOL") {}
-                    .frame(maxWidth: 400)
-                    .disabled(true)
+            Button {
+                isQRCodePresented = true
+            } label: {
+                AngledBanner {
+                    Text("Receive")
+                        .frame(maxWidth: 400)
+                }
             }
-            .padding()
-            .comingSoon()
+            .padding(.horizontal)
 
             VStack {
                 Menu {
@@ -145,6 +149,92 @@ struct WalletView: View {
         .fullScreenCover(isPresented: $isSendTokenPresented) {
             SendTokenView(isPresented: $isSendTokenPresented)
         }
+        .sheet(isPresented: $isQRCodePresented) {
+            WalletQRCodeView(
+                address: walletmanager.getAddress() ?? "",
+                isPresented: $isQRCodePresented
+            )
+        }
+    }
+}
+
+struct WalletQRCodeView: View {
+    let address: String
+    @Binding var isPresented: Bool
+    @State private var copied = false
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Text("Receive Tokens")
+                .font(.title2.bold())
+                .foregroundStyle(.white)
+                .padding(.top)
+
+            if let qrImage = generateQRCode(from: address) {
+                Image(uiImage: qrImage)
+                    .interpolation(.none)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+                    .background(Color.white)
+                    .cornerRadius(12)
+            }
+
+            Text("Scan this QR code to send tokens to this wallet")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+            Button {
+                UIPasteboard.general.string = address
+                copied = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    copied = false
+                }
+            } label: {
+                HStack {
+                    Text(address)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Image(systemName: copied ? "checkmark" : "doc.on.doc")
+                }
+                .font(.caption)
+                .foregroundStyle(.white)
+                .padding()
+                .frame(maxWidth: 300)
+                .background(Color.white.opacity(0.15))
+                .cornerRadius(10)
+            }
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(hex: "#1a1a2e").ignoresSafeArea())
+        .overlay(alignment: .topTrailing) {
+            Button {
+                isPresented = false
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding()
+            }
+        }
+    }
+
+    private func generateQRCode(from string: String) -> UIImage? {
+        guard let data = string.data(using: .ascii),
+              let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
+        filter.setValue(data, forKey: "inputMessage")
+        filter.setValue("M", forKey: "inputCorrectionLevel")
+
+        guard let outputImage = filter.outputImage else { return nil }
+        let scale = 200 / outputImage.extent.size.width
+        let scaled = outputImage.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+        let context = CIContext()
+        guard let cgImage = context.createCGImage(scaled, from: scaled.extent) else { return nil }
+        return UIImage(cgImage: cgImage)
     }
 }
 

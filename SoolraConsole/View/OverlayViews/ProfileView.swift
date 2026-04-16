@@ -21,6 +21,10 @@ struct ProfileView: View {
     // A unique ID to force AsyncImage to reload after an upload
     @State private var imageId = UUID()
     
+    // MARK: - Top Games State
+    @State private var topGames: [TopGame] = []
+    @State private var isLoadingTopGames = false
+
     // MARK: - NFT State
     @State private var nfts: [NFTMetadata] = []
     @State private var isLoadingNFTs = false
@@ -128,6 +132,7 @@ struct ProfileView: View {
             }.padding()
                 .task {
                     await datamanager.refresh()
+                    await loadTopGames()
                     await loadNFTs()
                 }
 
@@ -139,25 +144,53 @@ struct ProfileView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
 
-                HStack {
-                    ForEach(0..<3) { index in
-                        CachedAsyncImage(
-                            url: URL(string: "https://random.danielpetrica.com/api/random?format=thumb")
-                        ) { image in
-                            image.resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 111, height: 97)
-                                .cornerRadius(10)
-                                .gradientBorder(
-                                    RoundedRectangle(cornerRadius: 10),
-                                    colors: [Color(hex: "#FF00E1"), Color(hex: "#FCC4FF")]
-                                )
-                        } placeholder: {
-                            ProgressView()
+                if isLoadingTopGames {
+                    ProgressView()
+                        .tint(.white)
+                        .padding()
+                } else if topGames.isEmpty {
+                    Text("No games played yet")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.7))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                } else {
+                    HStack {
+                        ForEach(topGames) { game in
+                            VStack(spacing: 6) {
+                                CachedAsyncImage(
+                                    url: game.imageUrl.flatMap(URL.init)
+                                ) { image in
+                                    image.resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 111, height: 97)
+                                        .cornerRadius(10)
+                                        .gradientBorder(
+                                            RoundedRectangle(cornerRadius: 10),
+                                            colors: [Color(hex: "#FF00E1"), Color(hex: "#FCC4FF")]
+                                        )
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color.gray.opacity(0.3))
+                                        .frame(width: 111, height: 97)
+                                        .overlay(ProgressView().tint(.white))
+                                }
+
+                                Text(game.gameName)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                    .lineLimit(1)
+
+                                Text("\(game.timesPlayed) plays")
+                                    .font(.caption2)
+                                    .foregroundStyle(.white.opacity(0.7))
+                            }
+                            .frame(width: 111)
                         }
                     }
                 }
-            }.comingSoon()
+            }
 
             // MARK: - Treasures (NFTs)
             VStack {
@@ -276,6 +309,18 @@ struct ProfileView: View {
         }
     }
     
+    private func loadTopGames() async {
+        guard let userId = walletManager.privyUser?.id else { return }
+        isLoadingTopGames = true
+        let client = ApiClient()
+        if let games = await client.fetchTopGames(userId: userId) {
+            withAnimation {
+                self.topGames = games
+            }
+        }
+        isLoadingTopGames = false
+    }
+
     private func loadNFTs() async {
         guard let userId = walletManager.privyUser?.id else { return }
         isLoadingNFTs = true
