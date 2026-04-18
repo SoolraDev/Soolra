@@ -23,10 +23,13 @@ enum WebGameCatalog {
 //        let uVp = URL(string: "http://128.140.121.129/tank-arcade/")!
 //        let uVp = URL(string: "https://webgames.soolra.com/vp/")!
         let uAnimalPuzzle = URL(string: "http://webgames.soolra.com/animals_puzzle/")!
-        let utvpoker = URL(string: "http://128.140.121.129/tv-poker/")!
+        let utvpoker = URL(string: "http://webgames.soolra.com/tv_poker/")!
         let uTanks = URL(string: "http://128.140.121.129/tank-arcade/")!
-        let uBlackjack = URL(string: "http://128.140.121.129/blackJack3/")!
-        let uPlatformer = URL(string: "http://128.140.121.129/mario/")!
+        let uBlackjack = URL(string: "http://webgames.soolra.com/blackjack3/")!
+        let uPlatformer = URL(string: "http://webgames.soolra.com/meow_meow_adventure/")!
+        let uAirHockey = URL(string: "http://webgames.soolra.com/air_hockey/")!
+        let uBrickOut = URL(string: "http://webgames.soolra.com/brick_out/")!
+        let uDarts = URL(string: "http://webgames.soolra.com/darts/")!
 
 
         return [
@@ -89,6 +92,51 @@ enum WebGameCatalog {
                 url: uAnimalPuzzle,
                 icon: UIImage(named: "Animal Puzzle"),
                 makeViewModel: { UnityGameViewModel(startURL: uAnimalPuzzle) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Air Hockey",
+                url: uAirHockey,
+                icon: UIImage(named: "Air Hockey"),
+                makeViewModel: { UnityGameViewModel(startURL: uAirHockey) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Blackjack",
+                url: uBlackjack,
+                icon: UIImage(named: "Blackjack"),
+                makeViewModel: { UnityGameViewModel(startURL: uBlackjack) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Brick Out",
+                url: uBrickOut,
+                icon: UIImage(named: "Brick Out"),
+                makeViewModel: { UnityGameViewModel(startURL: uBrickOut) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "Darts",
+                url: uDarts,
+                icon: UIImage(named: "Darts"),
+                makeViewModel: { UnityGameViewModel(startURL: uDarts) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "TV Poker",
+                url: utvpoker,
+                icon: UIImage(named: "TV Poker"),
+                makeViewModel: { UnityGameViewModel(startURL: utvpoker) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
                 }
