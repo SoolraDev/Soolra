@@ -18,6 +18,7 @@ struct PlatformerWrapper: View {
                     makeConfiguration: {
                         let cfg = WKWebViewConfiguration()
                         cfg.allowsInlineMediaPlayback = true
+                        cfg.mediaTypesRequiringUserActionForPlayback = []
                         return cfg
                     },
                     onWebViewReady: { web in

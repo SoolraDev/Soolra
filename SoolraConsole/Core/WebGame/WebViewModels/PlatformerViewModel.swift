@@ -5,6 +5,7 @@ final class PlatformerViewModel: NSObject, ObservableObject, WebGameViewModel, C
     let startURL: URL
     weak var webView: WKWebView?
     private var keyState = Set<Int>()
+    private var audioUnlocked = false
     var dismiss: (() -> Void)?
     @Published var isLoading = true
 
@@ -18,6 +19,11 @@ final class PlatformerViewModel: NSObject, ObservableObject, WebGameViewModel, C
     }
 
     func controllerDidPress(action: SoolraControllerAction, pressed: Bool) {
+        if pressed && !audioUnlocked {
+            audioUnlocked = true
+            unlockAudio()
+        }
+
         func handle(_ which: Int, _ key: String, _ code: String) {
             pressed ? keyDown(which: which, key: key, codeName: code)
                     : keyUp(which: which, key: key, codeName: code)
@@ -78,6 +84,21 @@ final class PlatformerViewModel: NSObject, ObservableObject, WebGameViewModel, C
             cancelable: true
         });
         document.dispatchEvent(e);
+        """)
+    }
+
+    private func unlockAudio() {
+        injectJS("""
+        (function () {
+            try {
+                var ui = window.unityInstance;
+                var ctx = ui && ui.Module && ui.Module.WEBAudio && ui.Module.WEBAudio.audioContext;
+                if (ctx && ctx.state === 'suspended') ctx.resume();
+            } catch (e) {}
+            document.querySelectorAll('audio,video').forEach(function (m) {
+                try { m.muted = false; m.play().catch(function () {}); } catch (e) {}
+            });
+        })();
         """)
     }
 

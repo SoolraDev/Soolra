@@ -20,17 +20,21 @@ enum WebGameCatalog {
         let uHextris = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/hextris/")!
         let uTower = URL(string: "https://webgame-server-058de90773d7.herokuapp.com/tower/")!
         let uHexGl = URL(string: "https://webgames.soolra.com/hexgl/")!
-//        let uVp = URL(string: "http://128.140.121.129/tank-arcade/")!
-//        let uVp = URL(string: "https://webgames.soolra.com/vp/")!
-        let uAnimalPuzzle = URL(string: "http://webgames.soolra.com/animals_puzzle/")!
-        let utvpoker = URL(string: "http://webgames.soolra.com/tv_poker/")!
-        let uTanks = URL(string: "http://128.140.121.129/tank-arcade/")!
-        let uBlackjack = URL(string: "http://webgames.soolra.com/blackjack3/")!
-        let uPlatformer = URL(string: "http://webgames.soolra.com/meow_meow_adventure/")!
-        let uAirHockey = URL(string: "http://webgames.soolra.com/air_hockey/")!
-        let uBrickOut = URL(string: "http://webgames.soolra.com/brick_out/")!
-        let uDarts = URL(string: "http://webgames.soolra.com/darts/")!
-
+        //        let uTanks = URL(string: "http://128.140.121.129/tank-arcade/")!
+//        let uAnimalPuzzle = URL(string: "https://soolra-animal-puzzle.netlify.app")!
+//        let utvpoker = URL(string: "https://soolra-videopoker.netlify.app")!
+//        let uBlackjack = URL(string: "https://soolra-blackjack.netlify.app")!
+//        let uPlatformer = URL(string: "https://soolra-meow-meow.netlify.app")!
+//        let uAirHockey = URL(string: "https://soolra-air-hockey.netlify.app")!
+//        let uBrickOut = URL(string: "https://soolra-brick-out.netlify.app")!
+//        let uDarts = URL(string: "https://soolra-darts.netlify.app")!
+        let uAnimalPuzzle = URL(string: "https://webgames.soolrafreegames.com/animal_puzzle/index.html")!
+        let utvpoker = URL(string: "https://webgames.soolrafreegames.com/tv-poker/index.html")!
+        let uBlackjack = URL(string: "https://webgames.soolrafreegames.com/blackJack3/index.html")!
+        let uPlatformer = URL(string: "https://webgames.soolrafreegames.com/meow_meow_adventure/index.html")!
+        let uAirHockey = URL(string: "https://webgames.soolrafreegames.com/air-hockey/index.html")!
+        let uBrickOut = URL(string: "https://webgames.soolrafreegames.com/brickOut/index.html")!
+        let uDarts = URL(string: "https://webgames.soolrafreegames.com/darts/index.html")!
 
         return [
             WebGame(
@@ -133,9 +137,9 @@ enum WebGameCatalog {
                 }
             ),
             WebGame(
-                name: "TV Poker",
+                name: "Video Poker",
                 url: utvpoker,
-                icon: UIImage(named: "TV Poker"),
+                icon: UIImage(named: "Video Poker"),
                 makeViewModel: { UnityGameViewModel(startURL: utvpoker) as any WebGameViewModel },
                 makeWrapper: { vm, onClose in
                     AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
