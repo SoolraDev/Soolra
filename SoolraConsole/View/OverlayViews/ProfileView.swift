@@ -343,6 +343,8 @@ struct NFTDetailOverlay: View {
     
     @State private var loadedImage: UIImage?
     @State private var showingSaveAlert = false
+    @State private var showingSaveError = false
+    @State private var isSaving = false
     @State private var showingListingSheet = false // New State
     
     var body: some View {
@@ -397,8 +399,8 @@ struct NFTDetailOverlay: View {
                                 .background(Color.white.opacity(0.2))
                                 .cornerRadius(8)
                         }
-                        .disabled(loadedImage == nil)
-                        
+                        .disabled(loadedImage == nil || isSaving)
+
                         Button(action: {
                             if let img = loadedImage {
                                 onSetProfile(img)
@@ -468,10 +470,33 @@ struct NFTDetailOverlay: View {
         .task {
             await loadImageData()
         }
+        .overlay {
+            if isSaving {
+                ZStack {
+                    Color.black.opacity(0.5)
+                    VStack(spacing: 12) {
+                        ProgressView()
+                            .tint(.white)
+                            .scaleEffect(1.2)
+                        Text("Saving to Photos…")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.white)
+                    }
+                    .padding(24)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                }
+                .cornerRadius(20)
+            }
+        }
         .alert("Image Saved", isPresented: $showingSaveAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text("The image has been saved to your photos.")
+        }
+        .alert("Save Failed", isPresented: $showingSaveError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Could not save the image. Please check that Soolra has permission to access your photos.")
         }
         // --- LISTING SHEET ---
         .sheet(isPresented: $showingListingSheet) {
@@ -497,8 +522,16 @@ struct NFTDetailOverlay: View {
     
     private func saveToPhotos() {
         guard let image = loadedImage else { return }
+        isSaving = true
         let saver = ImageSaver()
-        saver.onSuccess = { showingSaveAlert = true }
+        saver.onSuccess = {
+            isSaving = false
+            showingSaveAlert = true
+        }
+        saver.onError = { _ in
+            isSaving = false
+            showingSaveError = true
+        }
         saver.writeToPhotoAlbum(image: image)
     }
     
