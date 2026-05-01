@@ -205,6 +205,7 @@ struct ListingCard: View {
                             .foregroundStyle(.white.opacity(0.5))
                     }
                 }
+                .frame(maxWidth: .infinity)
                 .frame(height: 140)
                 .clipped()
                 .overlay(alignment: .topTrailing) {
