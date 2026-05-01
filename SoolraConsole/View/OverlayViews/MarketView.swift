@@ -10,6 +10,7 @@ import SwiftUI
 struct MarketView: View {
     @Binding var isPresented: Bool
     @StateObject private var viewModel = MarketViewModel()
+    @StateObject private var walletmanager = walletManager
     @State private var selectedTab: Int = 0 // 0 = ALL, 1 = FILTER...
     @State private var selectedListing: MarketplaceListing?
 
@@ -30,7 +31,7 @@ struct MarketView: View {
                 HStack {
                     Text("SOOL BALANCE")
                     Spacer()
-                    Text("0.0") // TODO: Hook up to real balance
+                    Text(walletmanager.balances["sool"] ?? "0.0")
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 10)
@@ -163,6 +164,7 @@ struct MarketView: View {
             if viewModel.listings.isEmpty {
                 await viewModel.fetchListings(reset: true)
             }
+            await walletmanager.getBalances()
         }
     }
 }
