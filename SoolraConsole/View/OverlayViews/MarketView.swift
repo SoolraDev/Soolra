@@ -41,12 +41,12 @@ struct MarketView: View {
                 HStack(spacing: 0) {
                     TabButton(title: "ALL ITEMS", isSelected: selectedTab == 0) {
                         selectedTab = 0
-                        // Trigger filter logic if needed
+                        Task { await viewModel.setFilter(.all) }
                     }
-                    
+
                     TabButton(title: "MY ITEMS", isSelected: selectedTab == 1) {
                         selectedTab = 1
-                        // Trigger filter logic if needed
+                        Task { await viewModel.setFilter(.mine) }
                     }
                 }
                 .clipShape(AngledBannerShape())
