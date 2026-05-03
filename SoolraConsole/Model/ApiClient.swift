@@ -28,6 +28,7 @@ class AuthManager {
         return [
             "Content-Type": "application/json",
             "jwt": jwt,
+            "user_id": privyId,
             "authorization": "Bearer \(jwt)",
         ]
     }
@@ -204,6 +205,36 @@ class ApiClient {
             return try decoder.decode([MarketplaceListing].self, from: data)
         } catch {
             print("🚨 Error fetching marketplace listings: \(error)")
+            return nil
+        }
+    }
+
+    /// Fetches the active marketplace listings owned by the current authenticated user.
+    /// Hits `/v1/marketplace/listings/me`, which derives the seller from the JWT.
+    func fetchMyMarketplaceListings() async -> [MarketplaceListing]? {
+        guard let headers = AuthManager.shared.getAuthHeaders() else {
+            return nil
+        }
+
+        let url = baseURL.appendingPathComponent("/v1/marketplace/listings/me")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+
+        do {
+            let (data, response) = try await URLSession.shared.data(
+                for: request
+            )
+            guard let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200
+            else {
+                return nil
+            }
+            let decoder = JSONDecoder()
+            return try decoder.decode([MarketplaceListing].self, from: data)
+        } catch {
+            print("🚨 Error fetching my marketplace listings: \(error)")
             return nil
         }
     }

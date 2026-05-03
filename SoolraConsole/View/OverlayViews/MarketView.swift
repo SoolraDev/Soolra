@@ -10,6 +10,7 @@ import SwiftUI
 struct MarketView: View {
     @Binding var isPresented: Bool
     @StateObject private var viewModel = MarketViewModel()
+    @StateObject private var walletmanager = walletManager
     @State private var selectedTab: Int = 0 // 0 = ALL, 1 = FILTER...
     @State private var selectedListing: MarketplaceListing?
 
@@ -30,7 +31,7 @@ struct MarketView: View {
                 HStack {
                     Text("SOOL BALANCE")
                     Spacer()
-                    Text("0.0") // TODO: Hook up to real balance
+                    Text(walletmanager.balances["sool"] ?? "0.0")
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 10)
@@ -41,12 +42,12 @@ struct MarketView: View {
                 HStack(spacing: 0) {
                     TabButton(title: "ALL ITEMS", isSelected: selectedTab == 0) {
                         selectedTab = 0
-                        // Trigger filter logic if needed
+                        Task { await viewModel.setFilter(.all) }
                     }
-                    
+
                     TabButton(title: "MY ITEMS", isSelected: selectedTab == 1) {
                         selectedTab = 1
-                        // Trigger filter logic if needed
+                        Task { await viewModel.setFilter(.mine) }
                     }
                 }
                 .clipShape(AngledBannerShape())
@@ -163,6 +164,7 @@ struct MarketView: View {
             if viewModel.listings.isEmpty {
                 await viewModel.fetchListings(reset: true)
             }
+            await walletmanager.getBalances()
         }
     }
 }
@@ -193,35 +195,41 @@ struct ListingCard: View {
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 8) {
-                // Image
-                CachedAsyncImage(url: URL(string: listing.metadata?.image ?? "")) { image in
-                    image.resizable().aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    ZStack {
-                        Color.gray.opacity(0.3)
-                        Image(systemName: "cube.box")
-                            .foregroundStyle(.white.opacity(0.5))
+                // Image — Color.clear fixes the cell to (cellWidth × 140)
+                // regardless of the underlying NFT's natural size; the image
+                // overlays it with .fill + .clipped() so it crops cleanly.
+                Color.clear
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 140)
+                    .overlay {
+                        CachedAsyncImage(url: URL(string: listing.metadata?.image ?? "")) { image in
+                            image.resizable().aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            ZStack {
+                                Color.gray.opacity(0.3)
+                                Image(systemName: "cube.box")
+                                    .foregroundStyle(.white.opacity(0.5))
+                            }
+                        }
                     }
-                }
-                .frame(height: 140)
-                .clipped()
-                .overlay(alignment: .topTrailing) {
-                    Text(listing.price.token)
-                        .font(.caption2.bold())
-                        .foregroundColor(.black)
-                        .padding(4)
-                        .background(Color.white.opacity(0.8))
-                        .cornerRadius(4)
-                        .padding(4)
-                }
-                
+                    .clipped()
+                    .overlay(alignment: .topTrailing) {
+                        Text(listing.price.token)
+                            .font(.caption2.bold())
+                            .foregroundColor(.black)
+                            .padding(4)
+                            .background(Color.white.opacity(0.8))
+                            .cornerRadius(4)
+                            .padding(4)
+                    }
+
                 // Info
                 VStack(alignment: .leading, spacing: 4) {
                     Text(listing.metadata?.name ?? "Unknown Item")
                         .font(.caption.bold())
                         .foregroundStyle(.white)
                         .lineLimit(1)
-                    
+
                     Text("\(listing.price.formatted)")
                         .font(.callout.bold())
                         .foregroundStyle(.yellow)
@@ -229,6 +237,7 @@ struct ListingCard: View {
                 .padding(.horizontal, 8)
                 .padding(.bottom, 12)
             }
+            .frame(maxWidth: .infinity)
             .background(Color.black.opacity(0.4))
             .cornerRadius(12)
             .overlay(
