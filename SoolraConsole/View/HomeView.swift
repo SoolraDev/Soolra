@@ -43,6 +43,7 @@ struct HomeView: View {
     @State private var isShopWebviewVisible: Bool = false
     @StateObject private var overlaystate = overlayState
     @StateObject private var favoritesManager = FavoritesManager.shared
+    @StateObject private var hiddenWebGamesManager = HiddenWebGamesManager.shared
 
     // Toast notification for favorites
     @State private var showFavoriteToast: Bool = false
@@ -174,9 +175,9 @@ struct HomeView: View {
                 isLoading = false
             }
         }
-        .onChange(of: roms.count) { newCount in
+        .onChange(of: roms.count) { _ in
             rebuildItems()
-            viewModel.updateItemsCount(newCount + webGames.count)
+            viewModel.updateItemsCount(items.count)
         }
         .onChange(of: viewModel.selectedGameIndex) { index in
             if let index = index {
@@ -939,9 +940,9 @@ struct HomeView: View {
         let romItems: [(LibraryKind, LibraryItem)] = sortedRoms.map {
             (.rom($0), $0 as LibraryItem)
         }
-        let webItems: [(LibraryKind, LibraryItem)] = webGames.map {
-            (.web($0), $0 as LibraryItem)
-        }
+        let webItems: [(LibraryKind, LibraryItem)] = webGames
+            .filter { !hiddenWebGamesManager.isHidden($0) }
+            .map { (.web($0), $0 as LibraryItem) }
         items = webItems + romItems
     }
 

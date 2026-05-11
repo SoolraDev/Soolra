@@ -174,6 +174,7 @@ struct SettingsView: View {
         @StateObject private var viewModel = HomeViewModel.shared
         @State private var isPresented: Bool = false
         @State private var roms: [Rom] = []
+        @State private var webGames: [WebGame] = []
 
         @StateObject private var walletmanager = walletManager
 
@@ -201,6 +202,21 @@ struct SettingsView: View {
                     }
 
                     List {
+                        ForEach(webGames, id: \.name) { webGame in
+                            HStack {
+                                Text(webGame.name)
+                                Spacer()
+                                Button("Delete") {
+                                    withAnimation {
+                                        HiddenWebGamesManager.shared.hide(webGame)
+                                        webGames = WebGameCatalog.all().filter {
+                                            !HiddenWebGamesManager.shared.isHidden($0)
+                                        }
+                                    }
+                                }
+                                .foregroundColor(.red)
+                            }
+                        }
                         ForEach(roms, id: \.self) { rom in
                             HStack {
                                 Text(rom.name ?? "Unknown")
@@ -233,6 +249,9 @@ struct SettingsView: View {
                 }
                 .onAppear {
                     roms = dataController.romManager.fetchRoms()
+                    webGames = WebGameCatalog.all().filter {
+                        !HiddenWebGamesManager.shared.isHidden($0)
+                    }
                 }
                 .sheet(isPresented: $isPresented) {
                     DocumentPicker { url in

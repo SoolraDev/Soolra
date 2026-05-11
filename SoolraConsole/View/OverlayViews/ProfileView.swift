@@ -156,12 +156,13 @@ struct ProfileView: View {
                         .padding(.horizontal)
                 } else {
                     HStack {
+                        let catalog = WebGameCatalog.all()
                         ForEach(topGames) { game in
+                            let icon = catalog.first(where: { $0.name == game.gameName })?.icon
                             VStack(spacing: 6) {
-                                CachedAsyncImage(
-                                    url: game.imageUrl.flatMap(URL.init)
-                                ) { image in
-                                    image.resizable()
+                                if let icon = icon {
+                                    Image(uiImage: icon)
+                                        .resizable()
                                         .aspectRatio(contentMode: .fill)
                                         .frame(width: 111, height: 97)
                                         .cornerRadius(10)
@@ -169,11 +170,15 @@ struct ProfileView: View {
                                             RoundedRectangle(cornerRadius: 10),
                                             colors: [Color(hex: "#FF00E1"), Color(hex: "#FCC4FF")]
                                         )
-                                } placeholder: {
+                                } else {
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(Color.gray.opacity(0.3))
                                         .frame(width: 111, height: 97)
-                                        .overlay(ProgressView().tint(.white))
+                                        .overlay(
+                                            Image(systemName: "photo")
+                                                .font(.title2)
+                                                .foregroundStyle(.white.opacity(0.6))
+                                        )
                                 }
 
                                 Text(game.gameName)
