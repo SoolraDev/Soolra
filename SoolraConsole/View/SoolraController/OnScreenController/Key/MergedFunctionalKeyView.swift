@@ -9,6 +9,9 @@ import SwiftUI
 struct MergedFunctionalKeyView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var consoleManager: ConsoleCoreManager
+    @ObservedObject var controllerViewModel: ControllerViewModel
+    @State private var isSelectPressed = false
+    @State private var isStartPressed = false
     var onButtonPress: ((SoolraControllerAction) -> Void)?
 
     var body: some View {
@@ -24,13 +27,20 @@ struct MergedFunctionalKeyView: View {
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged({ _ in
-                            onButtonPress?(.select)
-                            HapticManager.shared.buttonPress()
-                            consoleManager.handleControllerAction(.select, pressed: true)
+                            if !isSelectPressed {
+                                isSelectPressed = true
+                                onButtonPress?(.select)
+                                HapticManager.shared.buttonPress()
+                                // Route through controllerViewModel so the same path
+                                // reaches both native cores (GameView) and web games
+                                // (HomeView → web → BluetoothControllerService delegate).
+                                controllerViewModel.controllerDidPress(action: .select, pressed: true)
+                            }
                         })
                         .onEnded({ _ in
+                            isSelectPressed = false
                             HapticManager.shared.buttonRelease()
-                            consoleManager.handleControllerAction(.select, pressed: false)
+                            controllerViewModel.controllerDidPress(action: .select, pressed: false)
                         })
                 )
 
@@ -49,13 +59,17 @@ struct MergedFunctionalKeyView: View {
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged({ _ in
-                            onButtonPress?(.start)
-                            HapticManager.shared.buttonPress()
-                            consoleManager.handleControllerAction(.start, pressed: true)
+                            if !isStartPressed {
+                                isStartPressed = true
+                                onButtonPress?(.start)
+                                HapticManager.shared.buttonPress()
+                                controllerViewModel.controllerDidPress(action: .start, pressed: true)
+                            }
                         })
                         .onEnded({ _ in
+                            isStartPressed = false
                             HapticManager.shared.buttonRelease()
-                            consoleManager.handleControllerAction(.start, pressed: false)
+                            controllerViewModel.controllerDidPress(action: .start, pressed: false)
                         })
                 )
 

@@ -35,6 +35,8 @@ enum WebGameCatalog {
         let uAirHockey = URL(string: "https://webgames.soolrafreegames.com/air-hockey/index.html")!
         let uBrickOut = URL(string: "https://webgames.soolrafreegames.com/brickOut/index.html")!
         let uDarts = URL(string: "https://webgames.soolrafreegames.com/darts/index.html")!
+        let uMaze = URL(string: "https://webgames.soolrafreegames.com/maze_new/index.html")!
+        let uBall6 = URL(string: "https://webgames.soolrafreegames.com/6_ball_new/index.html")!
 
         return [
             WebGame(
@@ -145,6 +147,26 @@ enum WebGameCatalog {
                     AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
                 }
             ),
+            WebGame(
+                name: "Maze",
+                url: uMaze,
+                icon: UIImage(named: "Maze"),
+                makeViewModel: { UnityGameViewModel(startURL: uMaze) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            WebGame(
+                name: "6 Ball",
+                url: uBall6,
+                icon: UIImage(named: "6 Ball"),
+                // 6 Ball rotates pieces on y/b — route them through the GameHost bridge.
+                makeViewModel: { UnityGameViewModel(startURL: uBall6, bridgeActions: [.y, .b]) as any WebGameViewModel },
+                makeWrapper: { vm, onClose in
+                    AnyView(UnityGameWrapper(viewModel: vm as! UnityGameViewModel, onClose: onClose))
+                }
+            ),
+            
 //            WebGame(
 //                name: "Video Poker",
 //                url: utvpoker,

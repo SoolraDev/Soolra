@@ -50,7 +50,7 @@ struct SoolraControllerView: View {
                     .environmentObject(consoleManager)
 
                 }
-                MergedFunctionalKeyView(onButtonPress: onButtonPress)
+                MergedFunctionalKeyView(controllerViewModel: controllerViewModel, onButtonPress: onButtonPress)
                     .environmentObject(consoleManager)
                 ShoulderButtonView(
                     controllerViewModel: controllerViewModel,
